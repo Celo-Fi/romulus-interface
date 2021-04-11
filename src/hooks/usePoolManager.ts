@@ -1,8 +1,7 @@
-import { Alfajores, useContractKit } from "@celo-tools/use-contractkit";
-import { Web3Provider } from "@ethersproject/providers";
 import { useEffect, useState } from "react";
 
 import { PoolManager, PoolManager__factory } from "../generated";
+import { useProviderOrSigner } from "./useProviderOrSigner";
 
 const POOL_MANAGER_ADDRESS = "0x2bfd4e4db508024fb7e6443c008d54eb3579435f";
 
@@ -18,17 +17,13 @@ export const usePoolManager = (): {
   poolManager: PoolManager;
   poolAddresses: readonly string[];
   poolInfo: Record<string, PoolInfo>;
-  operator: string;
-  owner: string;
+  operator: string | null;
+  owner: string | null;
 } => {
-  const { kit, network, updateNetwork, address } = useContractKit();
-  useEffect(() => {
-    updateNetwork(Alfajores);
-  }, []);
-  const provider = new Web3Provider(kit.web3.currentProvider as unknown);
+  const provider = useProviderOrSigner();
   const poolManager = PoolManager__factory.connect(
     POOL_MANAGER_ADDRESS,
-    address ? provider.getSigner(address) : provider
+    provider
   );
 
   const [poolAddresses, setPoolAddresses] = useState<readonly string[]>([]);
@@ -64,6 +59,6 @@ export const usePoolManager = (): {
       setOperator(await poolManager.operator());
       setOwner(await poolManager.owner());
     })();
-  }, [network, poolManager]);
+  }, [poolManager]);
   return { poolManager, poolAddresses, poolInfo, operator, owner };
 };

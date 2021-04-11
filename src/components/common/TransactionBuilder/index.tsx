@@ -33,7 +33,7 @@ interface ContractCall {
 
 type Form = { [key in keyof ContractCall]: string };
 
-export const TransactionBuilder = () => {
+export const TransactionBuilder: React.FC = () => {
   const [abi, setAbi] = useState<Interface | null>(new Interface(ITimelockABI));
 
   const formik = useFormik<Form>({
@@ -66,6 +66,11 @@ export const TransactionBuilder = () => {
       alert(JSON.stringify(values, null, 2));
     },
   });
+
+  if (!abi) {
+    return <div>Loading ABI...</div>;
+  }
+
   return (
     <Form onSubmit={formik.handleSubmit}>
       <Field>
@@ -128,7 +133,7 @@ export const TransactionBuilder = () => {
         <label htmlFor="data">Data</label>
         {formik.values.signature ? (
           <TransactionDataBuilder
-            method={abi.functions[formik.values.signature]}
+            method={abi.functions[formik.values.signature]!}
             data={formik.values.data}
             onChange={(value) => formik.setFieldValue("data", value)}
           />

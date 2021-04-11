@@ -8,13 +8,13 @@ import React, { useState } from "react";
 import MultiSigABI from "../../../../abis/MultiSig.json";
 import { MultiSig__factory } from "../../../../generated/factories/MultiSig__factory";
 import { MultiSig } from "../../../../generated/MultiSig";
-import { useProviderOrSigner } from "../../../../hooks/useProviderOrSigner";
+import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
 import { ParamsForm } from "../../../common/TransactionBuilder/ParamsForm";
 
 export const MultisigCreate: React.FC = () => {
   const router = useRouter();
   const multisigInterface = new Interface(MultiSigABI);
-  const signer = useProviderOrSigner();
+  const getConnectedSigner = useGetConnectedSigner();
 
   const [params, setParams] = useState<readonly unknown[]>([]);
 
@@ -30,22 +30,25 @@ export const MultisigCreate: React.FC = () => {
       <ParamsForm
         params={
           multisigInterface.functions["initialize(address[],uint256,uint256)"]
-            .inputs
+            ?.inputs ?? []
         }
         values={params}
         onChange={setParams}
       />
       <button
         onClick={async () => {
-          if (!(signer instanceof Signer)) {
-            alert("Wallet not connected");
-          }
+          const signer = await getConnectedSigner();
+          console.log(
+            "deploying contract using " +
+              (await (signer as Signer).getAddress())
+          );
           const result = await deployContract({
             salt: `${Math.random()}`,
             contractBytecode: MultiSigJSON.bytecode,
             signer: signer as Signer,
           });
           setAddress(result.address);
+          console.log("deployed", result);
 
           const multisig = MultiSig__factory.connect(result.address, signer);
 
@@ -59,7 +62,7 @@ export const MultisigCreate: React.FC = () => {
       >
         Deploy
       </button>
-      <p>Address: {address ? "--" : address}</p>
+      <p>Address: {address ? address : "--"}</p>
       {initializeTx && <p>Initializing at {initializeTx.hash}</p>}
     </div>
   );
