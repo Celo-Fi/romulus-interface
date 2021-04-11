@@ -1,6 +1,7 @@
 import { Alfajores, useContractKit } from "@celo-tools/use-contractkit";
 import { Web3Provider } from "@ethersproject/providers";
 import { useEffect, useState } from "react";
+
 import { PoolManager, PoolManager__factory } from "../generated";
 
 const POOL_MANAGER_ADDRESS = "0x2bfd4e4db508024fb7e6443c008d54eb3579435f";
@@ -36,10 +37,10 @@ export const usePoolManager = (): {
   const [poolInfo, setPoolInfo] = useState<Record<string, PoolInfo>>({});
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       const count = await poolManager.poolsCount();
       const inputs = await Promise.all(
-        [...Array(count.toNumber())].map((_, i) => poolManager.poolsByIndex(i))
+        Array(count.toNumber()).map((_, i) => poolManager.poolsByIndex(i))
       );
       setPoolAddresses(inputs);
 
@@ -63,6 +64,6 @@ export const usePoolManager = (): {
       setOperator(await poolManager.operator());
       setOwner(await poolManager.owner());
     })();
-  }, [network]);
+  }, [network, poolManager]);
   return { poolManager, poolAddresses, poolInfo, operator, owner };
 };

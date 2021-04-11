@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
+
 import { useTimelock } from "../../../hooks/useTimelock";
 import { TransactionBuilder } from "../../common/TransactionBuilder";
 
@@ -9,7 +10,7 @@ interface Props {
 
 export const TimelockIndex: React.FC<Props> = ({
   address: timelockAddress,
-}) => {
+}: Props) => {
   const timelock = useTimelock(timelockAddress);
   return (
     <Wrapper>

@@ -1,6 +1,7 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { Web3Provider } from "@ethersproject/providers";
 import { useEffect } from "react";
+
 import { ITimelock, ITimelock__factory } from "../generated";
 
 export const useTimelock = (address: string): ITimelock => {
@@ -9,7 +10,7 @@ export const useTimelock = (address: string): ITimelock => {
   const timelock = ITimelock__factory.connect(address, provider);
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       provider.resetEventsBlock(0);
       const cancels = await timelock.queryFilter(
         timelock.filters.CancelTransaction(null, null, null, null, null, null)

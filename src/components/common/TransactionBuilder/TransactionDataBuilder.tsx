@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { defaultAbiCoder, FunctionFragment } from "@ethersproject/abi";
 import { BytesLike } from "ethers";
 import React from "react";
+
 import { ParamsForm } from "./ParamsForm";
 
 interface Props {
@@ -14,11 +15,13 @@ export const TransactionDataBuilder: React.FC<Props> = ({
   method,
   data,
   onChange,
-}) => {
-  let decoded: readonly any[] = Array(method.inputs.length);
+}: Props) => {
+  let decoded: readonly unknown[] = Array(method.inputs.length);
   try {
     decoded = defaultAbiCoder.decode(method.inputs, data);
-  } catch (e) {}
+  } catch (e) {
+    // ignore failure
+  }
 
   return (
     <ParamsForm

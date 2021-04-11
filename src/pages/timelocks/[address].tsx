@@ -1,6 +1,7 @@
 import { getAddress } from "ethers/lib/utils";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
+
 import { TimelockIndex } from "../../components/pages/TimelockIndex";
 
 const TimelockIndexPage = () => {

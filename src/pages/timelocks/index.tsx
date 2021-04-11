@@ -1,7 +1,7 @@
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 
-const Timelocks = () => {
+const Timelocks: React.FC = () => {
   const router = useRouter();
   const [address, setAddress] = useState<string>("");
   return (
@@ -11,7 +11,7 @@ const Timelocks = () => {
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          router.push(`/timelocks/${address}`);
+          void router.push(`/timelocks/${address}`);
         }}
       >
         <input

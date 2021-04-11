@@ -1,20 +1,12 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { ContractTransaction } from "ethers";
-import { useRouter } from "next/router";
 import { useState } from "react";
+
 import { usePoolManager } from "../../hooks/usePoolManager";
 
-const Timelocks = () => {
-  const router = useRouter();
-  const [address, setAddress] = useState<string>("");
+const RefreshPoolsPage: React.FC = () => {
   const kit = useContractKit();
-  const {
-    poolManager,
-    poolAddresses,
-    poolInfo,
-    operator,
-    owner,
-  } = usePoolManager();
+  const { poolManager, poolInfo, operator, owner } = usePoolManager();
   const [tx, setTx] = useState<ContractTransaction | null>(null);
   return (
     <div>
@@ -40,4 +32,4 @@ const Timelocks = () => {
   );
 };
 
-export default Timelocks;
+export default RefreshPoolsPage;

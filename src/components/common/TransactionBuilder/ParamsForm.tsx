@@ -1,27 +1,40 @@
 import styled from "@emotion/styled";
 import { ParamType } from "ethers/lib/utils";
 
-interface Props {
+interface Props<T extends readonly unknown[]> {
   params: readonly ParamType[];
-  values: readonly any[];
-  onChange: (data: readonly any[]) => void;
+  values: T;
+  onChange: (data: T) => void;
 }
 
-export const ParamsForm: React.FC<Props> = ({ params, values, onChange }) => {
+export const ParamsForm = <T extends readonly unknown[]>({
+  params,
+  values,
+  onChange,
+}: Props<T>): React.ReactElement => {
   return (
     <Wrapper>
       {params.map((param, i) => {
         return (
-          <Row>
+          <Row key={param.name}>
             <span>{param.format("full")}</span>
             {param.components && (
               <ParamsForm
                 params={param.components}
-                values={values[i] ?? Array(param.components.length)}
+                values={
+                  (values[i] as unknown[]) ?? Array(param.components.length)
+                }
                 onChange={(newV) => {
-                  const ret = values.slice();
+                  const subValues =
+                    (values[i] as unknown[]) ??
+                    (Array(param.components.length) as unknown[]);
+                  const ret = [...subValues];
                   ret[i] = newV;
-                  return ret;
+
+                  // update parent
+                  const nextValues = [...values];
+                  nextValues[i] = ret;
+                  onChange((nextValues as unknown) as T);
                 }}
               />
             )}
