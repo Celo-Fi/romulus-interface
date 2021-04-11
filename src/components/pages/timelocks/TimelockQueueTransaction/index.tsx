@@ -1,15 +1,15 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-import { useGetConnectedSigner } from "../../../hooks/useProviderOrSigner";
-import { useTimelock } from "../../../hooks/useTimelock";
-import { TransactionBuilder } from "../../common/TransactionBuilder";
+import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
+import { useTimelock } from "../../../../hooks/useTimelock";
+import { TransactionBuilder } from "../../../common/TransactionBuilder";
 
 interface Props {
   address: string;
 }
 
-export const TimelockIndex: React.FC<Props> = ({
+export const TimelockQueueTransaction: React.FC<Props> = ({
   address: timelockAddress,
 }: Props) => {
   const timelock = useTimelock(timelockAddress);
