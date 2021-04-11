@@ -90,7 +90,14 @@ export const TransactionBuilder: React.FC<Props> = ({
       const data = abi.encodeFunctionData(fragment, args ?? []);
       const encodedParams = abi._encodeParams(fragment.inputs, args ?? []);
       onSubmit({
-        call: { ...values, value: values.value ?? 0 },
+        call: {
+          ...values,
+          value: values.value || 0,
+          eta: values.eta
+            ? Math.floor(new Date(values.eta).getTime() / 1000)
+            : 0,
+        },
+
         data,
         encodedParams,
       });
@@ -120,6 +127,17 @@ export const TransactionBuilder: React.FC<Props> = ({
         {formik.touched.target && formik.errors.target && (
           <ErrorMessage>{formik.errors.target}</ErrorMessage>
         )}
+      </Field>
+      <Field>
+        <label htmlFor="abi">ABI</label>
+        <textarea
+          id="abi"
+          name="abi"
+          onChange={(e) => {
+            setAbi(new Interface(e.target.value));
+          }}
+          value={abi ? JSON.stringify(abi.fragments, null, 2) : ""}
+        />
       </Field>
       <Field>
         <label htmlFor="value">Value</label>
@@ -165,9 +183,9 @@ export const TransactionBuilder: React.FC<Props> = ({
       </Field>
       <Field>
         <label htmlFor="args">Arguments</label>
-        {formik.values.signature && abi ? (
+        {formik.values.signature && abi && functionFragment ? (
           <TransactionDataBuilder
-            method={abi.functions[formik.values.signature]!}
+            method={functionFragment}
             args={formik.values.args}
             onChange={(value) => formik.setFieldValue("args", value)}
           />

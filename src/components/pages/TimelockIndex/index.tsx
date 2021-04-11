@@ -23,7 +23,7 @@ export const TimelockIndex: React.FC<Props> = ({
           hasEta
           onSubmit={async ({ call, data }) => {
             const signer = await getConnectedSigner();
-            await timelock
+            const tx = await timelock
               .connect(signer)
               .queueTransaction(
                 call.target,
@@ -32,6 +32,7 @@ export const TimelockIndex: React.FC<Props> = ({
                 data,
                 call.eta
               );
+            console.log("Queued", tx);
           }}
         />
       </div>
