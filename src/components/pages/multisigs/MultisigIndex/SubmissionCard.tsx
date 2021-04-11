@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
+import { FunctionCall } from "../../../common/FunctionCall";
 import { Submission } from ".";
 
 interface Props {
@@ -21,6 +22,11 @@ export const SubmissionCard: React.FC<Props> = ({ submission }: Props) => {
           <FaExternalLinkAlt />
         </a>
       </Title>
+      <FunctionCall
+        address={submission.destination}
+        data={submission.data}
+        value={submission.value}
+      />
     </Wrapper>
   );
 };

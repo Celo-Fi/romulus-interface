@@ -2,9 +2,9 @@ import styled from "@emotion/styled";
 import { BigNumberish } from "@ethersproject/bignumber";
 import { BytesLike, getAddress, Interface, parseEther } from "ethers/lib/utils";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import ITimelockABI from "../../../abis/ITimelock.json";
+import { useAbi } from "../../../hooks/useAbi";
 import { FunctionWithArgs } from "../FunctionWithArgs";
 import { TransactionDataBuilder } from "./TransactionDataBuilder";
 
@@ -36,6 +36,7 @@ type Form = Omit<{ [key in keyof ContractCall]: string }, "args"> & {
 };
 
 interface Props {
+  abi?: Interface;
   hasEta?: boolean;
   onSubmit: (args: {
     call: ContractCall;
@@ -45,10 +46,11 @@ interface Props {
 }
 
 export const TransactionBuilder: React.FC<Props> = ({
+  abi: providedAbi,
   hasEta,
   onSubmit,
 }: Props) => {
-  const [abi, setAbi] = useState<Interface | null>(new Interface(ITimelockABI));
+  const [abi, setAbi] = useState<Interface | null>(providedAbi ?? null);
 
   const formik = useFormik<Form>({
     initialValues: {
@@ -87,15 +89,21 @@ export const TransactionBuilder: React.FC<Props> = ({
       const { args } = values;
       const data = abi.encodeFunctionData(fragment, args ?? []);
       const encodedParams = abi._encodeParams(fragment.inputs, args ?? []);
-      onSubmit({ call: values, data, encodedParams });
+      onSubmit({
+        call: { ...values, value: values.value ?? 0 },
+        data,
+        encodedParams,
+      });
     },
   });
+  const dynamicAbi = useAbi(formik.values.target);
+  useEffect(() => {
+    if (dynamicAbi) {
+      setAbi(dynamicAbi);
+    }
+  }, [dynamicAbi]);
 
-  if (!abi) {
-    return <div>Loading ABI...</div>;
-  }
-
-  const functionFragment = abi.functions[formik.values.signature];
+  const functionFragment = abi?.functions[formik.values.signature];
 
   return (
     <Form onSubmit={formik.handleSubmit}>
@@ -157,7 +165,7 @@ export const TransactionBuilder: React.FC<Props> = ({
       </Field>
       <Field>
         <label htmlFor="args">Arguments</label>
-        {formik.values.signature ? (
+        {formik.values.signature && abi ? (
           <TransactionDataBuilder
             method={abi.functions[formik.values.signature]!}
             args={formik.values.args}

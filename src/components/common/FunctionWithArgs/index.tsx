@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { FunctionFragment } from "ethers/lib/utils";
 
 interface Props {
+  callee?: string;
   frag: FunctionFragment;
   args?: readonly unknown[];
 }
@@ -11,12 +12,17 @@ interface Props {
  * @param frag
  * @paramargs
  */
-export const FunctionWithArgs = ({ frag, args }: Props): React.ReactElement => {
+export const FunctionWithArgs = ({
+  callee,
+  frag,
+  args,
+}: Props): React.ReactElement => {
   if (!args || args.length === 0) {
     return <Wrapper>{frag.name}()</Wrapper>;
   }
   return (
     <Wrapper>
+      {callee ? callee + "." : ""}
       {frag.name}(
       <br />
       {frag.inputs.map((input, i) => (

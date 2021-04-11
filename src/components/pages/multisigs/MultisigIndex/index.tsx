@@ -13,6 +13,7 @@ export interface Submission {
   data: string;
   executed: boolean;
   submissionHash: string;
+  submittedBy: string;
   id: number;
 }
 
@@ -57,6 +58,7 @@ export const MultisigIndex: React.FC<Props> = ({
               data: result.data,
               executed: result.executed,
               submissionHash: sub.transactionHash,
+              submittedBy: (await sub.getTransaction()).from,
               id: sub.args.transactionId.toNumber(),
             };
           })
