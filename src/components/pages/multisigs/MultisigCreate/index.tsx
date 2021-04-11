@@ -32,6 +32,10 @@ export const MultisigCreate: React.FC = () => {
           multisigInterface.functions["initialize(address[],uint256,uint256)"]
             ?.inputs ?? []
         }
+        paramsDoc={
+          MultiSigJSON.devdoc.methods["initialize(address[],uint256,uint256)"]
+            .params
+        }
         values={params}
         onChange={setParams}
       />
