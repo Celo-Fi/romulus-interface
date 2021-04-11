@@ -2,6 +2,7 @@ import MultiSigJSON from "@celo/contracts/build/MultiSig.json";
 import { deployContract } from "@ubeswap/solidity-create2-deployer";
 import { ContractTransaction, Signer } from "ethers";
 import { Interface } from "ethers/lib/utils";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
@@ -9,7 +10,18 @@ import MultiSigABI from "../../../../abis/MultiSig.json";
 import { MultiSig__factory } from "../../../../generated/factories/MultiSig__factory";
 import { MultiSig } from "../../../../generated/MultiSig";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
+import { FunctionWithData } from "../../../common/FunctionWithData";
 import { ParamsForm } from "../../../common/TransactionBuilder/ParamsForm";
+
+type Head<T extends unknown[]> = Required<T> extends [...infer H, unknown]
+  ? H
+  : never;
+type Last<T extends Array<unknown>> = Required<T> extends [
+  ...unknown[],
+  infer L
+]
+  ? L
+  : never;
 
 export const MultisigCreate: React.FC = () => {
   const router = useRouter();
@@ -26,7 +38,12 @@ export const MultisigCreate: React.FC = () => {
   return (
     <div>
       <h1>Create a new Multisig wallet</h1>
-      <p>This page allows deploying a new Celo multisig contract.</p>
+      <p>
+        This page allows deploying a new Celo multisig contract.{" "}
+        <Link href="/multisigs/source">
+          <a>View the source here.</a>
+        </Link>
+      </p>
       <ParamsForm
         params={
           multisigInterface.functions["initialize(address[],uint256,uint256)"]
@@ -39,6 +56,15 @@ export const MultisigCreate: React.FC = () => {
         values={params}
         onChange={setParams}
       />
+      <h3>Preview</h3>
+      <FunctionWithData
+        frag={
+          multisigInterface.functions["initialize(address[],uint256,uint256)"]!
+        }
+        data={params}
+      />
+      <br />
+      <br />
       <button
         onClick={async () => {
           const signer = await getConnectedSigner();
@@ -57,7 +83,10 @@ export const MultisigCreate: React.FC = () => {
           const multisig = MultiSig__factory.connect(result.address, signer);
 
           const tx = await multisig.initialize(
-            ...(params as Parameters<MultiSig["initialize"]>)
+            ...([...params] as Head<Parameters<MultiSig["initialize"]>>),
+            {
+              gasLimit: 2000000,
+            }
           );
           setInitializeTx(tx);
           await tx.wait();

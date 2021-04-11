@@ -32,7 +32,6 @@ export const ValueField = <T extends unknown>({
     const arrayValue =
       (value as readonly unknown[]) ??
       Array(param.arrayLength === -1 ? 1 : param.arrayLength).fill(null);
-    console.log("value", arrayValue);
     return (
       <ArrayInput
         arrayLength={param.arrayLength}
