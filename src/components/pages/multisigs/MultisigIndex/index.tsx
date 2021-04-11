@@ -1,9 +1,20 @@
 import styled from "@emotion/styled";
+import { BigNumber } from "ethers";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 import { useMultisigContract } from "../../../../hooks/useMultisigContract";
-import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
-import { TransactionBuilder } from "../../../common/TransactionBuilder";
+import { useProvider } from "../../../../hooks/useProviderOrSigner";
+import { SubmissionCard } from "./SubmissionCard";
+
+export interface Submission {
+  destination: string;
+  value: BigNumber;
+  data: string;
+  executed: boolean;
+  submissionHash: string;
+  id: number;
+}
 
 interface Props {
   address: string;
@@ -13,9 +24,11 @@ export const MultisigIndex: React.FC<Props> = ({
   address: multisigAddress,
 }: Props) => {
   const multisig = useMultisigContract(multisigAddress);
-  const getConnectedSigner = useGetConnectedSigner();
+  const provider = useProvider();
 
   const [txCount, setTxCount] = useState<number>(0);
+
+  const [submissions, setSubmissions] = useState<readonly Submission[]>();
 
   useEffect(() => {
     void (async () => {
@@ -24,25 +37,64 @@ export const MultisigIndex: React.FC<Props> = ({
     })();
   }, [multisig]);
 
+  useEffect(() => {
+    void (async () => {
+      provider.resetEventsBlock(0);
+      const provMultisig = multisig.connect(provider);
+      const prevSubmissions = await provMultisig.queryFilter(
+        multisig.filters.Submission(null)
+      );
+
+      setSubmissions(
+        await Promise.all(
+          prevSubmissions.map(async (sub) => {
+            const result = await provMultisig.transactions(
+              sub.args.transactionId.toNumber()
+            );
+            return {
+              destination: result.destination,
+              value: result.value,
+              data: result.data,
+              executed: result.executed,
+              submissionHash: sub.transactionHash,
+              id: sub.args.transactionId.toNumber(),
+            };
+          })
+        )
+      );
+    })();
+  }, [multisig, provider]);
+
   return (
     <Wrapper>
       <h1>Multisig {multisig.address}</h1>
+      <Nav>
+        <Link href={`/multisigs/${multisigAddress}/add-transaction`}>
+          <a>Add Transaction</a>
+        </Link>
+      </Nav>
       <p>{txCount} transactions</p>
-      <div>
-        <h2>Add transaction</h2>
-        <TransactionBuilder
-          onSubmit={async ({ call, data }) => {
-            const signer = await getConnectedSigner();
-            const tx = await multisig
-              .connect(signer)
-              .submitTransaction(call.target, call.value, data);
-            console.log("Submit TX", tx);
-          }}
-        />
-      </div>
+      <Submissions>
+        {submissions?.map((sub, i) => (
+          <SubmissionCard key={i} submission={sub} />
+        ))}
+      </Submissions>
     </Wrapper>
   );
 };
+
+const Submissions = styled.div`
+  display: grid;
+  grid-row-gap: 24px;
+`;
+
+const Nav = styled.div`
+  display: flex;
+  align-items: center;
+  a {
+    margin-right: 12px;
+  }
+`;
 
 const Wrapper = styled.div`
   max-width: 100%;
