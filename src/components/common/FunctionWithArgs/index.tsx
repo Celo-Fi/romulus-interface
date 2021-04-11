@@ -3,22 +3,25 @@ import { FunctionFragment } from "ethers/lib/utils";
 
 interface Props {
   frag: FunctionFragment;
-  data: readonly unknown[];
+  args?: readonly unknown[];
 }
 
 /**
- * Renders a solidity function fragment with call data.
+ * Renders a solidity function fragment with call args.
  * @param frag
- * @param data
+ * @paramargs
  */
-export const FunctionWithData = ({ frag, data }: Props): React.ReactElement => {
+export const FunctionWithArgs = ({ frag, args }: Props): React.ReactElement => {
+  if (!args || args.length === 0) {
+    return <Wrapper>{frag.name}()</Wrapper>;
+  }
   return (
     <Wrapper>
       {frag.name}(
       <br />
       {frag.inputs.map((input, i) => (
         <Param key={i}>
-          {input.format("full")} {renderValue(data[i])}
+          {input.format("full")} {renderValue(args[i])}
           {i !== frag.inputs.length - 1 ? ", " : ""}
           <br />
         </Param>

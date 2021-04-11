@@ -1,39 +1,27 @@
-import styled from "@emotion/styled";
-import { defaultAbiCoder, FunctionFragment } from "@ethersproject/abi";
-import { BytesLike } from "ethers";
+import { FunctionFragment } from "@ethersproject/abi";
+import { defaultAbiCoder } from "ethers/lib/utils";
 import React from "react";
 
 import { ParamsForm } from "./ParamsForm";
 
 interface Props {
   method: FunctionFragment;
-  data: BytesLike;
-  onChange: (data: BytesLike) => void;
+  args?: readonly unknown[];
+  onChange: (data: readonly unknown[]) => void;
 }
 
 export const TransactionDataBuilder: React.FC<Props> = ({
   method,
-  data,
+  args,
   onChange,
 }: Props) => {
-  let decoded: readonly unknown[] = Array(method.inputs.length);
-  try {
-    decoded = defaultAbiCoder.decode(method.inputs, data);
-  } catch (e) {
-    // ignore failure
-  }
-
   return (
     <ParamsForm
       params={method.inputs}
-      values={decoded}
+      values={args ?? defaultAbiCoder.getDefaultValue(method.inputs)}
       onChange={(newValues) => {
-        onChange(defaultAbiCoder.encode(method.inputs, newValues));
+        onChange(newValues);
       }}
     />
   );
 };
-
-const Wrapper = styled.div``;
-
-const Row = styled.div``;

@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
 import { BigNumberish } from "@ethersproject/bignumber";
-import { BytesLike } from "@ethersproject/bytes";
-import { getAddress, Interface, parseEther } from "ethers/lib/utils";
+import { BytesLike, getAddress, Interface, parseEther } from "ethers/lib/utils";
 import { useFormik } from "formik";
-import { useState } from "react";
+import React, { useState } from "react";
 
 import ITimelockABI from "../../../abis/ITimelock.json";
+import { FunctionWithArgs } from "../FunctionWithArgs";
 import { TransactionDataBuilder } from "./TransactionDataBuilder";
 
 interface ContractCall {
@@ -22,18 +22,32 @@ interface ContractCall {
    */
   signature: string;
   /**
-   * Call data
+   * Unencoded function args
    */
-  data: BytesLike;
+  args?: readonly unknown[];
   /**
    * Minimum timestamp for the call to be executed.
    */
   eta: BigNumberish;
 }
 
-type Form = { [key in keyof ContractCall]: string };
+type Form = Omit<{ [key in keyof ContractCall]: string }, "args"> & {
+  args?: readonly unknown[];
+};
 
-export const TransactionBuilder: React.FC = () => {
+interface Props {
+  hasEta?: boolean;
+  onSubmit: (args: {
+    call: ContractCall;
+    data: BytesLike;
+    encodedParams: BytesLike;
+  }) => void;
+}
+
+export const TransactionBuilder: React.FC<Props> = ({
+  hasEta,
+  onSubmit,
+}: Props) => {
   const [abi, setAbi] = useState<Interface | null>(new Interface(ITimelockABI));
 
   const formik = useFormik<Form>({
@@ -41,7 +55,7 @@ export const TransactionBuilder: React.FC = () => {
       target: "",
       value: "",
       signature: "",
-      data: "",
+      args: [],
       eta: "",
     },
     validate: (values) => {
@@ -63,13 +77,25 @@ export const TransactionBuilder: React.FC = () => {
       return errors;
     },
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      if (!abi) {
+        throw new Error("no abi");
+      }
+      const fragment = abi.functions[values.signature];
+      if (!fragment) {
+        throw new Error("unknown fragment: " + values.signature);
+      }
+      const { args } = values;
+      const data = abi.encodeFunctionData(fragment, args ?? []);
+      const encodedParams = abi._encodeParams(fragment.inputs, args ?? []);
+      onSubmit({ call: values, data, encodedParams });
     },
   });
 
   if (!abi) {
     return <div>Loading ABI...</div>;
   }
+
+  const functionFragment = abi.functions[formik.values.signature];
 
   return (
     <Form onSubmit={formik.handleSubmit}>
@@ -130,39 +156,47 @@ export const TransactionBuilder: React.FC = () => {
         )}
       </Field>
       <Field>
-        <label htmlFor="data">Data</label>
+        <label htmlFor="args">Arguments</label>
         {formik.values.signature ? (
           <TransactionDataBuilder
             method={abi.functions[formik.values.signature]!}
-            data={formik.values.data}
-            onChange={(value) => formik.setFieldValue("data", value)}
+            args={formik.values.args}
+            onChange={(value) => formik.setFieldValue("args", value)}
           />
         ) : (
           <input
-            id="data"
-            name="data"
+            id="args"
+            name="args"
             type="text"
             onChange={formik.handleChange}
-            value={formik.values.data}
+            value={JSON.stringify(formik.values.args)}
           />
         )}
-        {formik.touched.data && formik.errors.data && (
-          <ErrorMessage>{formik.errors.data}</ErrorMessage>
+        {formik.touched.args && formik.errors.args && (
+          <ErrorMessage>{formik.errors.args}</ErrorMessage>
         )}
       </Field>
-      <Field>
-        <label htmlFor="eta">Eta</label>
-        <input
-          id="eta"
-          name="eta"
-          type="datetime-local"
-          onChange={formik.handleChange}
-          value={formik.values.eta}
-        />
-        {formik.touched.eta && formik.errors.eta && (
-          <ErrorMessage>{formik.errors.eta}</ErrorMessage>
-        )}
-      </Field>
+      {hasEta && (
+        <Field>
+          <label htmlFor="eta">Eta</label>
+          <input
+            id="eta"
+            name="eta"
+            type="datetime-local"
+            onChange={formik.handleChange}
+            value={formik.values.eta}
+          />
+          {formik.touched.eta && formik.errors.eta && (
+            <ErrorMessage>{formik.errors.eta}</ErrorMessage>
+          )}
+        </Field>
+      )}
+      {functionFragment && (
+        <Field>
+          <h3>Preview</h3>
+          <FunctionWithArgs frag={functionFragment} args={formik.values.args} />
+        </Field>
+      )}
       <Field>
         <button type="submit">Submit</button>
       </Field>

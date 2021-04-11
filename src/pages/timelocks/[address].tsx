@@ -4,7 +4,7 @@ import React from "react";
 
 import { TimelockIndex } from "../../components/pages/TimelockIndex";
 
-const TimelockIndexPage = () => {
+const TimelockIndexPage: React.FC = () => {
   const router = useRouter();
   const { address: timelockAddress } = router.query;
 

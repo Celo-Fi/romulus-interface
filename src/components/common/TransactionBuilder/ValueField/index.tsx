@@ -53,6 +53,28 @@ export const ValueField = <T extends unknown>({
     );
   }
 
+  if (param.type === "string") {
+    return (
+      <input
+        type="text"
+        placeholder="Enter a string"
+        value={typeof value === "string" ? value : ""}
+        onChange={(e) => onChange(e.target.value as T)}
+      />
+    );
+  }
+
+  if (param.type === "bytes") {
+    return (
+      <input
+        type="text"
+        placeholder="0x00...."
+        value={typeof value === "string" ? value : ""}
+        onChange={(e) => onChange(e.target.value as T)}
+      />
+    );
+  }
+
   if (param.type.startsWith("uint")) {
     return (
       <input
