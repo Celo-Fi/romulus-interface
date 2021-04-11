@@ -5,6 +5,7 @@ import {
   useContractKit,
 } from "@celo-tools/use-contractkit";
 import styled from "@emotion/styled";
+import copyToClipboard from "copy-to-clipboard";
 
 const truncateAddress = (addr: string) =>
   addr.slice(0, 6) + "..." + addr.slice(addr.length - 4);
@@ -44,7 +45,13 @@ export const Header: React.FC = () => {
         </span>
         {address ? (
           <>
-            <AccountText>{truncateAddress(address)}</AccountText>
+            <AccountText
+              onClick={() => {
+                copyToClipboard(address);
+              }}
+            >
+              {truncateAddress(address)}
+            </AccountText>
           </>
         ) : (
           <button

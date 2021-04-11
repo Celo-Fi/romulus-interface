@@ -16,6 +16,7 @@
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "@ubeswap/solidity-create2-deployer": "^0.6.1",
+    "copy-to-clipboard": "^3.3.1",
     "ethers": "^5.1.0",
     "formik": "^2.2.6",
     "next": "10.1.3",
