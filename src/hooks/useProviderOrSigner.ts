@@ -1,7 +1,7 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { ExternalProvider } from "@ethersproject/providers/lib/web3-provider";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export const useProvider = (): Web3Provider => {
   const { kit } = useContractKit();
@@ -34,4 +34,15 @@ export const useGetConnectedSigner = (): (() => Promise<JsonRpcSigner>) => {
       .currentProvider as unknown) as ExternalProvider;
     return new Web3Provider(nextProvider).getSigner(nextKit.kit.defaultAccount);
   }, [signer, kit, connect]);
+};
+
+export const useConnectedSigner = (): JsonRpcSigner | null => {
+  const getConnectedSigner = useGetConnectedSigner();
+  const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
+  useEffect(() => {
+    void (async () => {
+      setSigner(await getConnectedSigner());
+    })();
+  }, [getConnectedSigner, setSigner]);
+  return signer;
 };

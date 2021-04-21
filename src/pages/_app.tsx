@@ -1,5 +1,6 @@
-import "@celo-tools/use-contractkit/lib/styles.css";
 import "normalize.css/normalize.css";
+import "@celo-tools/use-contractkit/lib/styles.css";
+import "@dracula/dracula-ui/styles/dracula-ui.css";
 
 import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
 import { Global } from "@emotion/react";

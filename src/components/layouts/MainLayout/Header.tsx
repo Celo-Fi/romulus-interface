@@ -4,8 +4,10 @@ import {
   Mainnet,
   useContractKit,
 } from "@celo-tools/use-contractkit";
+import { Button, Heading, Select, Text } from "@dracula/dracula-ui";
 import styled from "@emotion/styled";
 import copyToClipboard from "copy-to-clipboard";
+import React from "react";
 
 const truncateAddress = (addr: string) =>
   addr.slice(0, 6) + "..." + addr.slice(addr.length - 4);
@@ -17,66 +19,61 @@ export const Header: React.FC = () => {
 
   return (
     <Wrapper>
-      <Logo>Romulus</Logo>
+      <Heading>Romulus</Heading>
       <Account>
-        <span>
-          Network:{" "}
-          <select
-            value={network.name}
-            onChange={(e) => {
-              const nextNetwork = NETWORKS.find(
-                (n) => n.name === e.target.value
-              );
-              if (nextNetwork) {
-                updateNetwork(nextNetwork);
-              }
+        <Text weight="bold">Network:</Text>
+        <Select
+          onChange={(e) => {
+            const nextNetwork = NETWORKS.find(
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              (n) => n.name === (e.target as any).value
+            );
+            if (nextNetwork) {
+              updateNetwork(nextNetwork);
+            }
+          }}
+        >
+          {NETWORKS.map((n) => (
+            <option
+              key={n.name}
+              value={n.name}
+              selected={n.name === network.name}
+            >
+              {n.name}
+            </option>
+          ))}
+        </Select>
+        {address ? (
+          <AccountText
+            onClick={() => {
+              copyToClipboard(address);
             }}
           >
-            {NETWORKS.map((n) => (
-              <option
-                key={n.name}
-                value={n.name}
-                selected={n.name === network.name}
-              >
-                {n.name}
-              </option>
-            ))}
-          </select>
-        </span>
-        {address ? (
-          <>
-            <AccountText
-              onClick={() => {
-                copyToClipboard(address);
-              }}
-            >
-              {truncateAddress(address)}
-            </AccountText>
-          </>
+            {truncateAddress(address)}
+          </AccountText>
         ) : (
-          <button
+          <Button
             onClick={() => {
               void connect();
             }}
           >
             Connect to Wallet
-          </button>
+          </Button>
         )}
       </Account>
     </Wrapper>
   );
 };
 
-const AccountText = styled.span`
-  font-family: monospace;
-  margin-left: 4px;
+const AccountText = styled(Text)`
+  cursor: pointer;
 `;
 
-const Account = styled.div``;
-
-const Logo = styled.div`
-  font-weight: 600;
-  font-size: 24px;
+const Account = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 8px;
+  align-items: center;
 `;
 
 const Wrapper = styled.div`

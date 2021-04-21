@@ -13,8 +13,10 @@
   "dependencies": {
     "@celo-tools/use-contractkit": "^1.0.0-beta.2",
     "@celo/contracts": "^0.0.8",
+    "@dracula/dracula-ui": "^0.7.4",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
+    "@ubeswap/sdk": "^2.1.0",
     "@ubeswap/solidity-create2-deployer": "^0.6.1",
     "copy-to-clipboard": "^3.3.1",
     "ethers": "^5.1.0",
