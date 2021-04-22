@@ -1,3 +1,4 @@
+import { Anchor, Box, Card, Heading, Table } from "@dracula/dracula-ui";
 import styled from "@emotion/styled";
 import { BigNumber } from "ethers";
 import Link from "next/link";
@@ -5,6 +6,8 @@ import React, { useEffect, useState } from "react";
 
 import { useProvider } from "../../../../hooks/useProviderOrSigner";
 import { useTimelock } from "../../../../hooks/useTimelock";
+import { formatDuration } from "../../../../util/dateTime";
+import { Address } from "../../../common/Address";
 import { TimelockTransactionCard } from "./TimelockTransactionCard";
 
 export interface TimelockTransaction {
@@ -30,7 +33,7 @@ interface Props {
 export const TimelockIndex: React.FC<Props> = ({
   address: timelockAddress,
 }: Props) => {
-  const timelock = useTimelock(timelockAddress);
+  const { timelock, config } = useTimelock(timelockAddress);
   const provider = useProvider();
 
   const [transactions, setTransactions] = useState<
@@ -87,19 +90,44 @@ export const TimelockIndex: React.FC<Props> = ({
   }, [timelock, provider]);
 
   return (
-    <Wrapper>
-      <h1>Timelock {timelock.address}</h1>
+    <Box>
+      <Heading>Timelock {timelock.address}</Heading>
       <Nav>
         <Link href={`/timelocks/${timelockAddress}/add-transaction`}>
-          <a>Add Transaction</a>
+          <Anchor>Add Transaction</Anchor>
         </Link>
       </Nav>
+      <Card p="md" variant="subtle" color="white">
+        <Heading pb="sm">Details</Heading>
+        {config && (
+          <Table color="cyan" className="drac-text">
+            <tbody>
+              <tr>
+                <td>Admin</td>
+                <td>
+                  <Address value={config.admin} />
+                </td>
+              </tr>
+              <tr>
+                <td>Pending Admin</td>
+                <td>
+                  <Address value={config.pendingAdmin} />
+                </td>
+              </tr>
+              <tr>
+                <td>Delay</td>
+                <td>{formatDuration(config.delay)}</td>
+              </tr>
+            </tbody>
+          </Table>
+        )}
+      </Card>
       <Submissions>
         {transactions?.map((tx, i) => (
           <TimelockTransactionCard key={i} tx={tx} />
         ))}
       </Submissions>
-    </Wrapper>
+    </Box>
   );
 };
 
@@ -114,10 +142,4 @@ const Nav = styled.div`
   a {
     margin-right: 12px;
   }
-`;
-
-const Wrapper = styled.div`
-  max-width: 100%;
-  width: 720px;
-  margin: 0 auto;
 `;
