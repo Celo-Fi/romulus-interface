@@ -10,7 +10,7 @@ import MultiSigABI from "../../../../abis/MultiSig.json";
 import { MultiSig__factory } from "../../../../generated/factories/MultiSig__factory";
 import { MultiSig } from "../../../../generated/MultiSig";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
-import { FunctionWithData } from "../../../common/FunctionWithArgs";
+import { FunctionWithArgs } from "../../../common/FunctionWithArgs";
 import { ParamsForm } from "../../../common/TransactionBuilder/ParamsForm";
 
 type Head<T extends unknown[]> = Required<T> extends [...infer H, unknown]
@@ -57,11 +57,11 @@ export const MultisigCreate: React.FC = () => {
         onChange={setParams}
       />
       <h3>Preview</h3>
-      <FunctionWithData
+      <FunctionWithArgs
         frag={
           multisigInterface.functions["initialize(address[],uint256,uint256)"]!
         }
-        data={params}
+        args={params}
       />
       <br />
       <br />
