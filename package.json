@@ -6,7 +6,7 @@
     "dev": "next dev",
     "typechain": "typechain --target=ethers-v5 'src/**/abis/**/*.json' --outDir src/generated/",
     "lint": "eslint .",
-    "build": "next build",
+    "build": "CI='' npm run typechain && next build",
     "start": "next start",
     "prepare": "husky install"
   },
