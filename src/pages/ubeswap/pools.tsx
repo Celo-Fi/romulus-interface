@@ -1,4 +1,4 @@
-import { Box, Button } from "@dracula/dracula-ui";
+import { Box, Button, Heading } from "@dracula/dracula-ui";
 import { ContractTransaction } from "ethers";
 import React, { useState } from "react";
 
@@ -31,6 +31,14 @@ const PoolsPage: React.FC = () => {
       </p>
       <pre>{JSON.stringify(tx, null, 2)}</pre>
       <pre>{JSON.stringify(poolInfo, null, 2)}</pre>
+      <Heading>Staking tokens</Heading>
+      <pre>
+        {JSON.stringify(
+          Object.values(poolInfo).map((pool) => pool.stakingToken),
+          null,
+          2
+        )}
+      </pre>
     </Box>
   );
 };

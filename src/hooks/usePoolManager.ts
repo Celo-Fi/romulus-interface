@@ -21,17 +21,19 @@ export const usePoolManager = (): {
   owner: string | null;
 } => {
   const provider = useProviderOrSigner();
-  const poolManager = PoolManager__factory.connect(
-    POOL_MANAGER_ADDRESS,
-    provider
+  const [thePoolManager, setPoolManager] = useState<PoolManager>(
+    PoolManager__factory.connect(POOL_MANAGER_ADDRESS, provider)
   );
-
   const [poolAddresses, setPoolAddresses] = useState<readonly string[]>([]);
   const [operator, setOperator] = useState<string | null>(null);
   const [owner, setOwner] = useState<string | null>(null);
   const [poolInfo, setPoolInfo] = useState<Record<string, PoolInfo>>({});
 
   useEffect(() => {
+    const poolManager = PoolManager__factory.connect(
+      POOL_MANAGER_ADDRESS,
+      provider
+    );
     void (async () => {
       const count = await poolManager.poolsCount();
       const inputs = await Promise.all(
@@ -60,7 +62,14 @@ export const usePoolManager = (): {
 
       setOperator(await poolManager.operator());
       setOwner(await poolManager.owner());
+      setPoolManager(thePoolManager);
     })();
-  }, [poolManager]);
-  return { poolManager, poolAddresses, poolInfo, operator, owner };
+  }, [thePoolManager, provider]);
+  return {
+    poolManager: thePoolManager,
+    poolAddresses,
+    poolInfo,
+    operator,
+    owner,
+  };
 };
