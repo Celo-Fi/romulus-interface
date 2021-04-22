@@ -3,10 +3,13 @@ import { getAddress } from "ethers/lib/utils";
 import React from "react";
 
 interface IProps {
-  value: string;
+  value: string | null;
 }
 
 export const Address: React.FC<IProps> = ({ value }: IProps) => {
+  if (!value) {
+    return <>--</>;
+  }
   const fmt = getAddress(value);
   return (
     <Anchor

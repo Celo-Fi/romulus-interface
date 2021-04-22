@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { PoolManager, PoolManager__factory } from "../generated";
 import { useProviderOrSigner } from "./useProviderOrSigner";
 
-const POOL_MANAGER_ADDRESS = "0x2bfd4e4db508024fb7e6443c008d54eb3579435f";
+const POOL_MANAGER_ADDRESS = "0x9Ee3600543eCcc85020D6bc77EB553d1747a65D2";
 
 interface PoolInfo {
   index: number;
@@ -35,7 +35,9 @@ export const usePoolManager = (): {
     void (async () => {
       const count = await poolManager.poolsCount();
       const inputs = await Promise.all(
-        Array(count.toNumber()).map((_, i) => poolManager.poolsByIndex(i))
+        Array(count.toNumber())
+          .fill(null)
+          .map((_, i) => poolManager.poolsByIndex(i))
       );
       setPoolAddresses(inputs);
 
