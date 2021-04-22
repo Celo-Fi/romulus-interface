@@ -19,8 +19,8 @@ interface IReleaseStats {
   claimed: BigNumber;
 }
 
-const UBE_ADDRESS = "0x00Be915B9dCf56a3CBE739D9B9c202ca692409EC";
-const RELEASE_UBE_ADDRESS = "0x5Ed248077bD07eE9B530f7C40BE0c1dAE4c131C0";
+export const UBE_ADDRESS = "0x00Be915B9dCf56a3CBE739D9B9c202ca692409EC";
+export const RELEASE_UBE_ADDRESS = "0x5Ed248077bD07eE9B530f7C40BE0c1dAE4c131C0";
 
 const UbeswapIndexPage: React.FC = () => {
   const provider = useProvider();
