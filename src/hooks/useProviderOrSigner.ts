@@ -36,6 +36,25 @@ export const useGetConnectedSigner = (): (() => Promise<JsonRpcSigner>) => {
   }, [signer, kit, connect]);
 };
 
+export const useLazyConnectedSigner = (): {
+  signer: JsonRpcSigner | null;
+  address: string | null;
+  getConnectedSigner: () => Promise<JsonRpcSigner>;
+} => {
+  const getConnectedSigner = useGetConnectedSigner();
+  const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
+  const getConnectedSignerCb = useCallback(async () => {
+    const theSigner = await getConnectedSigner();
+    setSigner(theSigner);
+    return theSigner;
+  }, [getConnectedSigner, setSigner]);
+  return {
+    signer,
+    getConnectedSigner: getConnectedSignerCb,
+    address: signer?._address ?? null,
+  };
+};
+
 export const useConnectedSigner = (): JsonRpcSigner | null => {
   const getConnectedSigner = useGetConnectedSigner();
   const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
