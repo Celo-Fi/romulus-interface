@@ -12,7 +12,7 @@ interface Props {
 export const TimelockQueueTransaction: React.FC<Props> = ({
   address: timelockAddress,
 }: Props) => {
-  const timelock = useTimelock(timelockAddress);
+  const { timelock } = useTimelock(timelockAddress);
   const getConnectedSigner = useGetConnectedSigner();
   return (
     <Wrapper>
