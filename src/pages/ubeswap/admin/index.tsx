@@ -1,16 +1,10 @@
-import {
-  Button,
-  Card,
-  Heading,
-  Input,
-  Paragraph,
-  Text,
-} from "@dracula/dracula-ui";
+import { Button, Card, Heading, Input, Paragraph } from "@dracula/dracula-ui";
 import { BigNumber, ContractTransaction } from "ethers";
 import { formatEther, getAddress, parseEther } from "ethers/lib/utils";
 import { FormikErrors, useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 
+import { TransactionHash } from "../../../components/common/blockchain/TransactionHash";
 import { LinearReleaseToken__factory } from "../../../generated";
 import {
   useGetConnectedSigner,
@@ -89,7 +83,7 @@ const UbeswapAdminPage: React.FC = () => {
     <form onSubmit={handleSubmit}>
       <Card p="md" variant="subtle" color="purple">
         <Heading pb="sm">Allocate Release UBE</Heading>
-        {tx && <Text>{tx.hash}</Text>}
+        {tx && <TransactionHash value={tx} />}
         <Input
           my="sm"
           id="address"
