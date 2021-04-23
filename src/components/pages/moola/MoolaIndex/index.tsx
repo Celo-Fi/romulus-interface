@@ -1,3 +1,4 @@
+import { useContractKit } from "@celo-tools/use-contractkit";
 import { Card, Heading, Table } from "@dracula/dracula-ui";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -8,6 +9,10 @@ import React, { useEffect, useState } from "react";
 
 import { LendingPool__factory } from "../../../../generated";
 import { useConnectedSigner } from "../../../../hooks/useProviderOrSigner";
+import { Market } from "./Market";
+import { Mento } from "./Mento";
+
+export const CELO_MOOLA = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 const addresses = {
   mcUSD: {
@@ -32,9 +37,9 @@ const addresses = {
   },
 };
 
-const RESERVES = [addresses.cUSD, addresses.cEUR, addresses.CELO];
+const RESERVES = [addresses.cUSD, addresses.cEUR];
 
-const moolaLendingPools = {
+export const moolaLendingPools = {
   // Addresses from: https://github.com/moolamarket/moola
   [ChainId.ALFAJORES]: {
     lendingPool: "0x0886f74eEEc443fBb6907fB5528B57C28E813129",
@@ -58,6 +63,7 @@ interface IMoolaAccountData {
 }
 
 export const MoolaIndex: React.FC = () => {
+  const { network } = useContractKit();
   const signer = useConnectedSigner();
   const [accountData, setAccountData] = useState<IMoolaAccountData | null>(
     null
@@ -137,18 +143,20 @@ export const MoolaIndex: React.FC = () => {
         )}
       </Card>
       <Card p="md" variant="subtle" color="purple">
-        <Heading pb="sm">Lend</Heading>
+        <Heading pb="sm">Markets</Heading>
+        {RESERVES.map((res) => (
+          <Market key={res[ChainId.MAINNET]} reserve={res[ChainId.MAINNET]} />
+        ))}
+        <Market key={CELO_MOOLA} reserve={CELO_MOOLA} />
       </Card>
-      <Card p="md" variant="subtle" color="purple">
-        <Heading pb="sm">Borrow</Heading>
-      </Card>
+      <Mento />
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 100%;
   grid-column-gap: 24px;
   grid-row-gap: 20px;
 `;

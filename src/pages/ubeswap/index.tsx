@@ -5,6 +5,7 @@ import { BigNumber, ContractTransaction } from "ethers";
 import React, { useEffect, useState } from "react";
 
 import { Address } from "../../components/common/Address";
+import { TransactionHash } from "../../components/common/blockchain/TransactionHash";
 import { LinearReleaseToken__factory } from "../../generated/factories/LinearReleaseToken__factory";
 import { UbeToken__factory } from "../../generated/factories/UbeToken__factory";
 import {
@@ -102,7 +103,11 @@ const UbeswapIndexPage: React.FC = () => {
               {hasUnclaimedUBE ? "Claim UBE" : "No UBE to claim"}
             </Button>
           }
-          {tx && <Text>Claiming at ransaction {tx.hash}</Text>}
+          {tx && (
+            <Text>
+              Claiming transaction <TransactionHash value={tx} />
+            </Text>
+          )}
         </Card>
       ) : (
         <Text color="red">

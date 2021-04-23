@@ -17,7 +17,7 @@ export const MainLayout: React.FC<Props> = ({ children }: Props) => {
 };
 
 const Wrapper = styled.div`
-  max-width: 800px;
+  /* max-width: 800px; */
   width: 100%;
   margin: 0 auto;
 `;
