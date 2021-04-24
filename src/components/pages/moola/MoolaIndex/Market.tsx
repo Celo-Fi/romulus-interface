@@ -359,7 +359,37 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
           >
             Deposit
           </Button>
-          <Button>Repay</Button>
+          <Button
+            onClick={async () => {
+              const signer = await getConnectedSigner();
+              const lendingPool = LendingPool__factory.connect(
+                moolaLendingPools[ChainId.MAINNET].lendingPool,
+                signer
+              );
+              const amount = prompt("How much do you want to repay?");
+              if (amount) {
+                const rawAmount = parseEther(amount);
+                alert(`Approving ${formatEther(rawAmount)}`);
+                await runTx(
+                  ERC20__factory.connect(reserve, signer),
+                  "approve",
+                  [
+                    moolaLendingPools[ChainId.MAINNET].lendingPoolCore,
+                    rawAmount,
+                  ]
+                );
+                alert(`Repaying ${formatEther(rawAmount)}`);
+                await runTx(lendingPool, "repay", [
+                  reserve,
+                  rawAmount,
+                  address,
+                ]);
+                await refreshData();
+              }
+            }}
+          >
+            Repay
+          </Button>
         </Box>
       </td>
     </tr>

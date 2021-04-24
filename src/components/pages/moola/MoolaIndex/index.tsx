@@ -1,12 +1,13 @@
+import { useContractKit } from "@celo-tools/use-contractkit";
 import { Card, Heading, Table, Text } from "@dracula/dracula-ui";
 import styled from "@emotion/styled";
 import { CELO, ChainId } from "@ubeswap/sdk";
 import { BigNumber } from "ethers";
-import { formatEther } from "ethers/lib/utils";
+import { formatEther, formatUnits } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
 
 import { LendingPool__factory } from "../../../../generated";
-import { useConnectedSigner } from "../../../../hooks/useProviderOrSigner";
+import { useProvider } from "../../../../hooks/useProviderOrSigner";
 import { Market } from "./Market";
 
 export const CELO_MOOLA = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
@@ -61,36 +62,46 @@ export interface IMoolaAccountData {
   healthFactor: BigNumber;
 }
 
+const interpretHealthFactor = (healthFactor: BigNumber): React.ReactNode => {
+  const healthFactorF = parseFloat(formatEther(healthFactor));
+  if (healthFactorF > 1.25 || healthFactor.isZero()) {
+    return <Text color="green">OK</Text>;
+  } else if (healthFactorF < 1) {
+    return <Text color="red">Liquidation Imminent</Text>;
+  } else {
+    return <Text color="yellow">Risky</Text>;
+  }
+};
+
 export const MoolaIndex: React.FC = () => {
-  const signer = useConnectedSigner();
+  const { address } = useContractKit();
+  const provider = useProvider();
   const [accountData, setAccountData] = useState<IMoolaAccountData | null>(
     null
   );
 
   useEffect(() => {
-    if (!signer) {
+    if (!address) {
       return;
     }
     const lendingPool = LendingPool__factory.connect(
       moolaLendingPools[ChainId.MAINNET].lendingPool,
-      signer
+      provider
     );
 
     void (async () => {
       try {
         setAccountData(
-          await lendingPool.callStatic.getUserAccountData(
-            await signer.getAddress()
-          )
+          await lendingPool.callStatic.getUserAccountData(address)
         );
       } catch (e) {
         console.error(e);
       }
     })();
-  }, [signer]);
+  }, [address, provider]);
 
   return (
-    <Wrapper>
+    <Wrapper className="drac-text">
       <Card p="md" variant="subtle" color="white">
         <Heading pb="sm">My Account</Heading>
         {accountData && (
@@ -125,7 +136,12 @@ export const MoolaIndex: React.FC = () => {
             </tr>
             <tr>
               <th>Health Factor</th>
-              <td>{accountData.healthFactor.toString()}</td>
+              <td>
+                {parseFloat(formatUnits(accountData.healthFactor, 18)).toFixed(
+                  4
+                )}{" "}
+                {interpretHealthFactor(accountData.healthFactor)}
+              </td>
             </tr>
           </Table>
         )}
