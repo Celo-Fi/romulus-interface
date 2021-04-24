@@ -106,6 +106,7 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 10px 0;
+  margin-bottom: var(--spacing-sm);
 `;
 
 const Logo = styled.span`

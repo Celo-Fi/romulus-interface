@@ -103,49 +103,55 @@ export const MoolaIndex: React.FC = () => {
   return (
     <Wrapper className="drac-text">
       <Card p="md" variant="subtle" color="white">
-        <Heading pb="sm">My Account</Heading>
-        {accountData && (
-          <Table color="cyan">
-            <tr>
-              <th>Total Liquidity CELO</th>
-              <td>{formatEther(accountData.totalLiquidityETH)}</td>
-            </tr>
-            <tr>
-              <th>Total Collateral CELO</th>
-              <td>{formatEther(accountData.totalCollateralETH)}</td>
-            </tr>
-            <tr>
-              <th>Total Borrows CELO</th>
-              <td>{formatEther(accountData.totalBorrowsETH)}</td>
-            </tr>
-            <tr>
-              <th>Total Fees CELO</th>
-              <td>{formatEther(accountData.totalFeesETH)}</td>
-            </tr>
-            <tr>
-              <th>Available Borrows CELO</th>
-              <td>{formatEther(accountData.availableBorrowsETH)}</td>
-            </tr>
-            <tr>
-              <th>Current Liquidiation Threshold</th>
-              <td>{accountData.currentLiquidationThreshold.toString()}</td>
-            </tr>
-            <tr>
-              <th>LTV</th>
-              <td>{accountData.ltv.toString()}</td>
-            </tr>
-            <tr>
-              <th>Health Factor</th>
-              <td>
-                {parseFloat(formatUnits(accountData.healthFactor, 18)).toFixed(
-                  4
-                )}{" "}
-                {interpretHealthFactor(accountData.healthFactor)}
-              </td>
-            </tr>
-          </Table>
-        )}
+        <Heading>Moola Market Bootleg Interface</Heading>
+        <Text>This is an experimental interface. Use at your own risk.</Text>
       </Card>
+      {address !== "" && (
+        <Card p="md" variant="subtle" color="white">
+          <Heading pb="sm">My Account</Heading>
+          {accountData && (
+            <Table color="cyan">
+              <tr>
+                <th>Total Liquidity CELO</th>
+                <td>{formatEther(accountData.totalLiquidityETH)}</td>
+              </tr>
+              <tr>
+                <th>Total Collateral CELO</th>
+                <td>{formatEther(accountData.totalCollateralETH)}</td>
+              </tr>
+              <tr>
+                <th>Total Borrows CELO</th>
+                <td>{formatEther(accountData.totalBorrowsETH)}</td>
+              </tr>
+              <tr>
+                <th>Total Fees CELO</th>
+                <td>{formatEther(accountData.totalFeesETH)}</td>
+              </tr>
+              <tr>
+                <th>Available Borrows CELO</th>
+                <td>{formatEther(accountData.availableBorrowsETH)}</td>
+              </tr>
+              <tr>
+                <th>Current Liquidiation Threshold</th>
+                <td>{accountData.currentLiquidationThreshold.toString()}</td>
+              </tr>
+              <tr>
+                <th>LTV</th>
+                <td>{accountData.ltv.toString()}</td>
+              </tr>
+              <tr>
+                <th>Health Factor</th>
+                <td>
+                  {parseFloat(
+                    formatUnits(accountData.healthFactor, 18)
+                  ).toFixed(4)}{" "}
+                  {interpretHealthFactor(accountData.healthFactor)}
+                </td>
+              </tr>
+            </Table>
+          )}
+        </Card>
+      )}
       <Card p="md" variant="subtle" color="purple">
         <Heading pb="sm">Markets</Heading>
         <Table>
@@ -168,18 +174,20 @@ export const MoolaIndex: React.FC = () => {
               </th>
             </tr>
           </thead>
-          {RESERVES.map((res) => (
+          <tbody>
+            {RESERVES.map((res) => (
+              <Market
+                key={res[ChainId.MAINNET]}
+                reserve={res[ChainId.MAINNET]}
+                accountData={accountData}
+              />
+            ))}
             <Market
-              key={res[ChainId.MAINNET]}
-              reserve={res[ChainId.MAINNET]}
+              key={CELO_MOOLA}
+              reserve={CELO_MOOLA}
               accountData={accountData}
             />
-          ))}
-          <Market
-            key={CELO_MOOLA}
-            reserve={CELO_MOOLA}
-            accountData={accountData}
-          />
+          </tbody>
         </Table>
       </Card>
       {/* <Mento /> */}
