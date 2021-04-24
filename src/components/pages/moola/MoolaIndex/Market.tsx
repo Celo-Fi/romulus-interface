@@ -1,5 +1,6 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { Box, Button, List, Switch, Text } from "@dracula/dracula-ui";
+import { css } from "@emotion/react";
 import { ChainId } from "@ubeswap/sdk";
 import { BigNumber, ContractTransaction } from "ethers";
 import {
@@ -133,45 +134,57 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
     : null;
 
   return (
-    <tr>
+    <tr
+      className="drac-text"
+      css={css`
+        td {
+          padding: var(--spacing-sm);
+        }
+        ul {
+          padding-inline-start: 0px;
+        }
+      `}
+    >
       <td>
         <Box>
           {token.name} ({token.symbol})
         </Box>
       </td>
       <td>
-        <Box>
-          <List>
-            <li>
-              Liquidity: {commify(formatEther(data.totalLiquidity))}{" "}
-              {token.symbol}
-            </li>
-            <li>
-              Borrows: {commify(formatEther(data.totalBorrowsVariable))}{" "}
-              {token.symbol}
-            </li>
-            <li>
-              Supply interest rate:{" "}
-              {parseFloat(formatUnits(data.liquidityRate, 25)).toFixed(4)}%
-            </li>
-            <li>
-              Borrow interest rate:{" "}
-              {parseFloat(formatUnits(data.variableBorrowRate, 25)).toFixed(4)}%
-            </li>
-            <li>
-              Borrow interest rate (fixed):{" "}
-              {parseFloat(formatUnits(data.stableBorrowRate, 25)).toFixed(4)}%
-            </li>
-            <li>
-              Oracle Price: {price ? commify(formatEther(price)) : "--"} CELO
-            </li>
-          </List>
-        </Box>
+        <List variant="unordered" color="purple">
+          <li>
+            Liquidity: {commify(formatEther(data.totalLiquidity))}{" "}
+            {token.symbol}
+          </li>
+          <li>
+            Borrows: {commify(formatEther(data.totalBorrowsVariable))}{" "}
+            {token.symbol}
+          </li>
+          <li>
+            Borrows (fixed): {commify(formatEther(data.totalBorrowsStable))}{" "}
+            {token.symbol}
+          </li>
+          <li>
+            Supply interest rate:{" "}
+            {parseFloat(formatUnits(data.liquidityRate, 25)).toFixed(4)}%
+          </li>
+          <li>
+            Borrow interest rate:{" "}
+            {parseFloat(formatUnits(data.variableBorrowRate, 25)).toFixed(4)}%
+          </li>
+          <li>
+            Borrow interest rate (fixed):{" "}
+            {parseFloat(formatUnits(data.stableBorrowRate, 25)).toFixed(4)}%
+          </li>
+          <li>
+            Oracle Price: {price ? commify(formatEther(price)) : "--"} CELO
+          </li>
+        </List>
       </td>
       <td>
         <Box>
           {userData ? (
-            <List>
+            <List variant="unordered" color="purple">
               <li>
                 Wallet: {formatEther(token.userBalance)} {token.symbol}
               </li>
@@ -228,23 +241,13 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
         />
       </td>
       <td>
-        <Box>
-          <Button
-            onClick={async () => {
-              const signer = await getConnectedSigner();
-              const lendingPool = LendingPool__factory.connect(
-                moolaLendingPools[ChainId.MAINNET].lendingPool,
-                signer
-              );
-              setTx(
-                await lendingPool.setUserUseReserveAsCollateral(reserve, true)
-              );
-              await refreshData();
-            }}
-          >
-            Use as Collateral
-          </Button>
-
+        <Box
+          css={css`
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: var(--spacing-sm);
+          `}
+        >
           <Button
             onClick={async () => {
               const signer = await getConnectedSigner();

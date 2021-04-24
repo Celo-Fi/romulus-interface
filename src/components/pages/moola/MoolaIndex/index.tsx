@@ -1,4 +1,4 @@
-import { Card, Heading, Table } from "@dracula/dracula-ui";
+import { Card, Heading, Table, Text } from "@dracula/dracula-ui";
 import styled from "@emotion/styled";
 import { CELO, ChainId } from "@ubeswap/sdk";
 import { BigNumber } from "ethers";
@@ -133,6 +133,25 @@ export const MoolaIndex: React.FC = () => {
       <Card p="md" variant="subtle" color="purple">
         <Heading pb="sm">Markets</Heading>
         <Table>
+          <thead>
+            <tr>
+              <th>
+                <Text weight="bold">Reserve Asset</Text>
+              </th>
+              <th>
+                <Text weight="semibold">Market Info</Text>
+              </th>
+              <th>
+                <Text weight="semibold">User Info</Text>
+              </th>
+              <th>
+                <Text weight="semibold">Collateral Enabled?</Text>
+              </th>
+              <th>
+                <Text weight="semibold">Actions</Text>
+              </th>
+            </tr>
+          </thead>
           {RESERVES.map((res) => (
             <Market
               key={res[ChainId.MAINNET]}
