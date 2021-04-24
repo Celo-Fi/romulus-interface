@@ -28,6 +28,18 @@ interface IProps {
   reserve: string;
 }
 
+const describeBorrowMode = (mode: BigNumber): React.ReactNode => {
+  switch (mode.toString()) {
+    case "0":
+      return <Text color="blackSecondary">n/a</Text>;
+    case "1":
+      return <Text color="green">fixed</Text>;
+    case "2":
+      return <Text color="yellow">variable</Text>;
+  }
+  return "";
+};
+
 interface IReserveData {
   totalLiquidity: BigNumber;
   availableLiquidity: BigNumber;
@@ -189,8 +201,11 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
                 Wallet: {formatEther(token.userBalance)} {token.symbol}
               </li>
               <li>
-                Supply: {formatEther(userData.currentATokenBalance)} Moola{" "}
-                {token.symbol}
+                Supply:{" "}
+                <Text color="green">
+                  {formatEther(userData.currentATokenBalance)}
+                </Text>{" "}
+                <Text color="cyan">Moola {token.symbol}</Text>
               </li>
               <li>
                 Principal:{" "}
@@ -201,7 +216,15 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
                 Debt: {commify(formatEther(userData.currentBorrowBalance))}{" "}
                 {token.symbol}
               </li>
-              <li>Borrow Mode: {userData.borrowRateMode.toString()}</li>
+              <li>
+                Borrow Mode: {describeBorrowMode(userData.borrowRateMode)}
+              </li>
+              <li>
+                Borrow Rate:{" "}
+                <Text color="green">
+                  {parseFloat(formatUnits(userData.borrowRate, 25)).toFixed(4)}%
+                </Text>
+              </li>
               <li>
                 Remaining Borrow Limit:{" "}
                 {borrowLimit
