@@ -1,6 +1,10 @@
 import { css } from "@emotion/react";
 
 export const globalStyles = css`
+  * {
+    box-sizing: border-box;
+  }
+
   html {
     color: var(--purple);
     background: #1d1e26;

@@ -4,9 +4,11 @@ import {
   Mainnet,
   useContractKit,
 } from "@celo-tools/use-contractkit";
-import { Anchor, Button, Heading, Select, Text } from "@dracula/dracula-ui";
+import { Anchor, Button, Select, Text } from "@dracula/dracula-ui";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import copyToClipboard from "copy-to-clipboard";
+import Link from "next/link";
 import React from "react";
 
 const truncateAddress = (addr: string) =>
@@ -25,7 +27,16 @@ export const Header: React.FC = () => {
 
   return (
     <Wrapper>
-      <Heading>Romulus</Heading>
+      <Link href="/">
+        <Text
+          css={css`
+            cursor: pointer;
+            user-select: none;
+          `}
+        >
+          <Logo>🏛️ Romulus</Logo>
+        </Text>
+      </Link>
       <Account>
         <Text weight="bold">Network:</Text>
         <Select
@@ -92,6 +103,11 @@ const Account = styled.div`
 
 const Wrapper = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 10px 0;
+`;
+
+const Logo = styled.span`
+  font-family: Cinzel;
 `;
