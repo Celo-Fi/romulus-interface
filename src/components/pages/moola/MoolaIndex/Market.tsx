@@ -203,7 +203,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
               </li>
               <li>Borrow Mode: {userData.borrowRateMode.toString()}</li>
               <li>
-                Borrow Limit:{" "}
+                Remaining Borrow Limit:{" "}
                 {borrowLimit
                   ? `${commify(formatEther(borrowLimit))} ${token.symbol}`
                   : "--"}
