@@ -21,7 +21,7 @@ export const TransactionHash: React.FC<IProps> = ({ value }: IProps) => {
   }
   return (
     <Anchor href={`https://explorer.celo.org/transaction/${value.hash}`}>
-      {value}
+      {value.hash}
       {receipt ? " (completed)" : ""}
     </Anchor>
   );

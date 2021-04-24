@@ -2,15 +2,20 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { Box, Button, List, Text } from "@dracula/dracula-ui";
 import styled from "@emotion/styled";
 import { ChainId } from "@ubeswap/sdk";
-import { BigNumber } from "ethers";
+import { BigNumber, ContractTransaction } from "ethers";
 import { formatEther, formatUnits, parseEther } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
 
-import { AToken__factory, LendingPool__factory } from "../../../../generated";
+import {
+  AToken__factory,
+  ERC20__factory,
+  LendingPool__factory,
+} from "../../../../generated";
 import {
   useGetConnectedSigner,
   useProvider,
 } from "../../../../hooks/useProviderOrSigner";
+import { TransactionHash } from "../../../common/blockchain/TransactionHash";
 import { CELO_MOOLA, moolaLendingPools } from ".";
 
 interface IProps {
@@ -67,6 +72,7 @@ export const Market: React.FC<IProps> = ({ reserve }: IProps) => {
   const [token, setToken] = useState<{ name: string; symbol: string } | null>(
     null
   );
+  const [tx, setTx] = useState<ContractTransaction | null>(null);
 
   useEffect(() => {
     const lendingPool = LendingPool__factory.connect(
@@ -103,6 +109,9 @@ export const Market: React.FC<IProps> = ({ reserve }: IProps) => {
   return (
     <Wrapper>
       <Box>
+        <TransactionHash value={tx}></TransactionHash>
+      </Box>
+      <Box>
         {token.name} ({token.symbol})
       </Box>
       <Box>
@@ -118,11 +127,28 @@ export const Market: React.FC<IProps> = ({ reserve }: IProps) => {
             {parseFloat(formatUnits(data.variableBorrowRate, 27)).toFixed(4)}%{" "}
             {token.symbol}
           </li>
+          <li>
+            Is Collateral:{" "}
+            {Boolean(userData?.usageAsCollateralEnabled).toString()}
+          </li>
         </List>
       </Box>
       <Box>{data?.lastUpdateTimestamp?.toString()}</Box>
       <Box>
-        <Button>Use as Collateral</Button>
+        <Button
+          onClick={async () => {
+            const signer = await getConnectedSigner();
+            const lendingPool = LendingPool__factory.connect(
+              moolaLendingPools[ChainId.MAINNET].lendingPool,
+              signer
+            );
+            setTx(
+              await lendingPool.setUserUseReserveAsCollateral(reserve, true)
+            );
+          }}
+        >
+          Use as Collateral
+        </Button>
         <Button
           onClick={async () => {
             const signer = await getConnectedSigner();
@@ -138,6 +164,30 @@ export const Market: React.FC<IProps> = ({ reserve }: IProps) => {
           }}
         >
           Borrow
+        </Button>
+        <Button
+          onClick={async () => {
+            const signer = await getConnectedSigner();
+            const lendingPool = LendingPool__factory.connect(
+              moolaLendingPools[ChainId.MAINNET].lendingPool,
+              signer
+            );
+            const amount = prompt("How much do you want to deposit?");
+            if (amount) {
+              const rawAmount = parseEther(amount);
+              alert(`Approving ${formatEther(rawAmount)}`);
+              setTx(
+                await ERC20__factory.connect(reserve, signer).approve(
+                  moolaLendingPools[ChainId.MAINNET].lendingPoolCore,
+                  "100"
+                )
+              );
+              alert(`Borrowing ${formatEther(rawAmount)}`);
+              setTx(await lendingPool.deposit(reserve, rawAmount, 0x4999));
+            }
+          }}
+        >
+          Deposit
         </Button>
         <Button>Repay</Button>
       </Box>

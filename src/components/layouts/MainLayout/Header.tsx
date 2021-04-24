@@ -4,7 +4,7 @@ import {
   Mainnet,
   useContractKit,
 } from "@celo-tools/use-contractkit";
-import { Button, Heading, Select, Text } from "@dracula/dracula-ui";
+import { Anchor, Button, Heading, Select, Text } from "@dracula/dracula-ui";
 import styled from "@emotion/styled";
 import copyToClipboard from "copy-to-clipboard";
 import React from "react";
@@ -15,7 +15,13 @@ const truncateAddress = (addr: string) =>
 const NETWORKS = [Mainnet, Alfajores, Baklava];
 
 export const Header: React.FC = () => {
-  const { address, network, updateNetwork, connect } = useContractKit();
+  const {
+    address,
+    network,
+    updateNetwork,
+    connect,
+    destroy,
+  } = useContractKit();
 
   return (
     <Wrapper>
@@ -49,7 +55,15 @@ export const Header: React.FC = () => {
               copyToClipboard(address);
             }}
           >
-            {truncateAddress(address)}
+            {truncateAddress(address)}{" "}
+            <Anchor
+              size="xs"
+              onClick={() => {
+                destroy();
+              }}
+            >
+              (disconnect)
+            </Anchor>
           </AccountText>
         ) : (
           <Button
