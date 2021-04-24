@@ -328,30 +328,30 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
                 const rawAmount = parseEther(amount);
                 if (reserve === CELO_MOOLA) {
                   alert(`Depositing ${formatEther(rawAmount)}`);
-                  const estimatedGas = await lendingPool.estimateGas.deposit(
-                    reserve,
-                    rawAmount,
-                    0x4999,
+                  await runTx(
+                    lendingPool,
+                    "deposit",
+                    [reserve, rawAmount, 0x4999],
                     {
                       value: rawAmount,
                     }
                   );
-                  setTx(
-                    await lendingPool.deposit(reserve, rawAmount, 0x4999, {
-                      value: rawAmount,
-                      gasLimit: estimatedGas.mul(110).div(100),
-                    })
-                  );
                 } else {
                   alert(`Approving ${formatEther(rawAmount)}`);
-                  setTx(
-                    await ERC20__factory.connect(reserve, signer).approve(
+                  await runTx(
+                    ERC20__factory.connect(reserve, signer),
+                    "approve",
+                    [
                       moolaLendingPools[ChainId.MAINNET].lendingPoolCore,
-                      rawAmount
-                    )
+                      rawAmount,
+                    ]
                   );
                   alert(`Depositing ${formatEther(rawAmount)}`);
-                  setTx(await lendingPool.deposit(reserve, rawAmount, 0x4999));
+                  await runTx(lendingPool, "deposit", [
+                    reserve,
+                    rawAmount,
+                    0x4999,
+                  ]);
                 }
                 await refreshData();
               }
