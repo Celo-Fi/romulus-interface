@@ -26,11 +26,13 @@ export const Mento: React.FC = () => {
 
   useEffect(() => {
     if (exchange) {
-      void (async () => {
-        setQuoteStable(
-          await exchange.quoteStableBuy(parseEther(amount).toString())
-        );
-      })();
+      if (amount !== "") {
+        void (async () => {
+          setQuoteStable(
+            await exchange.quoteStableBuy(parseEther(amount).toString())
+          );
+        })();
+      }
     }
   }, [amount, exchange]);
 

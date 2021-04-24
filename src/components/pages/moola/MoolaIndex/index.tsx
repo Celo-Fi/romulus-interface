@@ -1,6 +1,4 @@
-import { useContractKit } from "@celo-tools/use-contractkit";
 import { Card, Heading, Table } from "@dracula/dracula-ui";
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { CELO, ChainId } from "@ubeswap/sdk";
 import { BigNumber } from "ethers";
@@ -10,7 +8,6 @@ import React, { useEffect, useState } from "react";
 import { LendingPool__factory } from "../../../../generated";
 import { useConnectedSigner } from "../../../../hooks/useProviderOrSigner";
 import { Market } from "./Market";
-import { Mento } from "./Mento";
 
 export const CELO_MOOLA = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
@@ -48,10 +45,12 @@ export const moolaLendingPools = {
   [ChainId.MAINNET]: {
     lendingPool: "0xc1548F5AA1D76CDcAB7385FA6B5cEA70f941e535",
     lendingPoolCore: "0xAF106F8D4756490E7069027315F4886cc94A8F73",
+    // CeloProxyPriceProvider
+    priceOracle: "0x3aAd7400b796523904528F2BDa8fbC27B1B7b621",
   },
 };
 
-interface IMoolaAccountData {
+export interface IMoolaAccountData {
   totalLiquidityETH: BigNumber;
   totalCollateralETH: BigNumber;
   totalBorrowsETH: BigNumber;
@@ -63,7 +62,6 @@ interface IMoolaAccountData {
 }
 
 export const MoolaIndex: React.FC = () => {
-  const { network } = useContractKit();
   const signer = useConnectedSigner();
   const [accountData, setAccountData] = useState<IMoolaAccountData | null>(
     null
@@ -93,16 +91,6 @@ export const MoolaIndex: React.FC = () => {
 
   return (
     <Wrapper>
-      <div
-        css={css`
-          grid-column: 1 / -1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        `}
-      >
-        <img src="https://i.giphy.com/media/OuyIXPoaO5X7G/giphy.webp" />
-      </div>
       <Card p="md" variant="subtle" color="white">
         <Heading pb="sm">My Account</Heading>
         {accountData && (
@@ -144,12 +132,22 @@ export const MoolaIndex: React.FC = () => {
       </Card>
       <Card p="md" variant="subtle" color="purple">
         <Heading pb="sm">Markets</Heading>
-        {RESERVES.map((res) => (
-          <Market key={res[ChainId.MAINNET]} reserve={res[ChainId.MAINNET]} />
-        ))}
-        <Market key={CELO_MOOLA} reserve={CELO_MOOLA} />
+        <Table>
+          {RESERVES.map((res) => (
+            <Market
+              key={res[ChainId.MAINNET]}
+              reserve={res[ChainId.MAINNET]}
+              accountData={accountData}
+            />
+          ))}
+          <Market
+            key={CELO_MOOLA}
+            reserve={CELO_MOOLA}
+            accountData={accountData}
+          />
+        </Table>
       </Card>
-      <Mento />
+      {/* <Mento /> */}
     </Wrapper>
   );
 };

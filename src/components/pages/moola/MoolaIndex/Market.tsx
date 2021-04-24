@@ -1,24 +1,29 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { Box, Button, List, Text } from "@dracula/dracula-ui";
-import styled from "@emotion/styled";
+import { Box, Button, List, Switch, Text } from "@dracula/dracula-ui";
 import { ChainId } from "@ubeswap/sdk";
 import { BigNumber, ContractTransaction } from "ethers";
-import { formatEther, formatUnits, parseEther } from "ethers/lib/utils";
-import React, { useEffect, useState } from "react";
+import {
+  commify,
+  formatEther,
+  formatUnits,
+  parseEther,
+} from "ethers/lib/utils";
+import React, { useCallback, useEffect, useState } from "react";
 
 import {
-  AToken__factory,
   ERC20__factory,
+  IPriceOracle__factory,
   LendingPool__factory,
 } from "../../../../generated";
 import {
   useGetConnectedSigner,
   useProvider,
 } from "../../../../hooks/useProviderOrSigner";
-import { TransactionHash } from "../../../common/blockchain/TransactionHash";
-import { CELO_MOOLA, moolaLendingPools } from ".";
+import { runTx } from "../../../../util/runTx";
+import { CELO_MOOLA, IMoolaAccountData, moolaLendingPools } from ".";
 
 interface IProps {
+  accountData: IMoolaAccountData | null;
   reserve: string;
 }
 
@@ -62,141 +67,274 @@ interface IUserReserveData {
   usageAsCollateralEnabled: boolean;
 }
 
-export const Market: React.FC<IProps> = ({ reserve }: IProps) => {
+export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
   const { address } = useContractKit();
   const provider = useProvider();
   const getConnectedSigner = useGetConnectedSigner();
   const [data, setData] = useState<IReserveData | null>(null);
   const [config, setConfig] = useState<IReserveConfigurationData | null>(null);
   const [userData, setUserData] = useState<IUserReserveData | null>(null);
-  const [token, setToken] = useState<{ name: string; symbol: string } | null>(
-    null
-  );
+  const [token, setToken] = useState<{
+    name: string;
+    symbol: string;
+    userBalance: BigNumber;
+  } | null>(null);
   const [tx, setTx] = useState<ContractTransaction | null>(null);
+  const [price, setPrice] = useState<BigNumber | null>(null);
 
-  useEffect(() => {
+  const refreshData = useCallback(async () => {
+    const priceOracle = IPriceOracle__factory.connect(
+      moolaLendingPools[ChainId.MAINNET].priceOracle,
+      provider
+    );
     const lendingPool = LendingPool__factory.connect(
       moolaLendingPools[ChainId.MAINNET].lendingPool,
       provider
     );
-    void (async () => {
-      try {
-        if (reserve === CELO_MOOLA) {
-          setToken({
-            name: "Celo",
-            symbol: "CELO",
-          });
-        } else {
-          const tokenRaw = AToken__factory.connect(reserve, provider);
-          setToken({
-            name: await tokenRaw.name(),
-            symbol: await tokenRaw.symbol(),
-          });
-        }
-        setConfig(await lendingPool.getReserveConfigurationData(reserve));
-        setData(await lendingPool.getReserveData(reserve));
-        setUserData(await lendingPool.getUserReserveData(reserve, address));
-      } catch (e) {
-        console.error(e);
+    try {
+      if (reserve === CELO_MOOLA) {
+        setToken({
+          name: "Celo",
+          symbol: "CELO",
+          userBalance: await provider.getBalance(address),
+        });
+      } else {
+        const tokenRaw = ERC20__factory.connect(reserve, provider);
+        setToken({
+          name: await tokenRaw.name(),
+          symbol: await tokenRaw.symbol(),
+          userBalance: await tokenRaw.balanceOf(address),
+        });
       }
-    })();
+      setPrice(await priceOracle.getAssetPrice(reserve));
+      setConfig(await lendingPool.getReserveConfigurationData(reserve));
+      setData(await lendingPool.getReserveData(reserve));
+      setUserData(await lendingPool.getUserReserveData(reserve, address));
+    } catch (e) {
+      console.error(e);
+    }
   }, [provider, reserve, address]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      void refreshData();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [refreshData]);
 
   if (!data || !config || !token) {
     return <Text>Loading...</Text>;
   }
 
+  const borrowLimit = price
+    ? accountData?.availableBorrowsETH
+        .mul(BigNumber.from(10).pow(18))
+        .div(price)
+    : null;
+
   return (
-    <Wrapper>
-      <Box>
-        <TransactionHash value={tx}></TransactionHash>
-      </Box>
-      <Box>
-        {token.name} ({token.symbol})
-      </Box>
-      <Box>
-        <List>
-          <li>
-            Liquidity: {formatEther(data.totalLiquidity)} {token.symbol}
-          </li>
-          <li>
-            Borrows: {formatEther(data.totalBorrowsVariable)} {token.symbol}
-          </li>
-          <li>
-            Borrow rate:{" "}
-            {parseFloat(formatUnits(data.variableBorrowRate, 27)).toFixed(4)}%{" "}
-            {token.symbol}
-          </li>
-          <li>
-            Is Collateral:{" "}
-            {Boolean(userData?.usageAsCollateralEnabled).toString()}
-          </li>
-        </List>
-      </Box>
-      <Box>{data?.lastUpdateTimestamp?.toString()}</Box>
-      <Box>
-        <Button
+    <tr>
+      <td>
+        <Box>
+          {token.name} ({token.symbol})
+        </Box>
+      </td>
+      <td>
+        <Box>
+          <List>
+            <li>
+              Liquidity: {commify(formatEther(data.totalLiquidity))}{" "}
+              {token.symbol}
+            </li>
+            <li>
+              Borrows: {commify(formatEther(data.totalBorrowsVariable))}{" "}
+              {token.symbol}
+            </li>
+            <li>
+              Supply interest rate:{" "}
+              {parseFloat(formatUnits(data.liquidityRate, 25)).toFixed(4)}%
+            </li>
+            <li>
+              Borrow interest rate:{" "}
+              {parseFloat(formatUnits(data.variableBorrowRate, 25)).toFixed(4)}%
+            </li>
+            <li>
+              Borrow interest rate (fixed):{" "}
+              {parseFloat(formatUnits(data.stableBorrowRate, 25)).toFixed(4)}%
+            </li>
+            <li>
+              Oracle Price: {price ? commify(formatEther(price)) : "--"} CELO
+            </li>
+          </List>
+        </Box>
+      </td>
+      <td>
+        <Box>
+          {userData ? (
+            <List>
+              <li>
+                Wallet: {formatEther(token.userBalance)} {token.symbol}
+              </li>
+              <li>
+                Supply: {formatEther(userData.currentATokenBalance)} Moola{" "}
+                {token.symbol}
+              </li>
+              <li>
+                Principal:{" "}
+                {commify(formatEther(userData.principalBorrowBalance))}{" "}
+                {token.symbol}
+              </li>
+              <li>
+                Debt: {commify(formatEther(userData.currentBorrowBalance))}{" "}
+                {token.symbol}
+              </li>
+              <li>Borrow Mode: {userData.borrowRateMode.toString()}</li>
+              <li>
+                Borrow Limit:{" "}
+                {borrowLimit
+                  ? `${commify(formatEther(borrowLimit))} ${token.symbol}`
+                  : "--"}
+              </li>
+              <li>
+                Origination Fee: {commify(formatEther(userData.originationFee))}{" "}
+                {token.symbol}
+              </li>
+            </List>
+          ) : (
+            <>--</>
+          )}
+        </Box>
+      </td>
+      <td>
+        <Switch
+          key={address}
+          color="purple"
+          disabled={
+            !userData || userData.currentATokenBalance.isZero() === true
+          }
+          defaultChecked={userData?.usageAsCollateralEnabled === true}
           onClick={async () => {
             const signer = await getConnectedSigner();
             const lendingPool = LendingPool__factory.connect(
               moolaLendingPools[ChainId.MAINNET].lendingPool,
               signer
             );
-            setTx(
-              await lendingPool.setUserUseReserveAsCollateral(reserve, true)
-            );
+            await runTx(lendingPool, "setUserUseReserveAsCollateral", [
+              reserve,
+              userData?.usageAsCollateralEnabled !== true,
+            ]);
+            await refreshData();
           }}
-        >
-          Use as Collateral
-        </Button>
-        <Button
-          onClick={async () => {
-            const signer = await getConnectedSigner();
-            const lendingPool = LendingPool__factory.connect(
-              moolaLendingPools[ChainId.MAINNET].lendingPool,
-              signer
-            );
-            const amount = prompt("How much do you want to borrow?");
-            if (amount) {
-              alert(`Borrowing ${formatEther(parseEther(amount))}`);
-              await lendingPool.borrow(reserve, parseEther(amount), 2, 0x4999);
-            }
-          }}
-        >
-          Borrow
-        </Button>
-        <Button
-          onClick={async () => {
-            const signer = await getConnectedSigner();
-            const lendingPool = LendingPool__factory.connect(
-              moolaLendingPools[ChainId.MAINNET].lendingPool,
-              signer
-            );
-            const amount = prompt("How much do you want to deposit?");
-            if (amount) {
-              const rawAmount = parseEther(amount);
-              alert(`Approving ${formatEther(rawAmount)}`);
-              setTx(
-                await ERC20__factory.connect(reserve, signer).approve(
-                  moolaLendingPools[ChainId.MAINNET].lendingPoolCore,
-                  "100"
-                )
+        />
+      </td>
+      <td>
+        <Box>
+          <Button
+            onClick={async () => {
+              const signer = await getConnectedSigner();
+              const lendingPool = LendingPool__factory.connect(
+                moolaLendingPools[ChainId.MAINNET].lendingPool,
+                signer
               );
-              alert(`Borrowing ${formatEther(rawAmount)}`);
-              setTx(await lendingPool.deposit(reserve, rawAmount, 0x4999));
-            }
-          }}
-        >
-          Deposit
-        </Button>
-        <Button>Repay</Button>
-      </Box>
-    </Wrapper>
+              setTx(
+                await lendingPool.setUserUseReserveAsCollateral(reserve, true)
+              );
+              await refreshData();
+            }}
+          >
+            Use as Collateral
+          </Button>
+
+          <Button
+            onClick={async () => {
+              const signer = await getConnectedSigner();
+              const lendingPool = LendingPool__factory.connect(
+                moolaLendingPools[ChainId.MAINNET].lendingPool,
+                signer
+              );
+              const amount = prompt("How much do you want to borrow (fixed)?");
+              if (amount) {
+                alert(`Borrowing (fixed) ${formatEther(parseEther(amount))}`);
+                await runTx(lendingPool, "borrow", [
+                  reserve,
+                  parseEther(amount),
+                  1,
+                  0x4999,
+                ]);
+              }
+              await refreshData();
+            }}
+          >
+            Borrow (fixed)
+          </Button>
+          <Button
+            onClick={async () => {
+              const signer = await getConnectedSigner();
+              const lendingPool = LendingPool__factory.connect(
+                moolaLendingPools[ChainId.MAINNET].lendingPool,
+                signer
+              );
+              const amount = prompt("How much do you want to borrow?");
+              if (amount) {
+                alert(`Borrowing ${formatEther(parseEther(amount))}`);
+                await runTx(lendingPool, "borrow", [
+                  reserve,
+                  parseEther(amount),
+                  2,
+                  0x4999,
+                ]);
+              }
+              await refreshData();
+            }}
+          >
+            Borrow
+          </Button>
+          <Button
+            onClick={async () => {
+              const signer = await getConnectedSigner();
+              const lendingPool = LendingPool__factory.connect(
+                moolaLendingPools[ChainId.MAINNET].lendingPool,
+                signer
+              );
+              const amount = prompt("How much do you want to deposit?");
+              if (amount) {
+                const rawAmount = parseEther(amount);
+                if (reserve === CELO_MOOLA) {
+                  alert(`Depositing ${formatEther(rawAmount)}`);
+                  const estimatedGas = await lendingPool.estimateGas.deposit(
+                    reserve,
+                    rawAmount,
+                    0x4999,
+                    {
+                      value: rawAmount,
+                    }
+                  );
+                  setTx(
+                    await lendingPool.deposit(reserve, rawAmount, 0x4999, {
+                      value: rawAmount,
+                      gasLimit: estimatedGas.mul(110).div(100),
+                    })
+                  );
+                } else {
+                  alert(`Approving ${formatEther(rawAmount)}`);
+                  setTx(
+                    await ERC20__factory.connect(reserve, signer).approve(
+                      moolaLendingPools[ChainId.MAINNET].lendingPoolCore,
+                      rawAmount
+                    )
+                  );
+                  alert(`Depositing ${formatEther(rawAmount)}`);
+                  setTx(await lendingPool.deposit(reserve, rawAmount, 0x4999));
+                }
+                await refreshData();
+              }
+            }}
+          >
+            Deposit
+          </Button>
+          <Button>Repay</Button>
+        </Box>
+      </td>
+    </tr>
   );
 };
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-`;
