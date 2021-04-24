@@ -220,12 +220,13 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
       </td>
       <td>
         <Switch
-          key={address}
           color="purple"
           disabled={
             !userData || userData.currentATokenBalance.isZero() === true
           }
-          defaultChecked={userData?.usageAsCollateralEnabled === true}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          checked={userData?.usageAsCollateralEnabled === true}
           onClick={async () => {
             const signer = await getConnectedSigner();
             const lendingPool = LendingPool__factory.connect(
