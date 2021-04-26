@@ -1,10 +1,11 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { Card, Heading, Table, Text } from "@dracula/dracula-ui";
+import { Box, Card, Heading, Table, Text } from "@dracula/dracula-ui";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { CELO, ChainId } from "@ubeswap/sdk";
 import { BigNumber } from "ethers";
 import { formatEther, formatUnits } from "ethers/lib/utils";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { LendingPool__factory } from "../../../../generated";
 import { useProvider } from "../../../../hooks/useProviderOrSigner";
@@ -80,7 +81,7 @@ export const MoolaIndex: React.FC = () => {
     null
   );
 
-  useEffect(() => {
+  const refreshAccountData = useCallback(async () => {
     if (!address) {
       return;
     }
@@ -88,70 +89,101 @@ export const MoolaIndex: React.FC = () => {
       moolaLendingPools[ChainId.MAINNET].lendingPool,
       provider
     );
+    try {
+      setAccountData(await lendingPool.callStatic.getUserAccountData(address));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [address, setAccountData, provider]);
 
-    void (async () => {
-      try {
-        setAccountData(
-          await lendingPool.callStatic.getUserAccountData(address)
-        );
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, [address, provider]);
+  useEffect(() => {
+    const interval = setInterval(() => void refreshAccountData(), 1000);
+    return () => clearInterval(interval);
+  }, [refreshAccountData]);
 
   return (
     <Wrapper className="drac-text">
-      <Card p="md" variant="subtle" color="white">
-        <Heading>Moola Market Bootleg Interface</Heading>
-        <Text>This is an experimental interface. Use at your own risk.</Text>
-      </Card>
-      {address !== "" && (
+      <Box
+        css={css`
+          display: flex;
+          gap: var(--spacing-md);
+        `}
+      >
         <Card p="md" variant="subtle" color="white">
-          <Heading pb="sm">My Account</Heading>
-          {accountData && (
-            <Table color="cyan">
-              <tr>
-                <th>Total Liquidity CELO</th>
-                <td>{formatEther(accountData.totalLiquidityETH)}</td>
-              </tr>
-              <tr>
-                <th>Total Collateral CELO</th>
-                <td>{formatEther(accountData.totalCollateralETH)}</td>
-              </tr>
-              <tr>
-                <th>Total Borrows CELO</th>
-                <td>{formatEther(accountData.totalBorrowsETH)}</td>
-              </tr>
-              <tr>
-                <th>Total Fees CELO</th>
-                <td>{formatEther(accountData.totalFeesETH)}</td>
-              </tr>
-              <tr>
-                <th>Available Borrows CELO</th>
-                <td>{formatEther(accountData.availableBorrowsETH)}</td>
-              </tr>
-              <tr>
-                <th>Current Liquidiation Threshold</th>
-                <td>{accountData.currentLiquidationThreshold.toString()}</td>
-              </tr>
-              <tr>
-                <th>LTV</th>
-                <td>{accountData.ltv.toString()}</td>
-              </tr>
-              <tr>
-                <th>Health Factor</th>
-                <td>
-                  {parseFloat(
-                    formatUnits(accountData.healthFactor, 18)
-                  ).toFixed(4)}{" "}
-                  {interpretHealthFactor(accountData.healthFactor)}
-                </td>
-              </tr>
-            </Table>
-          )}
+          <Heading>Moola Market Bootleg Interface</Heading>
+          <Text>This is an experimental interface. Use at your own risk.</Text>
         </Card>
-      )}
+        {address !== "" && (
+          <Card
+            p="md"
+            variant="subtle"
+            color="white"
+            css={css`
+              flex-grow: 1;
+            `}
+          >
+            <Heading pb="sm">My Account</Heading>
+            {accountData && (
+              <Box
+                css={css`
+                  width: fit-content;
+                  td {
+                    padding: var(--spacing-sm);
+                  }
+                `}
+              >
+                <Table color="cyan">
+                  <tbody>
+                    <tr>
+                      <td>Total Liquidity</td>
+                      <td>{formatEther(accountData.totalLiquidityETH)} CELO</td>
+                    </tr>
+                    <tr>
+                      <td>Total Collateral</td>
+                      <td>
+                        {formatEther(accountData.totalCollateralETH)} CELO
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Total Borrows</td>
+                      <td>{formatEther(accountData.totalBorrowsETH)} CELO</td>
+                    </tr>
+                    <tr>
+                      <td>Total Lifetime Fees</td>
+                      <td>{formatEther(accountData.totalFeesETH)} CELO</td>
+                    </tr>
+                    <tr>
+                      <td>Available Borrows</td>
+                      <td>
+                        {formatEther(accountData.availableBorrowsETH)} CELO
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Current Liquidiation Threshold</td>
+                      <td>
+                        {accountData.currentLiquidationThreshold.toString()}%
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>LTV</td>
+                      <td>{accountData.ltv.toString()}%</td>
+                    </tr>
+                    <tr>
+                      <td>Health Factor</td>
+                      <td>
+                        {parseFloat(
+                          formatUnits(accountData.healthFactor, 18)
+                        ).toFixed(4)}{" "}
+                        {interpretHealthFactor(accountData.healthFactor)}
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </Box>
+            )}
+          </Card>
+        )}
+      </Box>
       <Card p="md" variant="subtle" color="purple">
         <Heading pb="sm">Markets</Heading>
         <Table>

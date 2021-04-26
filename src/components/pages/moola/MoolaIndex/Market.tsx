@@ -281,12 +281,12 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
       <td>
         <Box
           css={css`
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: var(--spacing-sm);
+            display: flex;
+            gap: var(--spacing-sm);
           `}
         >
           <Button
+            color="purpleCyan"
             onClick={async () => {
               const signer = await getConnectedSigner();
               const lendingPool = LendingPool__factory.connect(
@@ -309,6 +309,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
             Borrow (fixed)
           </Button>
           <Button
+            color="cyanGreen"
             onClick={async () => {
               const signer = await getConnectedSigner();
               const lendingPool = LendingPool__factory.connect(
@@ -331,6 +332,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
             Borrow
           </Button>
           <Button
+            color="yellowPink"
             onClick={async () => {
               const signer = await getConnectedSigner();
               const lendingPool = LendingPool__factory.connect(
@@ -374,6 +376,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
             Deposit
           </Button>
           <Button
+            color="pinkPurple"
             onClick={async () => {
               const signer = await getConnectedSigner();
               const lendingPool = LendingPool__factory.connect(
