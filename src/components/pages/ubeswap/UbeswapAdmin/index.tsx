@@ -3,6 +3,7 @@ import React from "react";
 
 import { RefreshPools } from "./RefreshPools";
 import { ReleaseUbe } from "./ReleaseUbe";
+import { TransferOwnership } from "./TransferOwnership";
 
 export const UbeswapAdmin: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ export const UbeswapAdmin: React.FC = () => {
     >
       <ReleaseUbe />
       <RefreshPools />
+      <TransferOwnership />
     </div>
   );
 };

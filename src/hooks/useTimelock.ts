@@ -21,16 +21,6 @@ export const useTimelock = (
 
   useEffect(() => {
     void (async () => {
-      provider.resetEventsBlock(0);
-      const cancels = await timelock.queryFilter(
-        timelock.filters.CancelTransaction(null, null, null, null, null, null)
-      );
-      console.log("Cancels", cancels);
-    })();
-  });
-
-  useEffect(() => {
-    void (async () => {
       const gracePeriod = (await timelock.callStatic.GRACE_PERIOD()).toNumber();
       const maximumDelay = (
         await timelock.callStatic.MAXIMUM_DELAY()
