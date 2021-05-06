@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import React from "react";
 
+import { AllocatePools } from "./AllocatePools";
 import { RefreshPools } from "./RefreshPools";
 import { ReleaseUbe } from "./ReleaseUbe";
 import { TransferOwnership } from "./TransferOwnership";
@@ -17,6 +18,7 @@ export const UbeswapAdmin: React.FC = () => {
       <ReleaseUbe />
       <RefreshPools />
       <TransferOwnership />
+      <AllocatePools />
     </div>
   );
 };

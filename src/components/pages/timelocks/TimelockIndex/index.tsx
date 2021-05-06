@@ -42,7 +42,7 @@ export const TimelockIndex: React.FC<Props> = ({
 
   useEffect(() => {
     void (async () => {
-      provider.resetEventsBlock(0);
+      provider.resetEventsBlock(1000000);
       const provTimelock = timelock.connect(provider);
       const prevQueued = await provTimelock.queryFilter(
         timelock.filters.QueueTransaction(null, null, null, null, null, null)
@@ -56,6 +56,7 @@ export const TimelockIndex: React.FC<Props> = ({
 
       setTransactions(
         await Promise.all(
+          // eslint-disable-next-line @typescript-eslint/require-await
           prevQueued.map(async (queued) => {
             const execution = prevExecuted.find(
               (tx) => tx.args.txHash === queued.args.txHash
@@ -73,15 +74,17 @@ export const TimelockIndex: React.FC<Props> = ({
               eta: queued.args.eta.toNumber(),
 
               queuedTxHash: queued.transactionHash,
-              queuedAt: (await queued.getBlock()).timestamp,
+              queuedAt: queued.blockNumber,
               cancelledTxHash: cancellation?.transactionHash,
-              cancelledAt: cancellation
-                ? (await cancellation.getBlock()).timestamp
-                : undefined,
               executedTxHash: execution?.transactionHash,
-              executedAt: execution
-                ? (await execution.getBlock()).timestamp
-                : undefined,
+
+              // queuedAt: (await queued.getBlock()).timestamp,
+              // cancelledAt: cancellation
+              //   ? (await cancellation.getBlock()).timestamp
+              //   : undefined,
+              // executedAt: execution
+              //   ? (await execution.getBlock()).timestamp
+              //   : undefined,
             };
           })
         )
@@ -124,7 +127,7 @@ export const TimelockIndex: React.FC<Props> = ({
       </Card>
       <Submissions>
         {transactions?.map((tx, i) => (
-          <TimelockTransactionCard key={i} tx={tx} />
+          <TimelockTransactionCard key={i} tx={tx} timelock={timelock} />
         ))}
       </Submissions>
     </Box>

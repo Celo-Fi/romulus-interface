@@ -16,6 +16,7 @@ export const TransferOwnership: React.FC = () => {
   const { timelock: executive } = useTimelock(TIMELOCK_EXECUTIVE);
   const { poolManager } = usePoolManager();
   const [tx, setTx] = useState<ContractTransaction | null>(null);
+
   return (
     <Card p="md" variant="subtle" color="purple">
       <Heading>Transfer pool manager ownership</Heading>
@@ -27,13 +28,18 @@ export const TransferOwnership: React.FC = () => {
             "transferOwnership",
             [OPERATOR]
           );
+          const encodedParams = poolManager.interface._encodeParams(
+            poolManager.interface.functions["transferOwnership(address)"]
+              .inputs,
+            [OPERATOR]
+          );
           const tx = await executive
             .connect(signer)
             .queueTransaction(
               poolManager.address,
               0,
               "transferOwnership(address)",
-              data,
+              encodedParams,
               Math.floor(new Date().getTime() / 1000) + 2 * 24 * 60 * 60 + 600
             );
           console.log("Queued", tx);
