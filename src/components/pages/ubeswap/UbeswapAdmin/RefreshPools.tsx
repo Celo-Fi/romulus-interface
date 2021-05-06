@@ -14,6 +14,11 @@ export const RefreshPools: React.FC = () => {
   const getConnectedSigner = useGetConnectedSigner();
   const { poolManager, poolInfo, operator, owner } = usePoolManager();
   const [tx, setTx] = useState<ContractTransaction | null>(null);
+
+  const poolsToRefresh = Object.values(poolInfo)
+    .filter((p) => p.weight !== 0)
+    .map((pool) => pool.stakingToken);
+
   return (
     <Card p="md" variant="subtle" color="purple">
       <Heading>Manage Pools</Heading>
@@ -23,7 +28,7 @@ export const RefreshPools: React.FC = () => {
           const tx = await ReleaseEscrow__factory.connect(
             MINING_RELEASE_ESCROW,
             await getConnectedSigner()
-          ).withdraw(2, {
+          ).withdraw(3, {
             gasLimit: 10000000,
           });
           setTx(tx);
@@ -35,12 +40,9 @@ export const RefreshPools: React.FC = () => {
         onClick={async () => {
           const tx = await poolManager
             .connect(await getConnectedSigner())
-            .initializePeriod(
-              Object.values(poolInfo).map(({ stakingToken }) => stakingToken),
-              {
-                gasLimit: 10000000,
-              }
-            );
+            .initializePeriod(poolsToRefresh, {
+              gasLimit: 10000000,
+            });
           setTx(tx);
         }}
       >
@@ -52,14 +54,8 @@ export const RefreshPools: React.FC = () => {
       <p>
         Operator: <Address value={operator} />
       </p>
-      <Heading>Staking tokens</Heading>
-      <pre>
-        {JSON.stringify(
-          Object.values(poolInfo).map((pool) => pool.stakingToken),
-          null,
-          2
-        )}
-      </pre>
+      <Heading>Pools to refresh</Heading>
+      <pre>{JSON.stringify(poolsToRefresh, null, 2)}</pre>
     </Card>
   );
 };
