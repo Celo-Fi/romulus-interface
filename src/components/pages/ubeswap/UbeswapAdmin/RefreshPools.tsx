@@ -28,7 +28,7 @@ export const RefreshPools: React.FC = () => {
           const tx = await ReleaseEscrow__factory.connect(
             MINING_RELEASE_ESCROW,
             await getConnectedSigner()
-          ).withdraw(3, {
+          ).withdraw(5, {
             gasLimit: 10000000,
           });
           setTx(tx);
