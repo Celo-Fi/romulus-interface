@@ -6,7 +6,7 @@ import { FormikErrors, useFormik } from "formik";
 import React, { useState } from "react";
 
 import { UbeswapFactory__factory } from "../../generated";
-import { useConnectedSigner } from "../../hooks/useProviderOrSigner";
+import { useGetConnectedSigner } from "../../hooks/useProviderOrSigner";
 
 interface IForm {
   tokenA: string;
@@ -14,7 +14,7 @@ interface IForm {
 }
 
 const CreatePairPage: React.FC = () => {
-  const signer = useConnectedSigner();
+  const getConnectedSigner = useGetConnectedSigner();
   const [tx, setTx] = useState<ContractTransaction | null>(null);
   const { handleChange, handleSubmit, handleBlur, errors, touched } = useFormik(
     {
@@ -40,6 +40,7 @@ const CreatePairPage: React.FC = () => {
         return errors;
       },
       onSubmit: async (values) => {
+        const signer = await getConnectedSigner();
         const factory = signer
           ? UbeswapFactory__factory.connect(FACTORY_ADDRESS, signer)
           : null;

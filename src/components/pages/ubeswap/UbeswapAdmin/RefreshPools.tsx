@@ -28,8 +28,8 @@ export const RefreshPools: React.FC = () => {
           const tx = await ReleaseEscrow__factory.connect(
             MINING_RELEASE_ESCROW,
             await getConnectedSigner()
-          ).withdraw(5, {
-            gasLimit: 10000000,
+          ).withdraw(7, {
+            gasLimit: 10_000_000,
           });
           setTx(tx);
         }}
@@ -41,7 +41,7 @@ export const RefreshPools: React.FC = () => {
           const tx = await poolManager
             .connect(await getConnectedSigner())
             .initializePeriod(poolsToRefresh, {
-              gasLimit: 10000000,
+              gasLimit: 10_000_000,
             });
           setTx(tx);
         }}
