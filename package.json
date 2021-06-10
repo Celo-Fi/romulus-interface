@@ -13,7 +13,7 @@
   "dependencies": {
     "@celo-tools/use-contractkit": "^1.0.0-beta.12",
     "@celo/contracts": "^0.0.8",
-    "@dracula/dracula-ui": "^0.7.4",
+    "@dracula/dracula-ui": "^0.8.1",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "@ubeswap/sdk": "^2.1.0",

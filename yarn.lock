@@ -274,10 +274,10 @@
     eth-lib "^0.2.8"
     ethereumjs-util "^5.2.0"
 
-"@dracula/dracula-ui@^0.7.4":
-  version "0.7.4"
-  resolved "https://npm.pkg.github.com/download/@dracula/dracula-ui/0.7.4/34c65e0965235184ec88278619742e20f7089087272d949c8df15b6d4ac79060#bf2ddba27b009e239f9750eec3a47a755efc0405"
-  integrity sha512-CUDKCVjEgzOsK1ADrAVVc1oXBGFAWTa18hOi4vS+/hlb5tMdMVmBN9M6nee7W84Anjbg+Ybze7hq/n0xuhi/Xg==
+"@dracula/dracula-ui@^0.8.1":
+  version "0.8.1"
+  resolved "https://npm.pkg.github.com/download/@dracula/dracula-ui/0.8.1/2d919875caf259b5bf0097553e0f7c109257d297aa739973f7ef12f813dad742#6ae6935cc7de2e77d684a70ea0c213d9caea475c"
+  integrity sha512-e6P80kA9sUEWo95faWBqWxljB+3dMzQxcXoHJ3Ryty3SDuipGjttOu3PGtBA5MJKurZEkxmc0C/YaERocMRETQ==
   dependencies:
     classnames "^2.2.6"
     lodash "^4.17.20"

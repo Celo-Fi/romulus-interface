@@ -21,7 +21,7 @@ export const AllocatePools: React.FC = () => {
           const signer = await getConnectedSigner();
           const newPools = [
             // UBE-CELO
-            ["0xe7b5ad135fa22678f426a381c7748f6a5f2c9e6c", 74],
+            ["0xe7b5ad135fa22678f426a381c7748f6a5f2c9e6c", 84],
             // UBE-MCUSD
             // ["0x59b22100751b7fda0c88201fb7a0eaf6fc30bcc7", 0],
             // UBE-mcEUR
@@ -35,7 +35,7 @@ export const AllocatePools: React.FC = () => {
             // cMCO2-cUSD
             // ["0x6626da55d43425a4ec1067b091cf87a7efbdad6b", 0],
             // cBTC-MCUSD
-            ["0x83CF02F79Be87A7402A3Cac013d0e1C95FeFcAba", 10],
+            ["0x83CF02F79Be87A7402A3Cac013d0e1C95FeFcAba", 0],
           ] as const;
 
           const tx = await poolManager.connect(signer).batchSetWeight(

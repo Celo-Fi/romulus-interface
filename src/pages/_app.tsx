@@ -12,7 +12,12 @@ import { MainLayout } from "../components/layouts/MainLayout";
 
 const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
   return (
-    <ContractKitProvider dappName="Romulus" networks={[Alfajores]}>
+    <ContractKitProvider
+      dappName="Romulus"
+      dappDescription="Romulus"
+      dappUrl="https://romulus.page"
+      networks={[Alfajores]}
+    >
       <Global styles={globalStyles} />
       <MainLayout>
         <Component />
