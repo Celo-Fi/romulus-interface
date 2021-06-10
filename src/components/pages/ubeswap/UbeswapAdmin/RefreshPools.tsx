@@ -20,6 +20,9 @@ export const RefreshPools: React.FC = () => {
   const [tx, setTx] = useState<ContractTransaction | null>(null);
 
   const [currentWeekIndex, setCurrentWeekIndex] = useState<number | null>(null);
+  const [numberOfWeeksWithdrawn, setNumberOfWeeksWithdrawn] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     const releaseEscrow = ReleaseEscrow__factory.connect(
@@ -28,6 +31,9 @@ export const RefreshPools: React.FC = () => {
     );
     void (async () => {
       setCurrentWeekIndex((await releaseEscrow.currentWeekIndex()).toNumber());
+      setNumberOfWeeksWithdrawn(
+        (await releaseEscrow.numberOfWeeksWithdrawn()).toNumber()
+      );
     })();
   }, [provider]);
 
@@ -39,20 +45,23 @@ export const RefreshPools: React.FC = () => {
     <Card p="md" variant="subtle" color="purple">
       <Heading>Manage Pools</Heading>
       <TransactionHash value={tx} />
-      <Paragraph>{currentWeekIndex}</Paragraph>
-      <Button
-        onClick={async () => {
-          const tx = await ReleaseEscrow__factory.connect(
-            MINING_RELEASE_ESCROW,
-            await getConnectedSigner()
-          ).withdraw(8, {
-            gasLimit: 10_000_000,
-          });
-          setTx(tx);
-        }}
-      >
-        Refresh release escrow
-      </Button>
+      <Paragraph>Current week: {currentWeekIndex} (0-indexed)</Paragraph>
+      <Paragraph>Number of weeks withdrawn: {numberOfWeeksWithdrawn}</Paragraph>
+      {numberOfWeeksWithdrawn !== null && (
+        <Button
+          onClick={async () => {
+            const tx = await ReleaseEscrow__factory.connect(
+              MINING_RELEASE_ESCROW,
+              await getConnectedSigner()
+            ).withdraw(numberOfWeeksWithdrawn + 1, {
+              gasLimit: 10_000_000,
+            });
+            setTx(tx);
+          }}
+        >
+          Refresh release escrow (up to epoch {numberOfWeeksWithdrawn + 1})
+        </Button>
+      )}
       <Button
         onClick={async () => {
           const tx = await poolManager

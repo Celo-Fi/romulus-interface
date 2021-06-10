@@ -2,7 +2,11 @@ import "normalize.css/normalize.css";
 import "@celo-tools/use-contractkit/lib/styles.css";
 import "@dracula/dracula-ui/styles/dracula-ui.css";
 
-import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
+import {
+  Alfajores,
+  ContractKitProvider,
+  Mainnet,
+} from "@celo-tools/use-contractkit";
 import { Global } from "@emotion/react";
 import { AppProps } from "next/app";
 import React from "react";
@@ -16,7 +20,7 @@ const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
       dappName="Romulus"
       dappDescription="Romulus"
       dappUrl="https://romulus.page"
-      networks={[Alfajores]}
+      networks={[Mainnet, Alfajores]}
     >
       <Global styles={globalStyles} />
       <MainLayout>
