@@ -16,6 +16,7 @@
     "@dracula/dracula-ui": "^0.8.1",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
+    "@types/react-modal": "^3.12.0",
     "@ubeswap/sdk": "^2.1.0",
     "@ubeswap/solidity-create2-deployer": "^0.6.1",
     "copy-to-clipboard": "^3.3.1",
@@ -27,6 +28,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-icons": "^4.2.0",
+    "react-modal": "^3.14.3",
     "regl": "1"
   },
   "devDependencies": {
