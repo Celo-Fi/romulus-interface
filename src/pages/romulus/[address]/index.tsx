@@ -7,6 +7,8 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { fromWei, toBN, toWei } from "web3-utils";
 import BN from "bn.js";
 import { useDelegateModal } from "./delegateModal";
+import { governanceLookup } from "..";
+import { ProposalCard } from "./ProposalCard";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 const humanFriendlyWei = (wei: BN) => {
@@ -16,12 +18,15 @@ const humanFriendlyWei = (wei: BN) => {
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
   const { address: romulusAddress } = router.query;
+  const governanceName = romulusAddress
+    ? governanceLookup[romulusAddress.toString()]
+    : "Unknown";
   const { kit, address } = useContractKit();
   const romulusKit = useRomulus(kit, romulusAddress?.toString());
 
   const proposals = useAsyncState<Array<Proposal>>(
     [],
-    romulusKit?.proposals(10, 0, Sort.ASC).then(({ proposals }) => proposals),
+    romulusKit?.proposals(10, 0, Sort.DESC).then(({ proposals }) => proposals),
     [romulusKit]
   );
   const { tokenVotes, releaseTokenVotes, totalVotes } = useAsyncState(
@@ -53,7 +58,7 @@ const RomulusIndexPage: React.FC = () => {
     try {
       const tx = await romulusKit
         ?.delegateToken(delegate)
-        ?.send({ from: delegate, gasPrice: toWei("0.1", "gwei") });
+        ?.send({ from: address, gasPrice: toWei("0.1", "gwei") });
       await tx?.waitReceipt();
     } catch (e) {
       alert(e);
@@ -77,7 +82,7 @@ const RomulusIndexPage: React.FC = () => {
     <>
       <Box>
         <Box mb="md">
-          <Heading size="xl">Poof.cash governance</Heading>
+          <Heading size="xl">{governanceName} governance</Heading>
         </Box>
         <Box mr="md">
           <Box>
@@ -117,19 +122,23 @@ const RomulusIndexPage: React.FC = () => {
         <Box my="md">
           <Heading>Proposals</Heading>
         </Box>
-        <Card py="sm">
+        <Card
+          style={{ cursor: "pointer" }}
+          py="sm"
+          onClick={() => {
+            router.push(`/romulus/${romulusAddress}/create`);
+          }}
+        >
           <Box style={{ textAlign: "center" }}>
             <Text>Create Proposal</Text>
           </Box>
         </Card>
         {proposals.length > 0 ? (
-          proposals.map((proposal, idx) => {
-            <Card py="sm" key={idx}>
-              <Box>
-                <Text>{proposal.id}</Text>
-              </Box>
-            </Card>;
-          })
+          proposals.map((proposal, idx) => (
+            <Box key={idx} mt="sm">
+              <ProposalCard proposal={proposal} />
+            </Box>
+          ))
         ) : (
           <Box mt="md" style={{ textAlign: "center" }}>
             <Text>There are currently no proposals.</Text>

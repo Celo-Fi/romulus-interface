@@ -2,8 +2,10 @@ import { Box, Text } from "@dracula/dracula-ui";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import React from "react";
+import Modal from "react-modal";
 
 const IndexPage: React.FC = () => {
+  Modal.setAppElement("#body");
   return (
     <Wrapper>
       <h1>Romulus</h1>
