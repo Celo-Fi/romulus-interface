@@ -1,11 +1,11 @@
-import { Box, Text } from "@dracula/dracula-ui";
+import { Box, Button, Text } from "@dracula/dracula-ui";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useRouter } from "next/router";
 import React from "react";
-import Modal from "react-modal";
 
 const IndexPage: React.FC = () => {
-  Modal.setAppElement("#body");
+  const router = useRouter();
   return (
     <Wrapper>
       <h1>Romulus</h1>
@@ -26,6 +26,9 @@ const IndexPage: React.FC = () => {
           </Text>
         </Text>
       </Box>
+      <Button color="yellowPink" onClick={() => router.push("/romulus")}>
+        Start Voting
+      </Button>
     </Wrapper>
   );
 };

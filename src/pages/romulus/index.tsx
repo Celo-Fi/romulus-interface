@@ -27,6 +27,9 @@ const RomulusIndexPage: React.FC = () => {
     <Box>
       <Box mb="md">
         <Heading>Romulus</Heading>
+        <Box mt="sm">
+          <Text>Select a governance system</Text>
+        </Box>
       </Box>
       {governances.map((governance) => {
         return (
@@ -37,12 +40,13 @@ const RomulusIndexPage: React.FC = () => {
               flexDirection: "column",
               justifyContent: "center",
               cursor: "pointer",
+              width: "fit-content",
             }}
             onClick={() => void router.push(`/romulus/${governance.address}`)}
-            width="xxs"
             height="xxs"
+            p="md"
           >
-            <Text size="lg">{governance.name}</Text>
+            <Heading size="xl">{governance.name}</Heading>
           </Card>
         );
       })}

@@ -13,8 +13,10 @@ import React from "react";
 
 import { globalStyles } from "../components/layouts/globalStyles";
 import { MainLayout } from "../components/layouts/MainLayout";
+import Modal from "react-modal";
 
 const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
+  Modal.setAppElement("body");
   return (
     <ContractKitProvider
       dappName="Romulus"
