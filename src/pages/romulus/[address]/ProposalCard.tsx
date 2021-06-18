@@ -2,8 +2,8 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { Box, Button, Card, Heading, Text } from "@dracula/dracula-ui";
 import { useRouter } from "next/router";
 import React from "react";
-import { Proposal, Support } from "romulus-kit/dist/src/kit";
-import { useRomulus } from "../../../hooks/useRomulus";
+import { Proposal, ProposalState, Support } from "romulus-kit/dist/src/kit";
+import { useAsyncState, useRomulus } from "../../../hooks/useRomulus";
 
 interface IProps {
   proposal: Proposal;
@@ -13,10 +13,44 @@ export const ProposalCard: React.FC<IProps> = ({ proposal }) => {
   const { address: romulusAddress } = router.query;
   const { kit, address } = useContractKit();
   const romulusKit = useRomulus(kit, romulusAddress?.toString());
+  const latestBlockNumber = useAsyncState(0, kit.web3.eth.getBlockNumber(), [
+    kit,
+  ]);
+  const proposalState = useAsyncState(
+    ProposalState.PENDING,
+    romulusKit?.state(proposal.id),
+    [romulusKit, proposal.id]
+  );
+  let stateStr = "Pending";
+  switch (proposalState) {
+    case ProposalState.ACTIVE:
+      stateStr = "Active";
+      break;
+    case ProposalState.CANCELED:
+      stateStr = "Canceled";
+      break;
+    case ProposalState.DEFEATED:
+      stateStr = "Defeated";
+      break;
+    case ProposalState.SUCCEEDED:
+      stateStr = "Succeeded";
+      break;
+    case ProposalState.QUEUED:
+      stateStr = "Queued";
+      break;
+    case ProposalState.EXPIRED:
+      stateStr = "Expired";
+      break;
+    case ProposalState.EXECUTED:
+      stateStr = "Executed";
+      break;
+  }
 
   return (
     <Card p="sm">
-      <Heading>Proposal #{proposal.id}</Heading>
+      <Heading>
+        Proposal #{proposal.id} ({stateStr})
+      </Heading>
       <Box>
         <Text>
           Proposed by: <Text weight="bold">{proposal.proposer}</Text>
@@ -55,6 +89,7 @@ export const ProposalCard: React.FC<IProps> = ({ proposal }) => {
               .send({ from: address })
               .catch(alert)
           }
+          disabled={!(proposalState === ProposalState.ACTIVE)}
           mx="sm"
         >
           Vote For
@@ -66,6 +101,7 @@ export const ProposalCard: React.FC<IProps> = ({ proposal }) => {
               .send({ from: address })
               .catch(alert)
           }
+          disabled={!(proposalState === ProposalState.ACTIVE)}
           mx="sm"
         >
           Vote Abstain
@@ -77,6 +113,7 @@ export const ProposalCard: React.FC<IProps> = ({ proposal }) => {
               .send({ from: address })
               .catch(alert)
           }
+          disabled={!(proposalState === ProposalState.ACTIVE)}
           mx="sm"
         >
           Vote Against

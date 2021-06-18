@@ -32,7 +32,7 @@ const RomulusIndexPage: React.FC = () => {
   const { tokenVotes, releaseTokenVotes, totalVotes } = useAsyncState(
     { tokenVotes: toBN(0), releaseTokenVotes: toBN(0), totalVotes: toBN(0) },
     romulusKit?.votingPower(address),
-    [romulusKit, address, "votes"]
+    [romulusKit, address]
   );
   const { tokenBalance, releaseTokenBalance, totalBalance } = useAsyncState(
     {
@@ -41,7 +41,7 @@ const RomulusIndexPage: React.FC = () => {
       totalBalance: toBN(0),
     },
     romulusKit?.tokenBalance(address),
-    [romulusKit, address, "balance"]
+    [romulusKit, address]
   );
   const { tokenDelegate, releaseTokenDelegate } = useAsyncState(
     {
@@ -49,7 +49,7 @@ const RomulusIndexPage: React.FC = () => {
       releaseTokenDelegate: ZERO_ADDRESS,
     },
     romulusKit?.currentDelegate(address),
-    [romulusKit, address, "delegate"]
+    [romulusKit, address]
   );
   const {
     delegateModal: tokenDelegateModal,
