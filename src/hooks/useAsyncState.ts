@@ -14,7 +14,7 @@ export function useAsyncState<T>(
           setState(v);
           setDirty(false);
         })
-        .catch(console.error);
+        .catch(console.warn);
     }
   }, [...deps, dirty]);
 
