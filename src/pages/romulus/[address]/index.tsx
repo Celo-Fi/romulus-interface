@@ -5,11 +5,11 @@ import { Proposal, RomulusKit } from "romulus-kit/dist/src/kit";
 import { Box, Button, Heading, Text } from "@dracula/dracula-ui";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { toBN, toWei } from "web3-utils";
-import { useDelegateModal } from "./delegateModal";
 import { governanceLookup } from "..";
-import { ProposalCard } from "./ProposalCard";
 import { useRomulus } from "../../../hooks/useRomulus";
 import { humanFriendlyWei } from "../../../util/number";
+import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
+import { ProposalCard } from "../../../components/pages/romulus/ProposalCard";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 

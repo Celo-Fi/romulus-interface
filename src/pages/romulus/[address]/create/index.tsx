@@ -4,8 +4,8 @@ import { RomulusKit } from "romulus-kit/dist/src/kit";
 import { Box, Button, Card, Heading, Text } from "@dracula/dracula-ui";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { toWei } from "web3-utils";
-import { useAddCommandModal } from "./addCommandModal";
 import { governanceLookup } from "../..";
+import { useAddCommandModal } from "../../../../components/pages/romulus/addCommandModal";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
