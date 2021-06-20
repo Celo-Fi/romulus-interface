@@ -45,6 +45,7 @@ const RomulusIndexPage: React.FC = () => {
             onClick={() => void router.push(`/romulus/${governance.address}`)}
             height="xxs"
             p="md"
+            color="pinkPurple"
           >
             <Heading size="xl">{governance.name}</Heading>
           </Card>

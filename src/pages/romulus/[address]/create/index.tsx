@@ -1,17 +1,11 @@
 import React from "react";
 import { useRouter } from "next/dist/client/router";
-import { useAsyncState, useRomulus } from "../../../../hooks/useRomulus";
-import { Proposal, Sort } from "romulus-kit/dist/src/kit";
-import { Box, Button, Card, Heading, Input, Text } from "@dracula/dracula-ui";
+import { RomulusKit } from "romulus-kit/dist/src/kit";
+import { Box, Button, Card, Heading, Text } from "@dracula/dracula-ui";
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { fromWei, toBN, toWei } from "web3-utils";
-import BN from "bn.js";
+import { toWei } from "web3-utils";
 import { useAddCommandModal } from "./addCommandModal";
-
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-const humanFriendlyWei = (wei: BN) => {
-  return Number(fromWei(wei)).toLocaleString();
-};
+import { governanceLookup } from "../..";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -19,8 +13,10 @@ const RomulusIndexPage: React.FC = () => {
     router.push(`/romulus/${romulusAddress}`);
   };
   const { address: romulusAddress } = router.query;
-  const { kit, address } = useContractKit();
-  const romulusKit = useRomulus(kit, romulusAddress?.toString());
+  const governanceName = romulusAddress
+    ? governanceLookup[romulusAddress.toString()]
+    : "Unknown";
+  const { performActions } = useContractKit();
   const [targets, setTargets] = React.useState<string[]>([]);
   const [values, setValues] = React.useState<(number | string)[]>([]);
   const [signatures, setSignatures] = React.useState<string[]>([]);
@@ -35,15 +31,30 @@ const RomulusIndexPage: React.FC = () => {
       setCalldatas([calldata, ...calldatas]);
     }
   );
+
+  if (!romulusAddress) {
+    return <div>Invalid romulus address</div>;
+  }
+
   const onCreateClick = async () => {
-    try {
-      const tx = await romulusKit
-        ?.propose(targets, values, signatures, calldatas, description)
-        ?.send({ from: address, gasPrice: toWei("0.1", "gwei") });
-      await tx?.waitReceipt();
-    } catch (e) {
-      alert(e);
-    }
+    performActions(async (connectedKit) => {
+      const romulusKit = new RomulusKit(
+        connectedKit,
+        romulusAddress.toString()
+      );
+      try {
+        const tx = await romulusKit
+          ?.propose(targets, values, signatures, calldatas, description)
+          ?.send({
+            from: connectedKit.defaultAccount,
+            gasPrice: toWei("0.1", "gwei"),
+          });
+        await tx?.waitReceipt();
+        goBack();
+      } catch (e) {
+        alert(e);
+      }
+    });
   };
 
   return (
@@ -51,7 +62,7 @@ const RomulusIndexPage: React.FC = () => {
       <Box>
         <Box>
           <Box mb="md">
-            <Heading size="xl">Create proposal for Poof.cash</Heading>
+            <Heading size="xl">Create proposal for {governanceName}</Heading>
           </Box>
           <Box mb="md">
             <Box>
@@ -91,7 +102,6 @@ const RomulusIndexPage: React.FC = () => {
               disabled={targets.length === 0}
               onClick={async () => {
                 await onCreateClick();
-                goBack();
               }}
             >
               Create

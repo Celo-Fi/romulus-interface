@@ -1,19 +1,17 @@
 import React from "react";
 import { useRouter } from "next/dist/client/router";
-import { useAsyncState, useRomulus } from "../../../hooks/useRomulus";
-import { Proposal, Sort } from "romulus-kit/dist/src/kit";
-import { Box, Button, Card, Heading, Text } from "@dracula/dracula-ui";
+import { useAsyncState } from "../../../hooks/useAsyncState";
+import { Proposal, RomulusKit } from "romulus-kit/dist/src/kit";
+import { Box, Button, Heading, Text } from "@dracula/dracula-ui";
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { fromWei, toBN, toWei } from "web3-utils";
-import BN from "bn.js";
+import { toBN, toWei } from "web3-utils";
 import { useDelegateModal } from "./delegateModal";
 import { governanceLookup } from "..";
 import { ProposalCard } from "./ProposalCard";
+import { useRomulus } from "../../../hooks/useRomulus";
+import { humanFriendlyWei } from "../../../util/number";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-const humanFriendlyWei = (wei: BN) => {
-  return Number(fromWei(wei)).toLocaleString();
-};
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -21,20 +19,25 @@ const RomulusIndexPage: React.FC = () => {
   const governanceName = romulusAddress
     ? governanceLookup[romulusAddress.toString()]
     : "Unknown";
-  const { kit, address } = useContractKit();
+  const { kit, performActions, address } = useContractKit();
   const romulusKit = useRomulus(kit, romulusAddress?.toString());
 
-  const proposals = useAsyncState<Array<Proposal>>(
+  const [proposals, refetchProposals] = useAsyncState<Array<Proposal>>(
     [],
-    romulusKit?.proposals(10, 0, Sort.DESC).then(({ proposals }) => proposals),
+    romulusKit?.proposals(address),
+    [romulusKit, address]
+  );
+  const [hasReleaseToken] = useAsyncState<boolean>(
+    false,
+    romulusKit?.hasReleaseToken(),
     [romulusKit]
   );
-  const { tokenVotes, releaseTokenVotes, totalVotes } = useAsyncState(
+  const [{ totalVotes }, refetchVotes] = useAsyncState(
     { tokenVotes: toBN(0), releaseTokenVotes: toBN(0), totalVotes: toBN(0) },
     romulusKit?.votingPower(address),
     [romulusKit, address]
   );
-  const { tokenBalance, releaseTokenBalance, totalBalance } = useAsyncState(
+  const [{ tokenBalance, releaseTokenBalance }] = useAsyncState(
     {
       tokenBalance: toBN(0),
       releaseTokenBalance: toBN(0),
@@ -43,39 +46,73 @@ const RomulusIndexPage: React.FC = () => {
     romulusKit?.tokenBalance(address),
     [romulusKit, address]
   );
-  const { tokenDelegate, releaseTokenDelegate } = useAsyncState(
+  const [{ tokenSymbol, releaseTokenSymbol }] = useAsyncState(
     {
-      tokenDelegate: ZERO_ADDRESS,
-      releaseTokenDelegate: ZERO_ADDRESS,
+      tokenSymbol: "",
+      releaseTokenSymbol: "",
     },
-    romulusKit?.currentDelegate(address),
+    romulusKit?.tokenSymbol(),
     [romulusKit, address]
   );
+  const [{ tokenDelegate, releaseTokenDelegate }, refetchDelegates] =
+    useAsyncState(
+      {
+        tokenDelegate: ZERO_ADDRESS,
+        releaseTokenDelegate: ZERO_ADDRESS,
+      },
+      romulusKit?.currentDelegate(address),
+      [romulusKit, address]
+    );
   const {
     delegateModal: tokenDelegateModal,
     openModal: openTokenDelegateModal,
   } = useDelegateModal(async (delegate) => {
-    try {
-      const tx = await romulusKit
-        ?.delegateToken(delegate)
-        ?.send({ from: address, gasPrice: toWei("0.1", "gwei") });
-      await tx?.waitReceipt();
-    } catch (e) {
-      alert(e);
-    }
+    performActions(async (connectedKit) => {
+      const romulusKit = new RomulusKit(
+        connectedKit,
+        romulusAddress?.toString()
+      );
+      try {
+        const txo = await romulusKit.delegateToken(delegate);
+        const tx = await txo.send({
+          from: connectedKit.defaultAccount,
+          gasPrice: toWei("0.1", "gwei"),
+        });
+        await tx.waitReceipt();
+        refetchVotes();
+        refetchDelegates();
+      } catch (e) {
+        alert(e);
+      }
+    });
   });
+
   const {
     delegateModal: releaseTokenDelegateModal,
     openModal: openReleaseTokenDelegateModal,
   } = useDelegateModal(async (delegate) => {
-    try {
-      const tx = await romulusKit
-        ?.delegateReleaseToken(delegate)
-        ?.send({ from: delegate, gasPrice: toWei("0.1", "gwei") });
-      await tx?.waitReceipt();
-    } catch (e) {
-      alert(e);
-    }
+    performActions(async (connectedKit) => {
+      const romulusKit = new RomulusKit(
+        connectedKit,
+        romulusAddress?.toString()
+      );
+      try {
+        const txo = await romulusKit.delegateReleaseToken(delegate);
+        if (!txo) {
+          alert("Error delegating release token");
+          return;
+        }
+        const tx = await txo.send({
+          from: connectedKit.defaultAccount,
+          gasPrice: toWei("0.1", "gwei"),
+        });
+        await tx?.waitReceipt();
+        refetchVotes();
+        refetchDelegates();
+      } catch (e) {
+        alert(e);
+      }
+    });
   });
 
   return (
@@ -85,58 +122,82 @@ const RomulusIndexPage: React.FC = () => {
           <Heading size="xl">{governanceName} governance</Heading>
         </Box>
         <Box mr="md">
-          <Box>
-            <Text>
-              Voting power:{" "}
-              <Text weight="bold">{humanFriendlyWei(totalVotes)}</Text> (
-              {humanFriendlyWei(tokenVotes)} token votes +{" "}
-              {humanFriendlyWei(releaseTokenVotes)} release token votes)
-            </Text>
+          <Box style={{ textAlign: "center" }} mb="lg">
+            <Heading size="2xl">{humanFriendlyWei(totalVotes)}</Heading>
+            <Text>Voting Power</Text>
+          </Box>
+          <Box my="md">
+            <Heading>Details</Heading>
           </Box>
           <Box>
             <Text>
               Token balance:{" "}
-              <Text weight="bold">{humanFriendlyWei(totalBalance)}</Text> (
-              {humanFriendlyWei(tokenBalance)} tokens +{" "}
-              {humanFriendlyWei(releaseTokenBalance)} release tokens)
+              <Text weight="bold">
+                {humanFriendlyWei(tokenBalance)} {tokenSymbol}
+              </Text>{" "}
             </Text>
           </Box>
+          {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
+            <Box>
+              <Text>
+                Release token balance:{" "}
+                <Text weight="bold">
+                  {humanFriendlyWei(releaseTokenBalance)} {releaseTokenSymbol}
+                </Text>
+              </Text>
+            </Box>
+          )}
           <Box style={{ display: "flex", alignItems: "center" }}>
             <Text>
               Token delegate: <Text weight="bold">{tokenDelegate}</Text>{" "}
             </Text>
-            <Button ml="sm" size="xs" onClick={openTokenDelegateModal}>
+            <Button
+              ml="sm"
+              size="xs"
+              onClick={openTokenDelegateModal}
+              variant="outline"
+            >
               change
             </Button>
           </Box>
-          <Box style={{ display: "flex", alignItems: "center" }}>
-            <Text>
-              Release token delegate:{" "}
-              <Text weight="bold">{releaseTokenDelegate}</Text>
-            </Text>
-            <Button ml="sm" size="xs" onClick={openReleaseTokenDelegateModal}>
-              change
-            </Button>
-          </Box>
+          {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
+            <Box style={{ display: "flex", alignItems: "center" }}>
+              <Text>
+                Release token delegate:{" "}
+                <Text weight="bold">{releaseTokenDelegate}</Text>
+              </Text>
+              <Button
+                ml="sm"
+                size="xs"
+                onClick={openReleaseTokenDelegateModal}
+                variant="outline"
+              >
+                change
+              </Button>
+            </Box>
+          )}
         </Box>
-        <Box my="md">
-          <Heading>Proposals</Heading>
-        </Box>
-        <Card
-          style={{ cursor: "pointer" }}
-          py="sm"
-          onClick={() => {
-            router.push(`/romulus/${romulusAddress}/create`);
-          }}
+        <Box
+          my="md"
+          style={{ display: "flex", justifyContent: "space-between" }}
         >
-          <Box style={{ textAlign: "center" }}>
-            <Text>Create Proposal</Text>
-          </Box>
-        </Card>
+          <Heading>Proposals</Heading>
+          <Button
+            py="sm"
+            onClick={() => {
+              router.push(`/romulus/${romulusAddress}/create`);
+            }}
+          >
+            Create Proposal
+          </Button>
+        </Box>
         {proposals.length > 0 ? (
           proposals.map((proposal, idx) => (
             <Box key={idx} mt="sm">
-              <ProposalCard proposal={proposal} />
+              <ProposalCard
+                proposal={proposal}
+                refetchProposals={refetchProposals}
+              />
             </Box>
           ))
         ) : (
