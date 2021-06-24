@@ -10,9 +10,10 @@ import {
 import { Global } from "@emotion/react";
 import { AppProps } from "next/app";
 import React from "react";
+import Modal from "react-modal";
+
 import { globalStyles } from "../components/layouts/globalStyles";
 import { MainLayout } from "../components/layouts/MainLayout";
-import Modal from "react-modal";
 
 const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
   Modal.setAppElement("body");

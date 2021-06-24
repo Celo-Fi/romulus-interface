@@ -1,7 +1,7 @@
-import React from "react";
-import Modal from "react-modal";
 import { Box, Button, Heading, Input, Text } from "@dracula/dracula-ui";
 import { ethers } from "ethers";
+import React from "react";
+import Modal from "react-modal";
 
 interface IProps {
   isOpen: boolean;

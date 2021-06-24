@@ -1,6 +1,6 @@
-import { Box, Card, Heading, Table, Text } from "@dracula/dracula-ui";
-import { useRouter } from "next/router";
 import { Address } from "@celo/contractkit";
+import { Box, Card, Heading, Text } from "@dracula/dracula-ui";
+import { useRouter } from "next/router";
 import React from "react";
 
 type Governance = {

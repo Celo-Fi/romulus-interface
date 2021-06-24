@@ -1,11 +1,12 @@
-import React from "react";
-import { useRouter } from "next/dist/client/router";
-import { RomulusKit } from "romulus-kit/dist/src/kit";
-import { Box, Button, Card, Heading, Text } from "@dracula/dracula-ui";
 import { useContractKit } from "@celo-tools/use-contractkit";
+import { Box, Button, Card, Heading, Text } from "@dracula/dracula-ui";
+import { useRouter } from "next/dist/client/router";
+import React from "react";
+import { RomulusKit } from "romulus-kit/dist/src/kit";
 import { toWei } from "web3-utils";
-import { governanceLookup } from "../..";
+
 import { useAddCommandModal } from "../../../../components/pages/romulus/addCommandModal";
+import { governanceLookup } from "../..";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
