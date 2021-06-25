@@ -1,6 +1,6 @@
-import moment from "moment";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { Box, Button, Card, Heading, Text } from "@dracula/dracula-ui";
+import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import {
@@ -9,9 +9,10 @@ import {
   RomulusKit,
   Support,
 } from "romulus-kit/dist/src/kit";
+import { toBN, toWei } from "web3-utils";
+
 import { useAsyncState } from "../../../hooks/useAsyncState";
 import { useRomulus } from "../../../hooks/useRomulus";
-import { toWei, toBN } from "web3-utils";
 import { humanFriendlyWei } from "../../../util/number";
 
 interface IProps {

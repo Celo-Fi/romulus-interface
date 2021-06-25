@@ -1,15 +1,16 @@
-import React from "react";
-import { useRouter } from "next/dist/client/router";
-import { useAsyncState } from "../../../hooks/useAsyncState";
-import { Proposal, RomulusKit } from "romulus-kit/dist/src/kit";
-import { Box, Button, Heading, Text } from "@dracula/dracula-ui";
 import { useContractKit } from "@celo-tools/use-contractkit";
+import { Box, Button, Heading, Text } from "@dracula/dracula-ui";
+import { useRouter } from "next/dist/client/router";
+import React from "react";
+import { Proposal, RomulusKit } from "romulus-kit/dist/src/kit";
 import { toBN, toWei } from "web3-utils";
-import { governanceLookup } from "..";
-import { useRomulus } from "../../../hooks/useRomulus";
-import { humanFriendlyWei } from "../../../util/number";
+
 import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
 import { ProposalCard } from "../../../components/pages/romulus/ProposalCard";
+import { useAsyncState } from "../../../hooks/useAsyncState";
+import { useRomulus } from "../../../hooks/useRomulus";
+import { humanFriendlyWei } from "../../../util/number";
+import { governanceLookup } from "..";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -54,15 +55,17 @@ const RomulusIndexPage: React.FC = () => {
     romulusKit?.tokenSymbol(),
     [romulusKit, address]
   );
-  const [{ tokenDelegate, releaseTokenDelegate }, refetchDelegates] =
-    useAsyncState(
-      {
-        tokenDelegate: ZERO_ADDRESS,
-        releaseTokenDelegate: ZERO_ADDRESS,
-      },
-      romulusKit?.currentDelegate(address),
-      [romulusKit, address]
-    );
+  const [
+    { tokenDelegate, releaseTokenDelegate },
+    refetchDelegates,
+  ] = useAsyncState(
+    {
+      tokenDelegate: ZERO_ADDRESS,
+      releaseTokenDelegate: ZERO_ADDRESS,
+    },
+    romulusKit?.currentDelegate(address),
+    [romulusKit, address]
+  );
   const {
     delegateModal: tokenDelegateModal,
     openModal: openTokenDelegateModal,

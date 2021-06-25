@@ -1,4 +1,4 @@
-import { ContractKit, Address } from "@celo/contractkit";
+import { Address, ContractKit } from "@celo/contractkit";
 import { useMemo } from "react";
 import { RomulusKit } from "romulus-kit";
 
