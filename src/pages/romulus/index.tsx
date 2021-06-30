@@ -11,7 +11,11 @@ type Governance = {
 const governances: Governance[] = [
   {
     name: "Poof.cash",
-    address: "0x125A2e7C1DBAC09740cA2D38d6972fBd6DA5ba69",
+    address: "0x1fDf21dac8424cfd8FDB5706824a62CE980fd8a2",
+  },
+  {
+    name: "Ubeswap",
+    address: "0xa54555d9c13294326452fd8dEaC4bF9334c7BaCb",
   },
 ];
 
@@ -31,26 +35,29 @@ const RomulusIndexPage: React.FC = () => {
           <Text>Select a governance system</Text>
         </Box>
       </Box>
-      {governances.map((governance) => {
-        return (
-          <Card
-            css={{
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              cursor: "pointer",
-              width: "fit-content",
-            }}
-            onClick={() => void router.push(`/romulus/${governance.address}`)}
-            height="xxs"
-            p="md"
-            color="pinkPurple"
-          >
-            <Heading size="xl">{governance.name}</Heading>
-          </Card>
-        );
-      })}
+      <Box css={{ display: "flex", flexWrap: "wrap" }}>
+        {governances.map((governance) => {
+          return (
+            <Card
+              css={{
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => void router.push(`/romulus/${governance.address}`)}
+              height="xxs"
+              mr="sm"
+              p="md"
+              width="md"
+              color="pinkPurple"
+            >
+              <Heading size="xl">{governance.name}</Heading>
+            </Card>
+          );
+        })}
+      </Box>
     </Box>
   );
 };
