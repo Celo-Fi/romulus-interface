@@ -25,7 +25,7 @@ const RomulusIndexPage: React.FC = () => {
 
   const [proposals, refetchProposals] = useAsyncState<Array<Proposal>>(
     [],
-    romulusKit?.proposals(address),
+    romulusKit?.proposals(address).then((proposals) => proposals.slice(1)),
     [romulusKit, address]
   );
   const [hasReleaseToken] = useAsyncState<boolean>(
@@ -55,17 +55,15 @@ const RomulusIndexPage: React.FC = () => {
     romulusKit?.tokenSymbol(),
     [romulusKit, address]
   );
-  const [
-    { tokenDelegate, releaseTokenDelegate },
-    refetchDelegates,
-  ] = useAsyncState(
-    {
-      tokenDelegate: ZERO_ADDRESS,
-      releaseTokenDelegate: ZERO_ADDRESS,
-    },
-    romulusKit?.currentDelegate(address),
-    [romulusKit, address]
-  );
+  const [{ tokenDelegate, releaseTokenDelegate }, refetchDelegates] =
+    useAsyncState(
+      {
+        tokenDelegate: ZERO_ADDRESS,
+        releaseTokenDelegate: ZERO_ADDRESS,
+      },
+      romulusKit?.currentDelegate(address),
+      [romulusKit, address]
+    );
   const {
     delegateModal: tokenDelegateModal,
     openModal: openTokenDelegateModal,
