@@ -195,5 +195,8 @@ export default {
     input: {
       color: "text",
     },
+    textarea: {
+      color: "text",
+    },
   },
 };
