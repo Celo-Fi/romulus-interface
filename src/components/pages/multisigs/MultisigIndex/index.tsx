@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { BigNumber } from "ethers";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { Button, Text } from "theme-ui";
 
 import { useMultisigContract } from "../../../../hooks/useMultisigContract";
 import { useProvider } from "../../../../hooks/useProviderOrSigner";
@@ -72,10 +73,10 @@ export const MultisigIndex: React.FC<Props> = ({
       <h1>Multisig {multisig.address}</h1>
       <Nav>
         <Link href={`/multisigs/${multisigAddress}/add-transaction`}>
-          <a>Add Transaction</a>
+          <Button mb={2}>Add Transaction</Button>
         </Link>
       </Nav>
-      <p>{txCount} transactions</p>
+      <Text sx={{ display: "block", mb: 3 }}>{txCount} transactions</Text>
       <Submissions>
         {submissions?.map((sub, i) => (
           <SubmissionCard key={i} submission={sub} />

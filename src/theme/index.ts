@@ -188,4 +188,12 @@ export default {
       color: "secondary",
     },
   },
+  forms: {
+    label: {
+      color: "text",
+    },
+    input: {
+      color: "text",
+    },
+  },
 };

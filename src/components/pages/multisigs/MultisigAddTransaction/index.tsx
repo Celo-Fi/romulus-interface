@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import React, { useEffect, useState } from "react";
+import { Heading, Text } from "theme-ui";
 
 import { useMultisigContract } from "../../../../hooks/useMultisigContract";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
@@ -26,10 +27,10 @@ export const MultisigAddTransaction: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <h1>Multisig {multisig.address}</h1>
-      <p>{txCount} transactions</p>
+      <Heading as="h1">Multisig {multisig.address}</Heading>
+      <Text>{txCount} transactions</Text>
       <div>
-        <h2>Add transaction</h2>
+        <Heading as="h2">Add transaction</Heading>
         <TransactionBuilder
           onSubmit={async ({ call, data }) => {
             const signer = await getConnectedSigner();

@@ -3,6 +3,7 @@ import { BigNumberish } from "@ethersproject/bignumber";
 import { BytesLike, getAddress, Interface, parseEther } from "ethers/lib/utils";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
+import { Input, Label, Textarea } from "theme-ui";
 
 import { useAbi } from "../../../hooks/useAbi";
 import { FunctionWithArgs } from "../FunctionWithArgs";
@@ -115,8 +116,8 @@ export const TransactionBuilder: React.FC<Props> = ({
   return (
     <Form onSubmit={formik.handleSubmit}>
       <Field>
-        <label htmlFor="target">Target contract address</label>
-        <input
+        <Label htmlFor="target">Target contract address</Label>
+        <Input
           id="target"
           name="target"
           type="text"
@@ -129,8 +130,8 @@ export const TransactionBuilder: React.FC<Props> = ({
         )}
       </Field>
       <Field>
-        <label htmlFor="abi">ABI</label>
-        <textarea
+        <Label htmlFor="abi">ABI</Label>
+        <Textarea
           id="abi"
           name="abi"
           onChange={(e) => {
@@ -140,8 +141,8 @@ export const TransactionBuilder: React.FC<Props> = ({
         />
       </Field>
       <Field>
-        <label htmlFor="value">Value</label>
-        <input
+        <Label htmlFor="value">Value</Label>
+        <Input
           id="value"
           name="value"
           type="text"
@@ -154,7 +155,7 @@ export const TransactionBuilder: React.FC<Props> = ({
         )}
       </Field>
       <Field>
-        <label htmlFor="signature">Method signature</label>
+        <Label htmlFor="signature">Method signature</Label>
         {abi ? (
           <select
             id="signature"
@@ -169,7 +170,7 @@ export const TransactionBuilder: React.FC<Props> = ({
             ))}
           </select>
         ) : (
-          <input
+          <Input
             id="signature"
             name="signature"
             type="text"
@@ -182,7 +183,7 @@ export const TransactionBuilder: React.FC<Props> = ({
         )}
       </Field>
       <Field>
-        <label htmlFor="args">Arguments</label>
+        <Label htmlFor="args">Arguments</Label>
         {formik.values.signature && abi && functionFragment ? (
           <TransactionDataBuilder
             method={functionFragment}
@@ -190,7 +191,7 @@ export const TransactionBuilder: React.FC<Props> = ({
             onChange={(value) => formik.setFieldValue("args", value)}
           />
         ) : (
-          <input
+          <Input
             id="args"
             name="args"
             type="text"
@@ -204,8 +205,8 @@ export const TransactionBuilder: React.FC<Props> = ({
       </Field>
       {hasEta && (
         <Field>
-          <label htmlFor="eta">Eta</label>
-          <input
+          <Label htmlFor="eta">Eta</Label>
+          <Input
             id="eta"
             name="eta"
             type="datetime-local"
