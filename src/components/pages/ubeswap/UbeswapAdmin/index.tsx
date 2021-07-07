@@ -12,7 +12,7 @@ export const UbeswapAdmin: React.FC = () => {
       css={css`
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-column-gap: 24px;
+        grid-gap: 12px;
       `}
     >
       <ReleaseUbe />

@@ -32,21 +32,21 @@ export const ArrayInput = <T extends readonly unknown[]>({
                 onChange={(newV) => {
                   const copy = [...values];
                   copy[i] = newV;
-                  onChange((copy as unknown) as T);
+                  onChange(copy as unknown as T);
                 }}
               />
               <FaTrash
                 onClick={() => {
                   const copy = [...values];
                   copy.splice(i, 1);
-                  onChange((copy as unknown) as T);
+                  onChange(copy as unknown as T);
                 }}
               />
             </FieldWithDelete>
           ))}
         <button
           onClick={() => {
-            onChange(([...values, null] as unknown) as T);
+            onChange([...values, null] as unknown as T);
           }}
         >
           Add another field
@@ -65,7 +65,7 @@ export const ArrayInput = <T extends readonly unknown[]>({
           onChange={(newV) => {
             const copy = [...values];
             copy[i] = newV;
-            onChange((copy as unknown) as T);
+            onChange(copy as unknown as T);
           }}
         />
       ))}

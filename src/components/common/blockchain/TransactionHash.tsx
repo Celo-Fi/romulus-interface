@@ -1,6 +1,6 @@
-import { Anchor } from "@dracula/dracula-ui";
 import { ContractReceipt, ContractTransaction } from "ethers";
 import React, { useEffect, useState } from "react";
+import { Link, Text } from "theme-ui";
 
 interface IProps {
   value: ContractTransaction | null;
@@ -17,12 +17,12 @@ export const TransactionHash: React.FC<IProps> = ({ value }: IProps) => {
   }, [value]);
 
   if (!value) {
-    return <>--</>;
+    return <Text sx={{ display: "block" }}>--</Text>;
   }
   return (
-    <Anchor href={`https://explorer.celo.org/tx/${value.hash}`}>
+    <Link href={`https://explorer.celo.org/tx/${value.hash}`}>
       {value.hash}
       {receipt ? " (completed)" : ""}
-    </Anchor>
+    </Link>
   );
 };

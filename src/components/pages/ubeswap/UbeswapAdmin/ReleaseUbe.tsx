@@ -1,8 +1,8 @@
-import { Button, Card, Heading, Input, Paragraph } from "@dracula/dracula-ui";
 import { BigNumber, ContractTransaction } from "ethers";
 import { formatEther, getAddress, parseEther } from "ethers/lib/utils";
 import { FormikErrors, useFormik } from "formik";
 import React, { useEffect, useState } from "react";
+import { Button, Card, Heading, Input, Paragraph } from "theme-ui";
 
 import { LinearReleaseToken__factory } from "../../../../generated";
 import {
@@ -21,51 +21,45 @@ export const ReleaseUbe: React.FC = () => {
   const provider = useProvider();
   const getConnectedSigner = useGetConnectedSigner();
   const [tx, setTx] = useState<ContractTransaction | null>(null);
-  const {
-    handleChange,
-    handleSubmit,
-    handleBlur,
-    errors,
-    touched,
-    values,
-  } = useFormik({
-    initialValues: {
-      address: "",
-      amount: "",
-    },
-    validate: (values) => {
-      const errors: FormikErrors<IForm> = {};
+  const { handleChange, handleSubmit, handleBlur, errors, touched, values } =
+    useFormik({
+      initialValues: {
+        address: "",
+        amount: "",
+      },
+      validate: (values) => {
+        const errors: FormikErrors<IForm> = {};
 
-      try {
-        getAddress(values.address);
-      } catch (e) {
-        errors.address = (e as Error).message;
-      }
+        try {
+          getAddress(values.address);
+        } catch (e) {
+          errors.address = (e as Error).message;
+        }
 
-      try {
-        parseEther(values.amount);
-      } catch (e) {
-        errors.amount = (e as Error).message;
-      }
+        try {
+          parseEther(values.amount);
+        } catch (e) {
+          errors.amount = (e as Error).message;
+        }
 
-      return errors;
-    },
-    onSubmit: async (values) => {
-      const signer = await getConnectedSigner();
-      const releaseUBE = LinearReleaseToken__factory.connect(
-        RELEASE_UBE_ADDRESS,
-        signer
-      );
-      const parsedAmount = parseEther(values.amount);
-      console.log(
-        `Sending ${formatEther(parsedAmount)} rUBE to ${values.address}`
-      );
-      console.log(parsedAmount.toString());
-      const tx = await releaseUBE.allocate([values.address], [parsedAmount]);
-      setTx(tx);
-      console.log("result", await tx.wait());
-    },
-  });
+        return errors;
+      },
+      onSubmit: async (values) => {
+        const signer = await getConnectedSigner();
+        const releaseUBE = LinearReleaseToken__factory.connect(
+          RELEASE_UBE_ADDRESS,
+          signer
+        );
+        const parsedAmount = parseEther(values.amount);
+        console.log(
+          `Sending ${formatEther(parsedAmount)} rUBE to ${values.address}`
+        );
+        console.log(parsedAmount.toString());
+        const tx = await releaseUBE.allocate([values.address], [parsedAmount]);
+        setTx(tx);
+        console.log("result", await tx.wait());
+      },
+    });
   const [currentBalance, setCurrentBalance] = useState<BigNumber | null>(null);
 
   useEffect(() => {
@@ -81,11 +75,13 @@ export const ReleaseUbe: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card p="md" variant="subtle" color="purple">
-        <Heading pb="sm">Allocate Release UBE</Heading>
+      <Card p={4}>
+        <Heading as="h2" pb={2}>
+          Allocate Release UBE
+        </Heading>
         {tx && <TransactionHash value={tx} />}
         <Input
-          my="sm"
+          my={2}
           id="address"
           name="address"
           placeholder="To address"
@@ -104,7 +100,7 @@ export const ReleaseUbe: React.FC = () => {
           </Paragraph>
         )}
         <Input
-          my="sm"
+          my={2}
           id="amount"
           name="amount"
           placeholder="Amount"
@@ -125,7 +121,7 @@ export const ReleaseUbe: React.FC = () => {
             )
           </Paragraph>
         )}
-        <Button my="sm" type="submit" color="animated">
+        <Button my={2} type="submit" color="animated">
           Submit
         </Button>
       </Card>

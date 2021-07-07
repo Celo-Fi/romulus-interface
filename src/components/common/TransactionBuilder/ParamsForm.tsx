@@ -33,7 +33,7 @@ export const ParamsForm = <T extends readonly unknown[]>({
                 onChange={(newV) => {
                   const copy = [...values];
                   copy[i] = newV;
-                  onChange((copy as unknown) as T);
+                  onChange(copy as unknown as T);
                 }}
               />
             </div>

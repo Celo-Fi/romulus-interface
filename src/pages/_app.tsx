@@ -1,19 +1,19 @@
 import "normalize.css/normalize.css";
 import "@celo-tools/use-contractkit/lib/styles.css";
-import "@dracula/dracula-ui/styles/dracula-ui.css";
 
 import {
   Alfajores,
   ContractKitProvider,
   Mainnet,
 } from "@celo-tools/use-contractkit";
-import { Global } from "@emotion/react";
+import { Global, ThemeProvider } from "@emotion/react";
 import { AppProps } from "next/app";
 import React from "react";
 import Modal from "react-modal";
 
 import { globalStyles } from "../components/layouts/globalStyles";
 import { MainLayout } from "../components/layouts/MainLayout";
+import theme from "../theme";
 
 const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
   Modal.setAppElement("body");
@@ -24,10 +24,12 @@ const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
       dappUrl="https://romulus.page"
       networks={[Mainnet, Alfajores]}
     >
-      <Global styles={globalStyles} />
-      <MainLayout>
-        <Component />
-      </MainLayout>
+      <ThemeProvider theme={theme}>
+        <Global styles={globalStyles} />
+        <MainLayout>
+          <Component />
+        </MainLayout>
+      </ThemeProvider>
     </ContractKitProvider>
   );
 };

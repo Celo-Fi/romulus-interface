@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import Head from "next/head";
 import React from "react";
+import { Box } from "theme-ui";
 
 import { Header } from "./Header";
 
@@ -14,19 +14,12 @@ export const MainLayout: React.FC<Props> = ({
   title = "Romulus",
 }: Props) => {
   return (
-    <Wrapper>
+    <Box sx={{ width: "100%", px: [4, 4], py: [3, 3] }}>
       <Head>
         <title>{title}</title>
       </Head>
       <Header />
       {children}
-    </Wrapper>
+    </Box>
   );
 };
-
-const Wrapper = styled.div`
-  /* max-width: 800px; */
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
-`;

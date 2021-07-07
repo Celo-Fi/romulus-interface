@@ -1,7 +1,7 @@
-import { Box, Button, Heading, Input, Text } from "@dracula/dracula-ui";
 import { isAddress } from "@ethersproject/address";
 import React from "react";
 import Modal from "react-modal";
+import { Box, Button, Heading, Input, Text } from "theme-ui";
 
 interface IProps {
   isOpen: boolean;
@@ -22,22 +22,23 @@ const DelegateModal: React.FC<IProps> = ({
     <Modal
       isOpen={isOpen}
       onRequestClose={() => setIsOpen(false)}
-      style={{ content: { background: "var(--black)" } }}
+      style={{ content: { background: "hsl(230, 25%, 18%)" } }}
     >
       <Box>
-        <Box mb="sm">
-          <Heading>Change delegate</Heading>
+        <Box mb={2}>
+          <Heading as="h1">Change delegate</Heading>
         </Box>
-        <Box mb="sm">
+        <Box mb={2}>
           <Text>Delegate address</Text>
           <Input
+            mt={2}
             placeholder="Delegate address"
             onChange={(e) => setDelegate(e.target.value)}
             value={delegate}
           />
         </Box>
         <Box style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button mr="sm" variant="outline" onClick={() => setIsOpen(false)}>
+          <Button mr={2} variant="outline" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
           <Button

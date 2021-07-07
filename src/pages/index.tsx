@@ -1,30 +1,17 @@
-import { Box, Button, Text } from "@dracula/dracula-ui";
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import React from "react";
+import { Box, Button, Heading, Text } from "theme-ui";
 
 const IndexPage: React.FC = () => {
   const router = useRouter();
   return (
     <Wrapper>
-      <h1>Romulus</h1>
-      <Box my="sm">
-        <Text
-          css={css`
-            font-size: var(--font-3xl);
-          `}
-        >
-          A{" "}
-          <Text
-            css={css`
-              font-size: var(--font-3xl);
-            `}
-            color="purpleCyan"
-          >
-            government management system
-          </Text>
-        </Text>
+      <Text variant="logo" sx={{ fontSize: [6, 7] }}>
+        Romulus
+      </Text>
+      <Box mt={2} mb={5}>
+        <Heading as="h3">A government management system</Heading>
       </Box>
       <Button color="yellowPink" onClick={() => router.push("/romulus")}>
         Start Voting

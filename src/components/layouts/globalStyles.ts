@@ -10,6 +10,7 @@ export const globalStyles = css`
     background: #1d1e26;
   }
   body {
+    font-family: Inter;
     background: var(--purple-transparent);
     height: 100%;
     width: 100%;

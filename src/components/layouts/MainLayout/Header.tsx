@@ -4,12 +4,12 @@ import {
   Mainnet,
   useContractKit,
 } from "@celo-tools/use-contractkit";
-import { Anchor, Button, Select, Text } from "@dracula/dracula-ui";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import copyToClipboard from "copy-to-clipboard";
 import Link from "next/link";
 import React from "react";
+import { Box, Button, Container, Flex, Select, Text } from "theme-ui";
 
 const truncateAddress = (addr: string) =>
   addr.slice(0, 6) + "..." + addr.slice(addr.length - 4);
@@ -17,16 +17,15 @@ const truncateAddress = (addr: string) =>
 const NETWORKS = [Mainnet, Alfajores, Baklava];
 
 export const Header: React.FC = () => {
-  const {
-    address,
-    network,
-    updateNetwork,
-    connect,
-    destroy,
-  } = useContractKit();
+  const { address, network, updateNetwork, connect, destroy } =
+    useContractKit();
 
   return (
-    <Wrapper>
+    <Flex
+      sx={{ justifyContent: "space-between", alignItems: "center" }}
+      pt={[4, 3]}
+      mb={4}
+    >
       <Link href="/">
         <Text
           css={css`
@@ -34,81 +33,84 @@ export const Header: React.FC = () => {
             user-select: none;
           `}
         >
-          <Logo>🏛️ Romulus</Logo>
+          <Text variant="logo" sx={{ fontSize: 4 }}>
+            🏛️<Text sx={{ display: ["none", "inherit"] }}> Romulus</Text>
+          </Text>
         </Text>
       </Link>
-      <Account>
-        <Text weight="bold">Network:</Text>
-        <Select
-          onChange={(e) => {
-            const nextNetwork = NETWORKS.find(
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              (n) => n.name === (e.target as any).value
-            );
-            if (nextNetwork) {
-              updateNetwork(nextNetwork);
-            }
+      <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
+        <Container
+          sx={{
+            mr: 4,
+            bg: "gray",
+            borderRadius: 8,
+            height: "fit-content",
           }}
         >
-          {NETWORKS.map((n) => (
-            <option
-              key={n.name}
-              value={n.name}
-              selected={n.name === network.name}
-            >
-              {n.name}
-            </option>
-          ))}
-        </Select>
-        {address ? (
-          <AccountText
-            onClick={() => {
-              copyToClipboard(address);
+          <Select
+            sx={{
+              minWidth: "fit-content",
+              pr: 4,
+              bg: "gray",
+            }}
+            onChange={(e) => {
+              const nextNetwork = NETWORKS.find(
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                (n) => n.name === (e.target as any).value
+              );
+              if (nextNetwork) {
+                updateNetwork(nextNetwork);
+              }
             }}
           >
-            {truncateAddress(address)}{" "}
-            <Anchor
-              size="xs"
+            {NETWORKS.map((n) => (
+              <option
+                key={n.name}
+                value={n.name}
+                selected={n.name === network.name}
+              >
+                {n.name}
+              </option>
+            ))}
+          </Select>
+        </Container>
+        <Box
+          sx={{ textAlign: "center", width: "100%", minWidth: "fit-content" }}
+        >
+          {address ? (
+            <>
+              <ClickableText
+                onClick={() => {
+                  copyToClipboard(address);
+                }}
+              >
+                {truncateAddress(address)}{" "}
+              </ClickableText>
+              <br />
+              <ClickableText
+                color="secondary"
+                onClick={() => {
+                  destroy();
+                }}
+              >
+                (disconnect)
+              </ClickableText>
+            </>
+          ) : (
+            <Button
               onClick={() => {
-                destroy();
+                void connect();
               }}
             >
-              (disconnect)
-            </Anchor>
-          </AccountText>
-        ) : (
-          <Button
-            onClick={() => {
-              void connect();
-            }}
-          >
-            Connect to Wallet
-          </Button>
-        )}
-      </Account>
-    </Wrapper>
+              Connect to Wallet
+            </Button>
+          )}
+        </Box>
+      </Flex>
+    </Flex>
   );
 };
 
-const AccountText = styled(Text)`
+const ClickableText = styled(Text)`
   cursor: pointer;
-`;
-
-const Account = styled.div`
-  display: grid;
-  grid-auto-flow: column;
-  grid-column-gap: 8px;
-  align-items: center;
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  margin-bottom: var(--spacing-sm);
-`;
-
-const Logo = styled.span`
-  font-family: Cinzel;
 `;

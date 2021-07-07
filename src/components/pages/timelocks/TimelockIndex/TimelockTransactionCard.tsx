@@ -1,7 +1,7 @@
-import { Button } from "@dracula/dracula-ui";
 import styled from "@emotion/styled";
 import React from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { Button } from "theme-ui";
 
 import { ITimelock } from "../../../../generated";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";

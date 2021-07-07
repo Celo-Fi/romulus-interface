@@ -4,10 +4,10 @@ import {
   ExchangeWrapper,
 } from "@celo/contractkit/lib/wrappers/Exchange";
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { Button, Card, Heading, Input, Table, Text } from "@dracula/dracula-ui";
 import { BigNumber } from "bignumber.js";
 import { parseEther } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
+import { Button, Card, Flex, Heading, Input, Text, Themed } from "theme-ui";
 
 export const Mento: React.FC = () => {
   const { kit } = useContractKit();
@@ -37,53 +37,79 @@ export const Mento: React.FC = () => {
   }, [amount, exchange]);
 
   return (
-    <Card p="md" variant="subtle" color="purple">
-      <Heading pb="sm">cEUR Mento</Heading>
+    <Card>
+      <Heading mb={2}>cEUR Mento</Heading>
       {cfg && (
-        <Table color="cyan">
+        <Themed.table css={{ marginBottom: 8 }}>
           <tr>
-            <td>Spread</td>
-            <td>{cfg.spread.toString()}</td>
+            <td>
+              <Text>Spread</Text>
+            </td>
+            <td>
+              <Text>{cfg.spread.toString()}</Text>
+            </td>
           </tr>
           <tr>
-            <td>Reserve Fraction</td>
-            <td>{cfg.reserveFraction.toString()}</td>
+            <td>
+              <Text>Reserve Fraction</Text>
+            </td>
+            <td>
+              <Text>{cfg.reserveFraction.toString()}</Text>
+            </td>
           </tr>
           <tr>
-            <td>Update Frequency</td>
-            <td>{cfg.updateFrequency.toString()}</td>
+            <td>
+              <Text>Update Frequency</Text>
+            </td>
+            <td>
+              <Text>{cfg.updateFrequency.toString()}</Text>
+            </td>
           </tr>
           <tr>
-            <td>Minimum Reports</td>
-            <td>{cfg.minimumReports.toString()}</td>
+            <td>
+              <Text>Minimum Reports</Text>
+            </td>
+            <td>
+              <Text>{cfg.minimumReports.toString()}</Text>
+            </td>
           </tr>
           <tr>
-            <td>Last Bucket Update</td>
-            <td>{cfg.lastBucketUpdate.toString()}</td>
+            <td>
+              <Text>Last Bucket Update</Text>
+            </td>
+            <td>
+              <Text>{cfg.lastBucketUpdate.toString()}</Text>
+            </td>
           </tr>
-        </Table>
+        </Themed.table>
       )}
-      <Input
-        type="text"
-        color="white"
-        value={amount}
-        onChange={(e) => {
-          setAmount(e.target.value);
-        }}
-      />
-      {quoteStable && <Text>{quoteStable.toString()}</Text>}
-      <Button
-        color="animated"
-        onClick={async () => {
-          if (quoteStable) {
-            await exchange
-              ?.buyStable(parseEther(amount).toString(), quoteStable.toString())
-              .sendAndWaitForReceipt();
-          }
-        }}
-      >
-        Trade
-      </Button>
+      <Flex>
+        <Input
+          placeholder="Amount"
+          type="text"
+          value={amount}
+          onChange={(e) => {
+            setAmount(e.target.value);
+          }}
+          mr={2}
+        />
+        {quoteStable && <Text>{quoteStable.toString()}</Text>}
+        <Button
+          color="animated"
+          onClick={async () => {
+            if (quoteStable) {
+              await exchange
+                ?.buyStable(
+                  parseEther(amount).toString(),
+                  quoteStable.toString()
+                )
+                .sendAndWaitForReceipt();
+            }
+          }}
+        >
+          Trade
+        </Button>
+      </Flex>
     </Card>
   );
 };

@@ -1,6 +1,6 @@
-import { Button, Card, Heading } from "@dracula/dracula-ui";
 import { ContractTransaction } from "ethers";
 import React, { useState } from "react";
+import { Button, Card, Heading } from "theme-ui";
 
 import { usePoolManager } from "../../../../hooks/usePoolManager";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
@@ -18,8 +18,10 @@ export const TransferOwnership: React.FC = () => {
   const [tx, setTx] = useState<ContractTransaction | null>(null);
 
   return (
-    <Card p="md" variant="subtle" color="purple">
-      <Heading>Transfer pool manager ownership</Heading>
+    <Card p={4}>
+      <Heading as="h2" pb={2}>
+        Transfer pool manager ownership
+      </Heading>
       <TransactionHash value={tx} />
       <Button
         onClick={async () => {

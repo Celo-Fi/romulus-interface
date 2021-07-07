@@ -1,8 +1,8 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { Box, Button, Heading, Text } from "@dracula/dracula-ui";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { Proposal, RomulusKit } from "romulus-kit/dist/src/kit";
+import { Box, Button, Heading, Text } from "theme-ui";
 import { toBN, toWei } from "web3-utils";
 
 import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
@@ -68,7 +68,7 @@ const RomulusIndexPage: React.FC = () => {
     delegateModal: tokenDelegateModal,
     openModal: openTokenDelegateModal,
   } = useDelegateModal(async (delegate) => {
-    performActions(async (connectedKit) => {
+    await performActions(async (connectedKit) => {
       const romulusKit = new RomulusKit(
         connectedKit,
         romulusAddress?.toString()
@@ -92,7 +92,7 @@ const RomulusIndexPage: React.FC = () => {
     delegateModal: releaseTokenDelegateModal,
     openModal: openReleaseTokenDelegateModal,
   } = useDelegateModal(async (delegate) => {
-    performActions(async (connectedKit) => {
+    await performActions(async (connectedKit) => {
       const romulusKit = new RomulusKit(
         connectedKit,
         romulusAddress?.toString()
@@ -119,12 +119,12 @@ const RomulusIndexPage: React.FC = () => {
   return (
     <>
       <Box>
-        <Box mb="md">
-          <Heading size="xl">{governanceName} governance</Heading>
+        <Box mb={4}>
+          <Heading as="h1">{governanceName} governance</Heading>
         </Box>
-        <Box mr="md">
+        <Box mb={4}>
           <Box style={{ textAlign: "center" }} mb="lg">
-            <Heading size="2xl">{humanFriendlyWei(totalVotes)}</Heading>
+            <Heading as="h1">{humanFriendlyWei(totalVotes)}</Heading>
             <Text>Voting Power</Text>
           </Box>
           <Box my="md">
@@ -133,7 +133,7 @@ const RomulusIndexPage: React.FC = () => {
           <Box>
             <Text>
               Token balance:{" "}
-              <Text weight="bold">
+              <Text sx={{ fontWeight: "display" }}>
                 {humanFriendlyWei(tokenBalance)} {tokenSymbol}
               </Text>{" "}
             </Text>
@@ -142,22 +142,18 @@ const RomulusIndexPage: React.FC = () => {
             <Box>
               <Text>
                 Release token balance:{" "}
-                <Text weight="bold">
+                <Text sx={{ fontWeight: "display" }}>
                   {humanFriendlyWei(releaseTokenBalance)} {releaseTokenSymbol}
                 </Text>
               </Text>
             </Box>
           )}
           <Box style={{ display: "flex", alignItems: "center" }}>
-            <Text>
-              Token delegate: <Text weight="bold">{tokenDelegate}</Text>{" "}
+            <Text mr={2}>
+              Token delegate:{" "}
+              <Text sx={{ fontWeight: "display" }}>{tokenDelegate}</Text>
             </Text>
-            <Button
-              ml="sm"
-              size="xs"
-              onClick={openTokenDelegateModal}
-              variant="outline"
-            >
+            <Button onClick={openTokenDelegateModal} variant="outline">
               change
             </Button>
           </Box>
@@ -165,47 +161,50 @@ const RomulusIndexPage: React.FC = () => {
             <Box style={{ display: "flex", alignItems: "center" }}>
               <Text>
                 Release token delegate:{" "}
-                <Text weight="bold">{releaseTokenDelegate}</Text>
+                <Text sx={{ fontWeight: "display" }}>
+                  {releaseTokenDelegate}
+                </Text>
               </Text>
-              <Button
-                ml="sm"
-                size="xs"
-                onClick={openReleaseTokenDelegateModal}
-                variant="outline"
-              >
+              <Button onClick={openReleaseTokenDelegateModal} variant="outline">
                 change
               </Button>
             </Box>
           )}
         </Box>
         <Box
-          my="md"
+          mb={4}
           style={{ display: "flex", justifyContent: "space-between" }}
         >
           <Heading>Proposals</Heading>
           <Button
-            py="sm"
             onClick={() => {
-              router.push(`/romulus/${romulusAddress}/create`);
+              if (romulusAddress) {
+                router
+                  .push(`/romulus/${romulusAddress.toString()}/create`)
+                  .catch(console.error);
+              }
             }}
+            disabled={totalVotes.lt(toBN("1000000"))} // TODO: Hardcode
           >
             Create Proposal
           </Button>
         </Box>
-        {proposals.length > 0 ? (
-          proposals.map((proposal, idx) => (
-            <Box key={idx} mt="sm">
-              <ProposalCard
-                proposal={proposal}
-                refetchProposals={refetchProposals}
-              />
+        <Box pb={6}>
+          {proposals.length > 0 ? (
+            proposals.map((proposal, idx) => (
+              <Box key={idx} mt={3}>
+                <ProposalCard
+                  proposal={proposal}
+                  refetchProposals={refetchProposals}
+                />
+              </Box>
+            ))
+          ) : (
+            <Box style={{ textAlign: "center" }}>
+              <Text>There are currently no proposals.</Text>
             </Box>
-          ))
-        ) : (
-          <Box mt="md" style={{ textAlign: "center" }}>
-            <Text>There are currently no proposals.</Text>
-          </Box>
-        )}
+          )}
+        </Box>
       </Box>
       {tokenDelegateModal}
       {releaseTokenDelegateModal}
