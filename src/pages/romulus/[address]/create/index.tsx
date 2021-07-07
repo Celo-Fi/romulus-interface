@@ -1,8 +1,8 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { Box, Button, Card, Heading, Text } from "@dracula/dracula-ui";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { RomulusKit } from "romulus-kit/dist/src/kit";
+import { Box, Button, Card, Flex, Heading, Text, Textarea } from "theme-ui";
 import { toWei } from "web3-utils";
 
 import { useAddCommandModal } from "../../../../components/pages/romulus/addCommandModal";
@@ -11,7 +11,9 @@ import { governanceLookup } from "../..";
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
   const goBack = () => {
-    router.push(`/romulus/${romulusAddress}`);
+    if (romulusAddress) {
+      router.push(`/romulus/${romulusAddress.toString()}`).catch(console.error);
+    }
   };
   const { address: romulusAddress } = router.query;
   const governanceName = romulusAddress
@@ -38,7 +40,7 @@ const RomulusIndexPage: React.FC = () => {
   }
 
   const onCreateClick = async () => {
-    performActions(async (connectedKit) => {
+    await performActions(async (connectedKit) => {
       const romulusKit = new RomulusKit(
         connectedKit,
         romulusAddress.toString()
@@ -62,52 +64,45 @@ const RomulusIndexPage: React.FC = () => {
     <>
       <Box>
         <Box>
-          <Box mb="md">
-            <Heading size="xl">Create proposal for {governanceName}</Heading>
+          <Box mb={4}>
+            <Heading as="h1">Create proposal for {governanceName}</Heading>
           </Box>
-          <Box mb="md">
-            <Box>
+          <Box mb={4}>
+            <Box mb={2}>
               <Text>Commands</Text>
             </Box>
-            <Box
-              style={{
-                display: "flex",
+            <Flex
+              sx={{
                 flexWrap: "wrap",
                 alignItems: "center",
               }}
             >
               {signatures.map((signature, idx) => (
-                <Card style={{ width: "fit-content" }} key={idx} p="sm" mr="sm">
+                <Card sx={{ width: "fit-content" }} key={idx} mr={3}>
                   <Text>{signature}</Text>
                 </Card>
               ))}
               <Button onClick={openModal}>Add</Button>
-            </Box>
+            </Flex>
           </Box>
-          <Box mb="sm">
+          <Box mb={4}>
             <Text>Proposal description</Text>
-            <textarea
-              className="drac-input"
-              style={{ height: "auto", paddingTop: 4 }}
+            <Textarea
+              mt={2}
               rows={5}
               placeholder="Enter details about your proposal"
               onChange={(e) => setDescription(e.target.value)}
               value={description}
             />
           </Box>
-          <Box style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button mr="sm" variant="outline" onClick={() => goBack()}>
+          <Flex sx={{ justifyContent: "flex-end" }}>
+            <Button mr={2} variant="outline" onClick={() => goBack()}>
               Back
             </Button>
-            <Button
-              disabled={targets.length === 0}
-              onClick={async () => {
-                await onCreateClick();
-              }}
-            >
+            <Button disabled={targets.length === 0} onClick={onCreateClick}>
               Create
             </Button>
-          </Box>
+          </Flex>
         </Box>
       </Box>
       {addCommandModal}

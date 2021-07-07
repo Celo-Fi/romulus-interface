@@ -21,15 +21,16 @@ interface IReleaseStats {
   claimed: BigNumber;
 }
 
-export const UBE_ADDRESS = "0x00Be915B9dCf56a3CBE739D9B9c202ca692409EC";
-export const RELEASE_UBE_ADDRESS = "0x5Ed248077bD07eE9B530f7C40BE0c1dAE4c131C0";
+export const POOF_ADDRESS = "0x00400FcbF0816bebB94654259de7273f4A05c762";
+export const RELEASE_POOF_ADDRESS =
+  "0x695218A22c805Bab9C6941546CF5395F169Ad871";
 
 const BorderText = styled(Text)({
   border: "1px solid white",
   padding: "12px",
 });
 
-const UbeswapIndexPage: React.FC = () => {
+const PoofIndexPage: React.FC = () => {
   const provider = useProvider();
   const { address } = useContractKit();
   const { getConnectedSigner } = useLazyConnectedSigner();
@@ -38,27 +39,27 @@ const UbeswapIndexPage: React.FC = () => {
   const [stats, setStats] = useState<IReleaseStats | null>(null);
 
   useEffect(() => {
-    const ube = UbeToken__factory.connect(UBE_ADDRESS, provider);
-    const releaseUBE = LinearReleaseToken__factory.connect(
-      RELEASE_UBE_ADDRESS,
+    const ube = UbeToken__factory.connect(POOF_ADDRESS, provider);
+    const releasePOOF = LinearReleaseToken__factory.connect(
+      RELEASE_POOF_ADDRESS,
       provider
     );
     void (async () => {
       setStats({
         ubeBalance: await ube.balanceOf(address),
-        balance: await releaseUBE.balanceOf(address),
-        earned: await releaseUBE.earned(address),
-        claimed: await releaseUBE.totalClaimed(address),
+        balance: await releasePOOF.balanceOf(address),
+        earned: await releasePOOF.earned(address),
+        claimed: await releasePOOF.totalClaimed(address),
       });
     })();
   }, [address, provider]);
 
-  const hasUnclaimedUBE = stats && !stats.earned.isZero();
+  const hasUnclaimedPOOF = stats && !stats.earned.isZero();
 
   return (
     <Box>
       <Heading as="h1" mb={3}>
-        Ubeswap Dashboard
+        Poof Dashboard
       </Heading>
       {address ? (
         <Card variant="subtle" p="sm" my="md">
@@ -73,51 +74,51 @@ const UbeswapIndexPage: React.FC = () => {
             columns={[2, "auto 1fr"]}
             mb={4}
           >
-            <BorderText>UBE Address</BorderText>
+            <BorderText>POOF Address</BorderText>
             <BorderText>
-              <Address value={UBE_ADDRESS} />
+              <Address value={POOF_ADDRESS} />
             </BorderText>
 
-            <BorderText>Release UBE Address</BorderText>
+            <BorderText>Release POOF Address</BorderText>
             <BorderText>
-              <Address value={RELEASE_UBE_ADDRESS} />
+              <Address value={RELEASE_POOF_ADDRESS} />
             </BorderText>
 
-            <BorderText>UBE Balance</BorderText>
+            <BorderText>POOF Balance</BorderText>
             <BorderText>
-              {stats ? `${formatEther(stats.ubeBalance)} UBE` : "--"}
+              {stats ? `${formatEther(stats.ubeBalance)} POOF` : "--"}
             </BorderText>
 
-            <BorderText>Your Release UBE</BorderText>
+            <BorderText>Your Release POOF</BorderText>
             <BorderText>
-              {stats ? `${formatEther(stats.balance)} rUBE` : "--"}
+              {stats ? `${formatEther(stats.balance)} rPOOF` : "--"}
             </BorderText>
 
-            <BorderText>Claimable UBE</BorderText>
+            <BorderText>Claimable POOF</BorderText>
             <BorderText>
-              {stats ? `${formatEther(stats.earned)} UBE` : "--"}
+              {stats ? `${formatEther(stats.earned)} POOF` : "--"}
             </BorderText>
 
-            <BorderText>Previously Claimed UBE</BorderText>
+            <BorderText>Previously Claimed POOF</BorderText>
             <BorderText>
-              {stats ? `${formatEther(stats.claimed)} UBE` : "--"}
+              {stats ? `${formatEther(stats.claimed)} POOF` : "--"}
             </BorderText>
           </Grid>
           {
             <Button
               mt="sm"
-              color={hasUnclaimedUBE ? "animated" : "purple"}
-              disabled={!hasUnclaimedUBE}
+              color={hasUnclaimedPOOF ? "animated" : "purple"}
+              disabled={!hasUnclaimedPOOF}
               onClick={async () => {
                 const signer = await getConnectedSigner();
                 const tx = await LinearReleaseToken__factory.connect(
-                  RELEASE_UBE_ADDRESS,
+                  RELEASE_POOF_ADDRESS,
                   signer
                 ).claim();
                 setTx(tx);
               }}
             >
-              {hasUnclaimedUBE ? "Claim UBE" : "No UBE to claim"}
+              {hasUnclaimedPOOF ? "Claim POOF" : "No POOF to claim"}
             </Button>
           }
           {tx && (
@@ -135,4 +136,4 @@ const UbeswapIndexPage: React.FC = () => {
   );
 };
 
-export default UbeswapIndexPage;
+export default PoofIndexPage;

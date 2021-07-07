@@ -1,6 +1,6 @@
-import { Anchor } from "@dracula/dracula-ui";
 import { getAddress } from "ethers/lib/utils";
 import React from "react";
+import { Link } from "theme-ui";
 
 interface IProps {
   value: string | null;
@@ -12,10 +12,13 @@ export const Address: React.FC<IProps> = ({ value }: IProps) => {
   }
   const fmt = getAddress(value);
   return (
-    <Anchor
+    <Link
       href={`https://explorer.celo.org/address/${fmt.toLowerCase()}/transactions`}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ textDecoration: "none" }}
     >
       {fmt}
-    </Anchor>
+    </Link>
   );
 };

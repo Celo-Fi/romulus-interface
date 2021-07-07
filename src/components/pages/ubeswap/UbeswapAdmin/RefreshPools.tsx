@@ -1,6 +1,6 @@
-import { Button, Card, Heading, Paragraph } from "@dracula/dracula-ui";
 import { ContractTransaction } from "ethers";
 import React, { useEffect, useState } from "react";
+import { Button, Card, Heading, Paragraph } from "theme-ui";
 
 import { ReleaseEscrow__factory } from "../../../../generated";
 import { usePoolManager } from "../../../../hooks/usePoolManager";
@@ -42,8 +42,10 @@ export const RefreshPools: React.FC = () => {
     .map((pool) => pool.stakingToken);
 
   return (
-    <Card p="md" variant="subtle" color="purple">
-      <Heading>Manage Pools</Heading>
+    <Card p={4}>
+      <Heading as="h2" pb={2}>
+        Manage Pools
+      </Heading>
       <TransactionHash value={tx} />
       <Paragraph>Current week: {currentWeekIndex} (0-indexed)</Paragraph>
       <Paragraph>Number of weeks withdrawn: {numberOfWeeksWithdrawn}</Paragraph>
@@ -58,6 +60,7 @@ export const RefreshPools: React.FC = () => {
             });
             setTx(tx);
           }}
+          mr={2}
         >
           Refresh release escrow (up to epoch {numberOfWeeksWithdrawn + 1})
         </Button>

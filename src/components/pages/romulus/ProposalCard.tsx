@@ -1,5 +1,4 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { Box, Button, Card, Heading, Text } from "@dracula/dracula-ui";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
@@ -9,6 +8,7 @@ import {
   RomulusKit,
   Support,
 } from "romulus-kit/dist/src/kit";
+import { Box, Button, Card, Flex, Heading, Text } from "theme-ui";
 import { toBN, toWei } from "web3-utils";
 
 import { useAsyncState } from "../../../hooks/useAsyncState";
@@ -101,19 +101,19 @@ export const ProposalCard: React.FC<IProps> = ({
     if (Number(proposal.support) === Support.FOR) {
       supportText = (
         <>
-          <Text weight="bold">for</Text> votes
+          <Text sx={{ fontWeight: "display" }}>for</Text> votes
         </>
       );
     } else if (Number(proposal.support) === Support.ABSTAIN) {
       supportText = (
         <>
-          <Text weight="bold">abstained</Text> votes
+          <Text sx={{ fontWeight: "display" }}>abstained</Text> votes
         </>
       );
     } else if (Number(proposal.support) === Support.AGAINST) {
       supportText = (
         <>
-          <Text weight="bold">against</Text> votes
+          <Text sx={{ fontWeight: "display" }}>against</Text> votes
         </>
       );
     }
@@ -142,7 +142,7 @@ export const ProposalCard: React.FC<IProps> = ({
             });
           }}
           disabled={!(proposalState === ProposalState.ACTIVE)}
-          mx="sm"
+          mx={2}
         >
           Vote For
         </Button>
@@ -161,7 +161,7 @@ export const ProposalCard: React.FC<IProps> = ({
             });
           }}
           disabled={!(proposalState === ProposalState.ACTIVE)}
-          mx="sm"
+          mx={2}
         >
           Vote Against
         </Button>
@@ -170,40 +170,43 @@ export const ProposalCard: React.FC<IProps> = ({
   }
 
   return (
-    <Card p="sm" color="blackLight" mb="md">
+    <Card>
       <Heading>
         Proposal #{proposal.id} ({stateStr})
       </Heading>{" "}
       <Box>
-        <Text>
-          Proposed by: <Text weight="bold">{proposal.proposer}</Text>
-        </Text>
+        <Text mr={2}>Proposed by:</Text>
+        <Text sx={{ fontWeight: "display" }}>{proposal.proposer}</Text>
       </Box>
       {timeText && (
         <Box>
-          <Text>
-            Status: <Text weight="bold">{timeText}</Text>
-          </Text>
+          <Text mr={2}>Status:</Text>
+          <Text sx={{ fontWeight: "display" }}>{timeText}</Text>
         </Box>
       )}
       <Box>
-        <Text>
-          For votes:{" "}
-          <Text weight="bold">{humanFriendlyWei(proposal.forVotes)}</Text>
+        <Text mr={2}>For votes:</Text>
+        <Text sx={{ fontWeight: "display" }}>
+          {humanFriendlyWei(proposal.forVotes)}
         </Text>
       </Box>
       <Box>
-        <Text>
-          Against votes:{" "}
-          <Text weight="bold">{humanFriendlyWei(proposal.againstVotes)}</Text>
+        <Text mr={2}>Against votes: </Text>
+        <Text sx={{ fontWeight: "display" }}>
+          {humanFriendlyWei(proposal.againstVotes)}
         </Text>
       </Box>
       <Box>
-        <Text>Description: {proposal.description}</Text>
+        <Text mr={2}>Description:</Text>
+        <Text>
+          {proposal.description === ""
+            ? "No description."
+            : proposal.description}
+        </Text>
       </Box>
-      <Box style={{ display: "flex", justifyContent: "center" }} mt="md">
+      <Flex sx={{ justifyContent: "center" }} mt={2}>
         {voteContent}
-      </Box>
+      </Flex>
     </Card>
   );
 };

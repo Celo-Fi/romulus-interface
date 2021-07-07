@@ -1,7 +1,7 @@
-import { Button, Card, Heading } from "@dracula/dracula-ui";
 import { ContractTransaction } from "ethers";
 import { getAddress } from "ethers/lib/utils";
 import React, { useState } from "react";
+import { Button, Card, Heading } from "theme-ui";
 
 import { usePoolManager } from "../../../../hooks/usePoolManager";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
@@ -13,8 +13,10 @@ export const AllocatePools: React.FC = () => {
   const [tx, setTx] = useState<ContractTransaction | null>(null);
 
   return (
-    <Card p="md" variant="subtle" color="purple">
-      <Heading>WELCOME TO THE JANK</Heading>
+    <Card p={4}>
+      <Heading as="h2" pb={2}>
+        WELCOME TO THE JANK
+      </Heading>
       <TransactionHash value={tx} />
       <Button
         onClick={async () => {

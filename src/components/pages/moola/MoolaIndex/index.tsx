@@ -1,11 +1,11 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { Box, Card, Heading, Table, Text } from "@dracula/dracula-ui";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { CELO, ChainId } from "@ubeswap/sdk";
 import { BigNumber } from "ethers";
 import { formatEther, formatUnits } from "ethers/lib/utils";
 import React, { useCallback, useEffect, useState } from "react";
+import { Box, Card, Flex, Heading, Text, Themed } from "theme-ui";
 
 import { LendingPool__factory } from "../../../../generated";
 import { useProvider } from "../../../../hooks/useProviderOrSigner";
@@ -102,27 +102,19 @@ export const MoolaIndex: React.FC = () => {
   }, [refreshAccountData]);
 
   return (
-    <Wrapper className="drac-text">
-      <Box
-        css={css`
-          display: flex;
-          gap: var(--spacing-md);
-        `}
-      >
-        <Card p="md" variant="subtle" color="white">
-          <Heading>Moola Market Bootleg Interface</Heading>
+    <Wrapper>
+      <Flex sx={{ gap: 4 }}>
+        <Card>
+          <Heading as="h2">Moola Market Interface</Heading>
           <Text>This is an experimental interface. Use at your own risk.</Text>
         </Card>
         {address !== "" && (
           <Card
-            p="md"
-            variant="subtle"
-            color="white"
-            css={css`
-              flex-grow: 1;
-            `}
+            sx={{
+              flexGrow: 1,
+            }}
           >
-            <Heading pb="sm">My Account</Heading>
+            <Heading as="h2">My Account</Heading>
             {accountData && (
               <Box
                 css={css`
@@ -132,78 +124,116 @@ export const MoolaIndex: React.FC = () => {
                   }
                 `}
               >
-                <Table color="cyan">
+                <Themed.table css={{ borderSpacing: 4 }}>
                   <tbody>
                     <tr>
-                      <td>Total Liquidity</td>
-                      <td>{formatEther(accountData.totalLiquidityETH)} CELO</td>
-                    </tr>
-                    <tr>
-                      <td>Total Collateral</td>
                       <td>
-                        {formatEther(accountData.totalCollateralETH)} CELO
+                        <Text>Total Liquidity</Text>
+                      </td>
+                      <td>
+                        <Text>
+                          {formatEther(accountData.totalLiquidityETH)} CELO
+                        </Text>
                       </td>
                     </tr>
                     <tr>
-                      <td>Total Borrows</td>
-                      <td>{formatEther(accountData.totalBorrowsETH)} CELO</td>
-                    </tr>
-                    <tr>
-                      <td>Total Lifetime Fees</td>
-                      <td>{formatEther(accountData.totalFeesETH)} CELO</td>
-                    </tr>
-                    <tr>
-                      <td>Available Borrows</td>
                       <td>
-                        {formatEther(accountData.availableBorrowsETH)} CELO
+                        <Text>Total Collateral</Text>
+                      </td>
+                      <td>
+                        <Text>
+                          {formatEther(accountData.totalCollateralETH)} CELO
+                        </Text>
                       </td>
                     </tr>
                     <tr>
-                      <td>Current Liquidiation Threshold</td>
                       <td>
-                        {accountData.currentLiquidationThreshold.toString()}%
+                        <Text>Total Borrows</Text>
+                      </td>
+                      <td>
+                        <Text>
+                          {formatEther(accountData.totalBorrowsETH)} CELO
+                        </Text>
                       </td>
                     </tr>
                     <tr>
-                      <td>LTV</td>
-                      <td>{accountData.ltv.toString()}%</td>
+                      <td>
+                        <Text>Total Lifetime Fees</Text>
+                      </td>
+                      <td>
+                        <Text>
+                          {formatEther(accountData.totalFeesETH)} CELO
+                        </Text>
+                      </td>
                     </tr>
                     <tr>
-                      <td>Health Factor</td>
                       <td>
-                        {parseFloat(
-                          formatUnits(accountData.healthFactor, 18)
-                        ).toFixed(4)}{" "}
-                        {interpretHealthFactor(accountData.healthFactor)}
+                        <Text>Available Borrows</Text>
+                      </td>
+                      <td>
+                        <Text>
+                          {formatEther(accountData.availableBorrowsETH)} CELO
+                        </Text>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <Text>Current Liquidiation Threshold</Text>
+                      </td>
+                      <td>
+                        <Text>
+                          {accountData.currentLiquidationThreshold.toString()}%
+                        </Text>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <Text>LTV</Text>
+                      </td>
+                      <td>
+                        <Text>{accountData.ltv.toString()}%</Text>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <Text>Health Factor</Text>
+                      </td>
+                      <td>
+                        <Text>
+                          {parseFloat(
+                            formatUnits(accountData.healthFactor, 18)
+                          ).toFixed(4)}{" "}
+                          {interpretHealthFactor(accountData.healthFactor)}
+                        </Text>
                       </td>
                     </tr>
                   </tbody>
-                </Table>
+                </Themed.table>
               </Box>
             )}
           </Card>
         )}
-      </Box>
-      <Card p="md" variant="subtle" color="purple">
-        <Heading pb="sm">Markets</Heading>
-        <Table>
+      </Flex>
+      <Card>
+        <Heading as="h2">Markets</Heading>
+        <Themed.table>
           <thead>
             <tr>
-              <th>
-                <Text weight="bold">Reserve Asset</Text>
-              </th>
-              <th>
-                <Text weight="semibold">Market Info</Text>
-              </th>
-              <th>
-                <Text weight="semibold">User Info</Text>
-              </th>
-              <th>
-                <Text weight="semibold">Collateral Enabled?</Text>
-              </th>
-              <th>
-                <Text weight="semibold">Actions</Text>
-              </th>
+              <Themed.th>
+                <Text sx={{ fontWeight: "bold" }}>Reserve Asset</Text>
+              </Themed.th>
+              <Themed.th>
+                <Text sx={{ fontWeight: "semibold" }}>Market Info</Text>
+              </Themed.th>
+              <Themed.th>
+                <Text sx={{ fontWeight: "semibold" }}>User Info</Text>
+              </Themed.th>
+              <Themed.th>
+                <Text sx={{ fontWeight: "semibold" }}>Collateral Enabled?</Text>
+              </Themed.th>
+              <Themed.th>
+                <Text sx={{ fontWeight: "semibold" }}>Actions</Text>
+              </Themed.th>
             </tr>
           </thead>
           <tbody>
@@ -220,7 +250,7 @@ export const MoolaIndex: React.FC = () => {
               accountData={accountData}
             />
           </tbody>
-        </Table>
+        </Themed.table>
       </Card>
       {/* <Mento /> */}
     </Wrapper>

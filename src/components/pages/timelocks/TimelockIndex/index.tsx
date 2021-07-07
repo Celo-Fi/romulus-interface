@@ -1,8 +1,7 @@
-import { Anchor, Box, Card, Heading, Table } from "@dracula/dracula-ui";
 import styled from "@emotion/styled";
 import { BigNumber } from "ethers";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { Box, Button, Card, Heading, Link, Text } from "theme-ui";
 
 import { useProvider } from "../../../../hooks/useProviderOrSigner";
 import { useTimelock } from "../../../../hooks/useTimelock";
@@ -36,9 +35,8 @@ export const TimelockIndex: React.FC<Props> = ({
   const { timelock, config } = useTimelock(timelockAddress);
   const provider = useProvider();
 
-  const [transactions, setTransactions] = useState<
-    readonly TimelockTransaction[]
-  >();
+  const [transactions, setTransactions] =
+    useState<readonly TimelockTransaction[]>();
 
   useEffect(() => {
     void (async () => {
@@ -94,35 +92,47 @@ export const TimelockIndex: React.FC<Props> = ({
 
   return (
     <Box>
-      <Heading>Timelock {timelock.address}</Heading>
-      <Nav>
-        <Link href={`/timelocks/${timelockAddress}/add-transaction`}>
-          <Anchor>Add Transaction</Anchor>
-        </Link>
-      </Nav>
-      <Card p="md" variant="subtle" color="white">
-        <Heading pb="sm">Details</Heading>
+      <Heading as="h2" mb={2}>
+        Timelock {timelock.address}
+      </Heading>
+      <Link href={`/timelocks/${timelockAddress}/add-transaction`}>
+        <Button>Add Transaction</Button>
+      </Link>
+      <Card mt={3}>
+        <Heading as="h3" mb={2}>
+          Details
+        </Heading>
         {config && (
-          <Table color="cyan" className="drac-text">
-            <tbody>
-              <tr>
-                <td>Admin</td>
-                <td>
+          <table css={{ borderSpacing: 4 }}>
+            <tr>
+              <td>
+                <Text>Admin</Text>
+              </td>
+              <td>
+                <Text>
                   <Address value={config.admin} />
-                </td>
-              </tr>
-              <tr>
-                <td>Pending Admin</td>
-                <td>
+                </Text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <Text>Pending Admin</Text>
+              </td>
+              <td>
+                <Text>
                   <Address value={config.pendingAdmin} />
-                </td>
-              </tr>
-              <tr>
-                <td>Delay</td>
-                <td>{formatDuration(config.delay)}</td>
-              </tr>
-            </tbody>
-          </Table>
+                </Text>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <Text>Delay</Text>
+              </td>
+              <td>
+                <Text>{formatDuration(config.delay)}</Text>
+              </td>
+            </tr>
+          </table>
         )}
       </Card>
       <Submissions>

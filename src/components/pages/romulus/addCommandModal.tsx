@@ -1,7 +1,7 @@
-import { Box, Button, Heading, Input, Text } from "@dracula/dracula-ui";
 import { ethers } from "ethers";
 import React from "react";
 import Modal from "react-modal";
+import { Box, Button, Flex, Heading, Input, Text } from "theme-ui";
 
 interface IProps {
   isOpen: boolean;
@@ -46,52 +46,57 @@ const AddCommandModal: React.FC<IProps> = ({
       style={{ content: { background: "var(--black)" } }}
     >
       <Box>
-        <Box mb="sm">
+        <Box mb={4}>
           <Heading>Add command</Heading>
         </Box>
-        <Box mb="sm">
+        <Box mb={3}>
           <Text>Target</Text>
           <Input
+            mt={2}
             placeholder="Enter the address to call"
             onChange={(e) => setTarget(e.target.value)}
             value={target}
           />
         </Box>
-        <Box mb="sm">
+        <Box mb={3}>
           <Text>Message value</Text>
           <Input
+            mt={2}
             type="number"
             placeholder="Enter the msg.value"
             onChange={(e) => setMessageValue(e.target.value)}
             value={messageValue}
           />
         </Box>
-        <Box mb="sm">
+        <Box mb={3}>
           <Text>Signature</Text>
           <Input
+            mt={2}
             placeholder="Enter the contract method signature"
             onChange={(e) => setSignature(e.target.value)}
             value={signature}
           />
         </Box>
-        <Box mb="sm">
+        <Box mb={3}>
           <Text>Types</Text>
           <Input
+            mt={2}
             placeholder="Enter a commma separated list of the method's types"
             onChange={(e) => setTypes(e.target.value)}
             value={types}
           />
         </Box>
-        <Box mb="sm">
+        <Box mb={3}>
           <Text>Values</Text>
           <Input
+            mt={2}
             placeholder="Enter a commma separated list of values to pass into the method"
             onChange={(e) => setValues(e.target.value)}
             value={values}
           />
         </Box>
-        <Box style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button mr="sm" variant="outline" onClick={() => setIsOpen(false)}>
+        <Flex sx={{ justifyContent: "flex-end" }}>
+          <Button mr={2} variant="outline" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
           <Button
@@ -107,7 +112,7 @@ const AddCommandModal: React.FC<IProps> = ({
           >
             Add
           </Button>
-        </Box>
+        </Flex>
       </Box>
     </Modal>
   );

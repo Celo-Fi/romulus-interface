@@ -1,9 +1,9 @@
-import { Button, Card, Heading, Input, Paragraph } from "@dracula/dracula-ui";
 import { getAddress } from "@ethersproject/address";
 import { FACTORY_ADDRESS } from "@ubeswap/sdk";
 import { ContractTransaction } from "ethers";
 import { FormikErrors, useFormik } from "formik";
 import React, { useState } from "react";
+import { Button, Card, Heading, Input, Paragraph } from "theme-ui";
 
 import { UbeswapFactory__factory } from "../../generated";
 import { useGetConnectedSigner } from "../../hooks/useProviderOrSigner";
@@ -60,7 +60,7 @@ const CreatePairPage: React.FC = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Card p="md" variant="subtle" color="purple">
+        <Card p={4}>
           <Heading pb="sm">Create Ubeswap Pair</Heading>
           <Input
             my="sm"

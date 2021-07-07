@@ -1,21 +1,24 @@
 import { Address } from "@celo/contractkit";
-import { Box, Card, Heading, Text } from "@dracula/dracula-ui";
 import { useRouter } from "next/router";
 import React from "react";
+import { Box, Flex, Heading, Image, Text } from "theme-ui";
 
 type Governance = {
   name: string;
   address: Address;
+  icon: string;
 };
 
 const governances: Governance[] = [
   {
     name: "Poof.cash",
     address: "0x1fDf21dac8424cfd8FDB5706824a62CE980fd8a2",
+    icon: "/assets/asset_POOF.png",
   },
   {
     name: "Ubeswap",
     address: "0xa54555d9c13294326452fd8dEaC4bF9334c7BaCb",
+    icon: "/assets/asset_UBE.png",
   },
 ];
 
@@ -29,35 +32,45 @@ const RomulusIndexPage: React.FC = () => {
 
   return (
     <Box>
-      <Box mb="md">
-        <Heading>Romulus</Heading>
-        <Box mt="sm">
-          <Text>Select a governance system</Text>
-        </Box>
+      <Heading as="h1" mb={2}>
+        Governance
+      </Heading>
+      <Box mb={4}>
+        <Text>Select a governance system</Text>
       </Box>
-      <Box css={{ display: "flex", flexWrap: "wrap" }}>
-        {governances.map((governance) => {
+      <Flex sx={{ flexWrap: "wrap", mt: 2 }}>
+        {governances.map((governance, idx) => {
           return (
-            <Card
-              css={{
+            <Flex
+              key={idx}
+              sx={{
                 textAlign: "center",
-                display: "flex",
-                flexDirection: "column",
+                alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
+                bg: "highlight",
+                width: "fit-content",
+                p: 4,
+                mr: 4,
+                mb: 2,
+                borderRadius: 4,
               }}
               onClick={() => void router.push(`/romulus/${governance.address}`)}
-              height="xxs"
-              mr="sm"
-              p="md"
-              width="md"
-              color="pinkPurple"
             >
-              <Heading size="xl">{governance.name}</Heading>
-            </Card>
+              <Image
+                sx={{
+                  height: "48px",
+                  width: "48px",
+                  mr: 2,
+                  clipPath: "circle(24px at center)",
+                }}
+                src={governance.icon}
+              />
+              <Heading as="h2">{governance.name}</Heading>
+            </Flex>
           );
         })}
-      </Box>
+      </Flex>
     </Box>
   );
 };

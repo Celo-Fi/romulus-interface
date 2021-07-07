@@ -1,5 +1,4 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { Anchor, Box, Button, List, Switch, Text } from "@dracula/dracula-ui";
 import { css } from "@emotion/react";
 import { ChainId } from "@ubeswap/sdk";
 import { BigNumber } from "ethers";
@@ -10,6 +9,7 @@ import {
   parseEther,
 } from "ethers/lib/utils";
 import React, { useCallback, useEffect, useState } from "react";
+import { Box, Button, Link, Switch, Text } from "theme-ui";
 
 import {
   ERC20__factory,
@@ -167,7 +167,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
       </td>
       <td>
         {token && data && (
-          <List variant="unordered" color="purple">
+          <ul>
             <li>
               Liquidity: {commify(formatEther(data.totalLiquidity))}{" "}
               {token.symbol}
@@ -195,22 +195,18 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
             <li>
               Oracle Price: {price ? commify(formatEther(price)) : "--"} CELO
             </li>
-          </List>
+          </ul>
         )}
       </td>
       <td>
         <Box>
           {address === "" && (
-            <Anchor
-              color="blackSecondary"
-              href="#"
-              onClick={getConnectedSigner}
-            >
+            <Link color="blackSecondary" href="#" onClick={getConnectedSigner}>
               Connect your wallet
-            </Anchor>
+            </Link>
           )}
           {userData && token && (
-            <List variant="unordered" color="purple">
+            <ul>
               {token.userBalance && (
                 <li>
                   Wallet: {formatEther(token.userBalance)} {token.symbol}
@@ -251,7 +247,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
                 Origination Fee: {commify(formatEther(userData.originationFee))}{" "}
                 {token.symbol}
               </li>
-            </List>
+            </ul>
           )}
         </Box>
       </td>
@@ -286,7 +282,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
           `}
         >
           <Button
-            color="purpleCyan"
+            mr={2}
             onClick={async () => {
               const signer = await getConnectedSigner();
               const lendingPool = LendingPool__factory.connect(
@@ -309,7 +305,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
             Borrow (fixed)
           </Button>
           <Button
-            color="cyanGreen"
+            mr={2}
             onClick={async () => {
               const signer = await getConnectedSigner();
               const lendingPool = LendingPool__factory.connect(
@@ -332,7 +328,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
             Borrow
           </Button>
           <Button
-            color="yellowPink"
+            mr={2}
             onClick={async () => {
               const signer = await getConnectedSigner();
               const lendingPool = LendingPool__factory.connect(
@@ -376,7 +372,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
             Deposit
           </Button>
           <Button
-            color="pinkPurple"
+            mr={2}
             onClick={async () => {
               const signer = await getConnectedSigner();
               const lendingPool = LendingPool__factory.connect(

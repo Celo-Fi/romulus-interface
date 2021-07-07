@@ -1,12 +1,15 @@
 import { useRouter } from "next/dist/client/router";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Heading } from "theme-ui";
 
 const Timelocks: React.FC = () => {
   const router = useRouter();
   const [address, setAddress] = useState<string>("");
   return (
     <div>
-      <h1>Enter a Timelock address</h1>
+      <Heading as="h1" mb={2}>
+        Enter a Timelock address
+      </Heading>
       <form
         onSubmit={(e) => {
           e.preventDefault();
