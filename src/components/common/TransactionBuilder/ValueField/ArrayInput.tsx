@@ -36,6 +36,7 @@ export const ArrayInput = <T extends readonly unknown[]>({
                 }}
               />
               <FaTrash
+                color="white"
                 onClick={() => {
                   const copy = [...values];
                   copy.splice(i, 1);

@@ -2,7 +2,7 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { Proposal, RomulusKit } from "romulus-kit/dist/src/kit";
-import { Box, Button, Heading, Text } from "theme-ui";
+import { Box, Button, Flex, Heading, Text } from "theme-ui";
 import { toBN, toWei } from "web3-utils";
 
 import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
@@ -11,6 +11,7 @@ import { useAsyncState } from "../../../hooks/useAsyncState";
 import { useRomulus } from "../../../hooks/useRomulus";
 import { humanFriendlyWei } from "../../../util/number";
 import { governanceLookup } from "..";
+import { truncateAddress } from "../../../components/layouts/MainLayout/Header";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -120,7 +121,7 @@ const RomulusIndexPage: React.FC = () => {
     <>
       <Box>
         <Box mb={4}>
-          <Heading as="h1">{governanceName} governance</Heading>
+          <Heading as="h1">{governanceName}</Heading>
         </Box>
         <Box mb={4}>
           <Box style={{ textAlign: "center" }} mb="lg">
@@ -128,48 +129,60 @@ const RomulusIndexPage: React.FC = () => {
             <Text>Voting Power</Text>
           </Box>
           <Box my="md">
-            <Heading>Details</Heading>
+            <Heading as="h2" mb={3}>
+              Details
+            </Heading>
           </Box>
-          <Box>
-            <Text>
-              Token balance:{" "}
+          <Box sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}>
+            <Box mb={2}>
+              <Text>Token balance: </Text>
               <Text sx={{ fontWeight: "display" }}>
                 {humanFriendlyWei(tokenBalance)} {tokenSymbol}
               </Text>{" "}
-            </Text>
+            </Box>
+            <Flex sx={{ alignItems: "center" }}>
+              <Text sx={{ maxWidth: "66%" }} mr={2}>
+                Token delegate:{" "}
+                <Text sx={{ fontWeight: "display" }}>
+                  {truncateAddress(tokenDelegate)}
+                </Text>
+              </Text>
+              <Button
+                onClick={openTokenDelegateModal}
+                variant="outline"
+                p={[2, 2]}
+              >
+                change
+              </Button>
+            </Flex>
           </Box>
-          {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
-            <Box>
-              <Text>
-                Release token balance:{" "}
+          <Box sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}>
+            {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
+              <Box mb={2}>
+                <Text>Release token balance: </Text>
                 <Text sx={{ fontWeight: "display" }}>
                   {humanFriendlyWei(releaseTokenBalance)} {releaseTokenSymbol}
                 </Text>
-              </Text>
-            </Box>
-          )}
-          <Box style={{ display: "flex", alignItems: "center" }}>
-            <Text mr={2}>
-              Token delegate:{" "}
-              <Text sx={{ fontWeight: "display" }}>{tokenDelegate}</Text>
-            </Text>
-            <Button onClick={openTokenDelegateModal} variant="outline">
-              change
-            </Button>
-          </Box>
-          {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
-            <Box style={{ display: "flex", alignItems: "center" }}>
-              <Text>
-                Release token delegate:{" "}
-                <Text sx={{ fontWeight: "display" }}>
-                  {releaseTokenDelegate}
+              </Box>
+            )}
+            {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
+              <Flex sx={{ alignItems: "center" }}>
+                <Text sx={{ maxWidth: "66%" }} mr={2}>
+                  Release token delegate:{" "}
+                  <Text sx={{ fontWeight: "display" }}>
+                    {truncateAddress(releaseTokenDelegate)}
+                  </Text>
                 </Text>
-              </Text>
-              <Button onClick={openReleaseTokenDelegateModal} variant="outline">
-                change
-              </Button>
-            </Box>
-          )}
+                <Button
+                  onClick={openReleaseTokenDelegateModal}
+                  variant="outline"
+                  p={[2, 2]}
+                >
+                  change
+                </Button>
+              </Flex>
+            )}
+          </Box>
         </Box>
         <Box
           mb={4}

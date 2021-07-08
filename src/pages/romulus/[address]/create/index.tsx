@@ -28,10 +28,10 @@ const RomulusIndexPage: React.FC = () => {
 
   const { addCommandModal, openModal } = useAddCommandModal(
     (target, value, signature, calldata) => {
-      setTargets([target, ...targets]);
-      setValues([value, ...values]);
-      setSignatures([signature, ...signatures]);
-      setCalldatas([calldata, ...calldatas]);
+      setTargets([...targets, target]);
+      setValues([...values, value]);
+      setSignatures([...signatures, signature]);
+      setCalldatas([...calldatas, calldata]);
     }
   );
 
@@ -78,7 +78,7 @@ const RomulusIndexPage: React.FC = () => {
               }}
             >
               {signatures.map((signature, idx) => (
-                <Card sx={{ width: "fit-content" }} key={idx} mr={3}>
+                <Card sx={{ width: "fit-content" }} key={idx} mr={3} mb={2}>
                   <Text>{signature}</Text>
                 </Card>
               ))}

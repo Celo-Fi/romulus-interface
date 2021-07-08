@@ -1,5 +1,6 @@
 import { ParamType } from "ethers/lib/utils";
 import React from "react";
+import { Input } from "theme-ui";
 
 import { ParamsForm } from "../ParamsForm";
 import { ArrayInput } from "./ArrayInput";
@@ -44,7 +45,7 @@ export const ValueField = <T extends unknown>({
 
   if (param.type === "address") {
     return (
-      <input
+      <Input
         type="text"
         placeholder="0x000000...."
         value={typeof value === "string" ? value : ""}
@@ -55,7 +56,7 @@ export const ValueField = <T extends unknown>({
 
   if (param.type === "string") {
     return (
-      <input
+      <Input
         type="text"
         placeholder="Enter a string"
         value={typeof value === "string" ? value : ""}
@@ -66,7 +67,7 @@ export const ValueField = <T extends unknown>({
 
   if (param.type === "bytes") {
     return (
-      <input
+      <Input
         type="text"
         placeholder="0x00...."
         value={typeof value === "string" ? value : ""}
@@ -77,7 +78,7 @@ export const ValueField = <T extends unknown>({
 
   if (param.type.startsWith("uint")) {
     return (
-      <input
+      <Input
         type="number"
         placeholder="123456"
         value={typeof value === "string" ? value : ""}

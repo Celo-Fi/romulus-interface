@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { ParamType } from "ethers/lib/utils";
 import React from "react";
+import { Box, Flex, Grid, Text } from "theme-ui";
 
 import { ValueField } from "./ValueField";
 
@@ -18,15 +19,15 @@ export const ParamsForm = <T extends readonly unknown[]>({
   onChange,
 }: Props<T>): React.ReactElement => {
   return (
-    <Wrapper>
+    <Grid>
       {params.map((param, i) => {
         return (
-          <Row key={param.name}>
-            <FieldInfo>
-              <span>{param.format("full")}</span>
+          <Flex key={param.name}>
+            <Box>
+              <Text>{param.format("full")}</Text>
               {paramsDoc?.[param.name] && <p>{paramsDoc[param.name]}</p>}
-            </FieldInfo>
-            <div>
+            </Box>
+            <Box>
               <ValueField
                 param={param}
                 value={values[i]}
@@ -36,22 +37,10 @@ export const ParamsForm = <T extends readonly unknown[]>({
                   onChange(copy as unknown as T);
                 }}
               />
-            </div>
-          </Row>
+            </Box>
+          </Flex>
         );
       })}
-    </Wrapper>
+    </Grid>
   );
 };
-
-const FieldInfo = styled.div``;
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-row-gap: 24px;
-`;
-
-const Row = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-`;
