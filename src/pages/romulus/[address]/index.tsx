@@ -26,7 +26,14 @@ const RomulusIndexPage: React.FC = () => {
 
   const [proposals, refetchProposals] = useAsyncState<Array<Proposal>>(
     [],
-    romulusKit?.proposals(address).then((proposals) => proposals.slice(1)),
+    (async () => {
+      if (!address) {
+        return [];
+      }
+      return await romulusKit
+        ?.proposals(address)
+        .then((proposals) => proposals.slice(1));
+    })(),
     [romulusKit, address]
   );
   const [hasReleaseToken] = useAsyncState<boolean>(
@@ -36,7 +43,16 @@ const RomulusIndexPage: React.FC = () => {
   );
   const [{ totalVotes }, refetchVotes] = useAsyncState(
     { tokenVotes: toBN(0), releaseTokenVotes: toBN(0), totalVotes: toBN(0) },
-    romulusKit?.votingPower(address),
+    (async () => {
+      if (!address) {
+        return {
+          tokenVotes: toBN(0),
+          releaseTokenVotes: toBN(0),
+          totalVotes: toBN(0),
+        };
+      }
+      return await romulusKit?.votingPower(address);
+    })(),
     [romulusKit, address]
   );
   const [{ tokenBalance, releaseTokenBalance }] = useAsyncState(
@@ -45,7 +61,16 @@ const RomulusIndexPage: React.FC = () => {
       releaseTokenBalance: toBN(0),
       totalBalance: toBN(0),
     },
-    romulusKit?.tokenBalance(address),
+    (async () => {
+      if (!address) {
+        return {
+          tokenBalance: toBN(0),
+          releaseTokenBalance: toBN(0),
+          totalBalance: toBN(0),
+        };
+      }
+      return await romulusKit?.tokenBalance(address);
+    })(),
     [romulusKit, address]
   );
   const [{ tokenSymbol, releaseTokenSymbol }] = useAsyncState(
@@ -62,7 +87,15 @@ const RomulusIndexPage: React.FC = () => {
         tokenDelegate: ZERO_ADDRESS,
         releaseTokenDelegate: ZERO_ADDRESS,
       },
-      romulusKit?.currentDelegate(address),
+      (async () => {
+        if (!address) {
+          return {
+            tokenDelegate: ZERO_ADDRESS,
+            releaseTokenDelegate: ZERO_ADDRESS,
+          };
+        }
+        return await romulusKit?.currentDelegate(address);
+      })(),
       [romulusKit, address]
     );
   const {

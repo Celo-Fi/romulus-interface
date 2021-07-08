@@ -45,12 +45,14 @@ const PoofIndexPage: React.FC = () => {
       provider
     );
     void (async () => {
-      setStats({
-        ubeBalance: await ube.balanceOf(address),
-        balance: await releasePOOF.balanceOf(address),
-        earned: await releasePOOF.earned(address),
-        claimed: await releasePOOF.totalClaimed(address),
-      });
+      if (address) {
+        setStats({
+          ubeBalance: await ube.balanceOf(address),
+          balance: await releasePOOF.balanceOf(address),
+          earned: await releasePOOF.earned(address),
+          claimed: await releasePOOF.totalClaimed(address),
+        });
+      }
     })();
   }, [address, provider]);
 

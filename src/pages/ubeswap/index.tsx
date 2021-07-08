@@ -44,12 +44,14 @@ const UbeswapIndexPage: React.FC = () => {
       provider
     );
     void (async () => {
-      setStats({
-        ubeBalance: await ube.balanceOf(address),
-        balance: await releaseUBE.balanceOf(address),
-        earned: await releaseUBE.earned(address),
-        claimed: await releaseUBE.totalClaimed(address),
-      });
+      if (address) {
+        setStats({
+          ubeBalance: await ube.balanceOf(address),
+          balance: await releaseUBE.balanceOf(address),
+          earned: await releaseUBE.earned(address),
+          claimed: await releaseUBE.totalClaimed(address),
+        });
+      }
     })();
   }, [address, provider]);
 

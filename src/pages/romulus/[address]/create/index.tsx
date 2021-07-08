@@ -7,6 +7,7 @@ import { toWei } from "web3-utils";
 
 import { useAddCommandModal } from "../../../../components/pages/romulus/addCommandModal";
 import { governanceLookup } from "../..";
+import { BytesLike } from "ethers";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const RomulusIndexPage: React.FC = () => {
   const [targets, setTargets] = React.useState<string[]>([]);
   const [values, setValues] = React.useState<(number | string)[]>([]);
   const [signatures, setSignatures] = React.useState<string[]>([]);
-  const [calldatas, setCalldatas] = React.useState<(string | number[])[]>([]);
+  const [calldatas, setCalldatas] = React.useState<BytesLike[]>([]);
   const [description, setDescription] = React.useState<string>("");
 
   const { addCommandModal, openModal } = useAddCommandModal(
@@ -47,7 +48,7 @@ const RomulusIndexPage: React.FC = () => {
       );
       try {
         const tx = await romulusKit
-          ?.propose(targets, values, signatures, calldatas, description)
+          ?.propose(targets, values, signatures, calldatas as any, description) // TODO: Hardcoded type
           ?.send({
             from: connectedKit.defaultAccount,
             gasPrice: toWei("0.1", "gwei"),
