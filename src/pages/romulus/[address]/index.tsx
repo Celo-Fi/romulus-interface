@@ -184,7 +184,7 @@ const RomulusIndexPage: React.FC = () => {
                   .catch(console.error);
               }
             }}
-            disabled={totalVotes.lt(toBN("1000000"))} // TODO: Hardcode
+            disabled={totalVotes.lt(toBN(toWei("1000000")))} // TODO: Hardcode
           >
             Create Proposal
           </Button>
