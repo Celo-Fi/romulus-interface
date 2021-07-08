@@ -156,16 +156,16 @@ const RomulusIndexPage: React.FC = () => {
               </Button>
             </Flex>
           </Box>
-          <Box sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}>
-            {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
+          {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
+            <Box
+              sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}
+            >
               <Box mb={2}>
                 <Text>Release token balance: </Text>
                 <Text sx={{ fontWeight: "display" }}>
                   {humanFriendlyWei(releaseTokenBalance)} {releaseTokenSymbol}
                 </Text>
               </Box>
-            )}
-            {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
               <Flex sx={{ alignItems: "center" }}>
                 <Text sx={{ maxWidth: "66%" }} mr={2}>
                   Release token delegate:{" "}
@@ -181,8 +181,8 @@ const RomulusIndexPage: React.FC = () => {
                   change
                 </Button>
               </Flex>
-            )}
-          </Box>
+            </Box>
+          )}
         </Box>
         <Box
           mb={4}

@@ -41,7 +41,7 @@ export const Header: React.FC = () => {
       <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
         <Container
           sx={{
-            mr: 4,
+            mr: 3,
             bg: "gray",
             borderRadius: 8,
             height: "fit-content",
@@ -102,7 +102,7 @@ export const Header: React.FC = () => {
                 void connect();
               }}
             >
-              Connect to Wallet
+              Connect Wallet
             </Button>
           )}
         </Box>

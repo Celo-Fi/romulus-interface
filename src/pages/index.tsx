@@ -10,10 +10,15 @@ const IndexPage: React.FC = () => {
       <Text variant="logo" sx={{ fontSize: [6, 7] }}>
         Romulus
       </Text>
-      <Box mt={2} mb={5}>
+      <Box mt={2} mb={4}>
         <Heading as="h3">A government management system</Heading>
       </Box>
-      <Button color="yellowPink" onClick={() => router.push("/romulus")}>
+      <Button
+        color="yellowPink"
+        onClick={() => router.push("/romulus")}
+        px={[4, 4]}
+        py={[3, 3]}
+      >
         Start Voting
       </Button>
     </Wrapper>
