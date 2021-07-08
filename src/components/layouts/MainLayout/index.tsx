@@ -3,7 +3,7 @@ import React from "react";
 import { Box } from "theme-ui";
 
 import { Header } from "./Header";
-
+import { Footer } from "./Footer";
 interface Props {
   title?: string;
   children?: React.ReactNode;
@@ -14,12 +14,26 @@ export const MainLayout: React.FC<Props> = ({
   title = "Romulus",
 }: Props) => {
   return (
-    <Box sx={{ width: "100%", px: [4, 4], py: [3, 3] }}>
+    <Box
+      sx={{
+        width: "100%",
+        px: [4, 4],
+        py: [3, 3],
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
       <Head>
         <title>{title}</title>
       </Head>
-      <Header />
-      {children}
+      <Box>
+        <Header />
+      </Box>
+      <Box sx={{ flex: "1 1 auto" }}>{children}</Box>
+      <Box>
+        <Footer />
+      </Box>
     </Box>
   );
 };
