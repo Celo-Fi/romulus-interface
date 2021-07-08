@@ -9,16 +9,15 @@ export const Footer: React.FC = () => {
   return (
     <Flex
       sx={{
-        maxWidth: 150,
-        justifyContent: "space-between",
-        alignItems: "center",
+        width: "100%",
+        px: [3, 3],
+        py: [3, 3],
+        flexDirection: "row",
       }}
-      pt={[4, 3]}
-      mb={4}
     >
       {socialLinks.map((element: socialLink, index) => {
         return (
-          <Flex key={index}>
+          <Flex sx={{ mx: 2 }} key={index}>
             <a href={element.link} target="_blank">
               <Image
                 src={element.imageSource}

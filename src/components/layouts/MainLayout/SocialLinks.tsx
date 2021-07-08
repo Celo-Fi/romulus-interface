@@ -18,16 +18,16 @@ export const socialLinks: socialLink[] = [
     imageSource: "/assets/GitHub-Mark/PNG/GitHub-Mark-Light-120px-plus.png",
     link: "https://github.com/Celo-Fi",
   },
-  {
-    name: "Discord",
-    alt: "Link to Discord discussion forum",
-    imageSource: "/assets/Discord-Logo-White.png",
-    link: "https://t.co/rqKBCVlh6q?amp=1",
-  },
-  {
-    name: "Telegram",
-    alt: "Link to Telegram discussion channel",
-    imageSource: "/assets/telegram-512.png",
-    link: "https://t.co/Be7yxqo0mG?amp=1",
-  },
+  // {
+  //   name: "Discord",
+  //   alt: "Link to Discord discussion forum",
+  //   imageSource: "/assets/Discord-Logo-White.png",
+  //   link: "https://discord.com/invite/soonTM",
+  // },
+  // {
+  //   name: "Telegram",
+  //   alt: "Link to Telegram discussion channel",
+  //   imageSource: "/assets/telegram-512.png",
+  //   link: "https://t.me/joinchat/soonTM",
+  // },
 ];

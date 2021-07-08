@@ -1,6 +1,6 @@
 import Head from "next/head";
 import React from "react";
-import { Box } from "theme-ui";
+import { Flex, Box } from "theme-ui";
 
 import { Header } from "./Header";
 import { Footer } from "./Footer";
@@ -14,12 +14,11 @@ export const MainLayout: React.FC<Props> = ({
   title = "Romulus",
 }: Props) => {
   return (
-    <Box
+    <Flex
       sx={{
         width: "100%",
         px: [4, 4],
         py: [3, 3],
-        display: "flex",
         flexDirection: "column",
         minHeight: "100vh",
       }}
@@ -34,6 +33,6 @@ export const MainLayout: React.FC<Props> = ({
       <Box>
         <Footer />
       </Box>
-    </Box>
+    </Flex>
   );
 };
