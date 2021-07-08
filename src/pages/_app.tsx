@@ -1,11 +1,7 @@
 import "normalize.css/normalize.css";
 import "@celo-tools/use-contractkit/lib/styles.css";
 
-import {
-  Alfajores,
-  ContractKitProvider,
-  Mainnet,
-} from "@celo-tools/use-contractkit";
+import { ContractKitProvider } from "@celo-tools/use-contractkit";
 import { Global, ThemeProvider } from "@emotion/react";
 import { AppProps } from "next/app";
 import React from "react";
@@ -19,10 +15,11 @@ const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
   Modal.setAppElement("body");
   return (
     <ContractKitProvider
-      dappName="Romulus"
-      dappDescription="A governance management system"
-      dappUrl="https://romulus.page"
-      networks={[Mainnet, Alfajores]}
+      dapp={{
+        name: "Romulus",
+        description: "A governance management system",
+        url: "https://romulus.page",
+      }}
     >
       <ThemeProvider theme={theme}>
         <Global styles={globalStyles} />
