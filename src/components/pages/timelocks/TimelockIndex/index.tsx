@@ -95,7 +95,7 @@ export const TimelockIndex: React.FC<Props> = ({
       <Heading as="h2" mb={2}>
         Timelock {timelock.address}
       </Heading>
-      <Link href={`/timelocks/${timelockAddress}/add-transaction`}>
+      <Link href={`/timelocks/${timelockAddress}/queue-transaction`}>
         <Button>Add Transaction</Button>
       </Link>
       <Card mt={3}>
