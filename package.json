@@ -11,7 +11,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@celo-tools/use-contractkit": "npm:@ubeswap/use-contractkit@^1.0.0-ube.7",
+    "@celo-tools/use-contractkit": "^1.0.6",
+    "@celo/contractkit": "^1.2.4",
     "@celo/contracts": "^0.0.8",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
@@ -58,5 +59,8 @@
   "lint-staged": {
     "*.{js,css,md,ts,tsx,json}": "prettier --write"
   },
-  "prettier": {}
+  "prettier": {},
+  "resolutions": {
+    "@celo/contractkit": "^1.2.4"
+  }
 }
