@@ -32,7 +32,6 @@
     "react-icons": "^4.2.0",
     "react-modal": "^3.14.3",
     "regl": "1",
-    "romulus-kit": "^1.0.3",
     "theme-ui": "^0.10.0"
   },
   "devDependencies": {

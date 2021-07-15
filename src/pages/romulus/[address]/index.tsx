@@ -1,153 +1,106 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
-import { Proposal, RomulusKit } from "romulus-kit/dist/src/kit";
-import { Box, Button, Flex, Heading, Text } from "theme-ui";
-import { toBN, toWei } from "web3-utils";
+import { Box, Button, Flex, Grid, Heading, Text } from "theme-ui";
+import { toWei, fromWei } from "web3-utils";
 
 import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
 import { ProposalCard } from "../../../components/pages/romulus/ProposalCard";
-import { useAsyncState } from "../../../hooks/useAsyncState";
-import { useRomulus } from "../../../hooks/useRomulus";
 import { humanFriendlyWei } from "../../../util/number";
 import { governanceLookup } from "..";
 import { truncateAddress } from "../../../components/layouts/MainLayout/Header";
-
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+import { useTopDelegates } from "../../../hooks/romulus/useTopDelegates";
+import { useProposals } from "../../../hooks/romulus/useProposals";
+import { BIG_ZERO } from "../../../util/constants";
+import { useRomulus } from "../../../hooks/romulus/useRomulus";
+import { useVotingTokens } from "../../../hooks/romulus/useVotingTokens";
+import { BigNumber } from "ethers";
+import {
+  useGetConnectedSigner,
+  useProvider,
+} from "../../../hooks/useProviderOrSigner";
+import {
+  PoofToken__factory,
+  RomulusDelegate__factory,
+} from "../../../generated";
+import { Address } from "../../../components/common/Address";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
   const { address: romulusAddress } = router.query;
+  const getConnectedSigner = useGetConnectedSigner();
+  const provider = useProvider();
   const governanceName = romulusAddress
     ? governanceLookup[romulusAddress.toString()]
     : "Unknown";
-  const { kit, performActions, address } = useContractKit();
-  const romulusKit = useRomulus(kit, romulusAddress?.toString());
+  const { address } = useContractKit();
+  const [topDelegates] = useTopDelegates((romulusAddress as string) || "", 5);
+  const [proposals] = useProposals((romulusAddress as string) || "");
+  const [
+    [
+      hasReleaseToken,
+      tokenSymbol,
+      releaseTokenSymbol,
+      tokenDelegate,
+      releaseTokenDelegate,
+    ],
+    refetchRomulus,
+  ] = useRomulus((romulusAddress as string) || "");
+  const [
+    { balance, releaseBalance, votingPower, releaseVotingPower },
+    refetchVotingTokens,
+  ] = useVotingTokens((romulusAddress as string) || "", address);
+  const totalVotingPower = votingPower.add(releaseVotingPower);
 
-  const [proposals, refetchProposals] = useAsyncState<Array<Proposal>>(
-    [],
-    (async () => {
-      if (!address) {
-        return [];
-      }
-      return await romulusKit
-        ?.proposals(address)
-        .then((proposals) => proposals.slice(1));
-    })(),
-    [romulusKit, address]
-  );
-  const [hasReleaseToken] = useAsyncState<boolean>(
-    false,
-    romulusKit?.hasReleaseToken(),
-    [romulusKit]
-  );
-  const [{ totalVotes }, refetchVotes] = useAsyncState(
-    { tokenVotes: toBN(0), releaseTokenVotes: toBN(0), totalVotes: toBN(0) },
-    (async () => {
-      if (!address) {
-        return {
-          tokenVotes: toBN(0),
-          releaseTokenVotes: toBN(0),
-          totalVotes: toBN(0),
-        };
-      }
-      return await romulusKit?.votingPower(address);
-    })(),
-    [romulusKit, address]
-  );
-  const [{ tokenBalance, releaseTokenBalance }] = useAsyncState(
-    {
-      tokenBalance: toBN(0),
-      releaseTokenBalance: toBN(0),
-      totalBalance: toBN(0),
-    },
-    (async () => {
-      if (!address) {
-        return {
-          tokenBalance: toBN(0),
-          releaseTokenBalance: toBN(0),
-          totalBalance: toBN(0),
-        };
-      }
-      return await romulusKit?.tokenBalance(address);
-    })(),
-    [romulusKit, address]
-  );
-  const [{ tokenSymbol, releaseTokenSymbol }] = useAsyncState(
-    {
-      tokenSymbol: "",
-      releaseTokenSymbol: "",
-    },
-    romulusKit?.tokenSymbol(),
-    [romulusKit, address]
-  );
-  const [{ tokenDelegate, releaseTokenDelegate }, refetchDelegates] =
-    useAsyncState(
-      {
-        tokenDelegate: ZERO_ADDRESS,
-        releaseTokenDelegate: ZERO_ADDRESS,
-      },
-      (async () => {
-        if (!address) {
-          return {
-            tokenDelegate: ZERO_ADDRESS,
-            releaseTokenDelegate: ZERO_ADDRESS,
-          };
-        }
-        return await romulusKit?.currentDelegate(address);
-      })(),
-      [romulusKit, address]
-    );
   const {
     delegateModal: tokenDelegateModal,
     openModal: openTokenDelegateModal,
   } = useDelegateModal(async (delegate) => {
-    await performActions(async (connectedKit) => {
-      const romulusKit = new RomulusKit(
-        connectedKit,
-        romulusAddress?.toString()
-      );
-      try {
-        const txo = await romulusKit.delegateToken(delegate);
-        const tx = await txo.send({
-          from: connectedKit.defaultAccount,
-          gasPrice: toWei("0.1", "gwei"),
-        });
-        await tx.waitReceipt();
-        refetchVotes();
-        refetchDelegates();
-      } catch (e) {
-        alert(e);
+    try {
+      if (!romulusAddress) {
+        console.warn("No romulus address");
+        return;
       }
-    });
+      const signer = await getConnectedSigner();
+      const romulus = RomulusDelegate__factory.connect(
+        romulusAddress as string,
+        provider
+      );
+      const token = PoofToken__factory.connect(await romulus.token(), signer);
+      await token.delegate(delegate);
+    } catch (e) {
+      alert(e);
+    } finally {
+      refetchVotingTokens();
+      refetchRomulus();
+    }
   });
 
   const {
     delegateModal: releaseTokenDelegateModal,
     openModal: openReleaseTokenDelegateModal,
   } = useDelegateModal(async (delegate) => {
-    await performActions(async (connectedKit) => {
-      const romulusKit = new RomulusKit(
-        connectedKit,
-        romulusAddress?.toString()
-      );
-      try {
-        const txo = await romulusKit.delegateReleaseToken(delegate);
-        if (!txo) {
-          alert("Error delegating release token");
-          return;
-        }
-        const tx = await txo.send({
-          from: connectedKit.defaultAccount,
-          gasPrice: toWei("0.1", "gwei"),
-        });
-        await tx?.waitReceipt();
-        refetchVotes();
-        refetchDelegates();
-      } catch (e) {
-        alert(e);
+    try {
+      if (!romulusAddress) {
+        console.warn("No romulus address");
+        return;
       }
-    });
+      const signer = await getConnectedSigner();
+      const romulus = RomulusDelegate__factory.connect(
+        romulusAddress as string,
+        provider
+      );
+      const token = PoofToken__factory.connect(
+        await romulus.releaseToken(),
+        signer
+      );
+      await token.delegate(delegate);
+    } catch (e) {
+      alert(e);
+    } finally {
+      refetchVotingTokens();
+      refetchRomulus();
+    }
   });
 
   return (
@@ -158,7 +111,9 @@ const RomulusIndexPage: React.FC = () => {
         </Box>
         <Box mb={4}>
           <Box style={{ textAlign: "center" }} mb="lg">
-            <Heading as="h1">{humanFriendlyWei(totalVotes)}</Heading>
+            <Heading as="h1">
+              {humanFriendlyWei(totalVotingPower.toString())}
+            </Heading>
             <Text>Voting Power</Text>
           </Box>
           <Box my="md">
@@ -170,7 +125,7 @@ const RomulusIndexPage: React.FC = () => {
             <Box mb={2}>
               <Text>Token balance: </Text>
               <Text sx={{ fontWeight: "display" }}>
-                {humanFriendlyWei(tokenBalance)} {tokenSymbol}
+                {humanFriendlyWei(balance.toString())} {tokenSymbol}
               </Text>{" "}
             </Box>
             <Flex sx={{ alignItems: "center" }}>
@@ -189,14 +144,15 @@ const RomulusIndexPage: React.FC = () => {
               </Button>
             </Flex>
           </Box>
-          {hasReleaseToken && releaseTokenBalance.gt(toBN(0)) && (
+          {hasReleaseToken && releaseBalance.gt(BIG_ZERO) && (
             <Box
               sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}
             >
               <Box mb={2}>
                 <Text>Release token balance: </Text>
                 <Text sx={{ fontWeight: "display" }}>
-                  {humanFriendlyWei(releaseTokenBalance)} {releaseTokenSymbol}
+                  {humanFriendlyWei(releaseBalance.toString())}{" "}
+                  {releaseTokenSymbol}
                 </Text>
               </Box>
               <Flex sx={{ alignItems: "center" }}>
@@ -217,6 +173,29 @@ const RomulusIndexPage: React.FC = () => {
             </Box>
           )}
         </Box>
+        <Box>
+          <Heading as="h2" mb={3}>
+            Top delegates
+          </Heading>
+          <Grid columns={[3, "auto auto 1fr"]} mb={4}>
+            {topDelegates.map((delegate, idx) => {
+              return (
+                <React.Fragment key={idx}>
+                  <Text mr={2}>
+                    {idx + 1}. <Address value={delegate[0]} />
+                  </Text>
+                  <Box sx={{ textAlign: "right" }}>
+                    <Text sx={{ fontWeight: "bold", mr: 2 }}>
+                      {Number(fromWei(delegate[1].toString())).toLocaleString()}
+                    </Text>
+                    <Text>Voting power</Text>
+                  </Box>
+                  <Box />
+                </React.Fragment>
+              );
+            })}
+          </Grid>
+        </Box>
         <Box
           mb={4}
           style={{ display: "flex", justifyContent: "space-between" }}
@@ -230,21 +209,21 @@ const RomulusIndexPage: React.FC = () => {
                   .catch(console.error);
               }
             }}
-            disabled={totalVotes.lt(toBN(toWei("1000000")))} // TODO: Hardcode
+            disabled={totalVotingPower.lt(BigNumber.from(toWei("1000000")))} // TODO: Hardcode
           >
             Create Proposal
           </Button>
         </Box>
         <Box pb={6}>
-          {proposals.length > 0 ? (
-            proposals.map((proposal, idx) => (
-              <Box key={idx} mt={3}>
-                <ProposalCard
-                  proposal={proposal}
-                  refetchProposals={refetchProposals}
-                />
-              </Box>
-            ))
+          {proposals.length > 1 ? (
+            proposals
+              .slice(1)
+              .reverse()
+              .map((proposalEvent, idx) => (
+                <Box key={idx} mt={3}>
+                  <ProposalCard proposalEvent={proposalEvent} />
+                </Box>
+              ))
           ) : (
             <Box style={{ textAlign: "center" }}>
               <Text>There are currently no proposals.</Text>

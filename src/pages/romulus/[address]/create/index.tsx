@@ -1,13 +1,12 @@
-import { useContractKit } from "@celo-tools/use-contractkit";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
-import { RomulusKit } from "romulus-kit/dist/src/kit";
 import { Box, Button, Card, Flex, Heading, Text, Textarea } from "theme-ui";
-import { toWei } from "web3-utils";
 
 import { useAddCommandModal } from "../../../../components/pages/romulus/addCommandModal";
 import { governanceLookup } from "../..";
 import { BytesLike } from "ethers";
+import { RomulusDelegate__factory } from "../../../../generated";
+import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -20,7 +19,7 @@ const RomulusIndexPage: React.FC = () => {
   const governanceName = romulusAddress
     ? governanceLookup[romulusAddress.toString()]
     : "Unknown";
-  const { performActions } = useContractKit();
+  const getConnectedSigner = useGetConnectedSigner();
   const [targets, setTargets] = React.useState<string[]>([]);
   const [values, setValues] = React.useState<(number | string)[]>([]);
   const [signatures, setSignatures] = React.useState<string[]>([]);
@@ -41,24 +40,27 @@ const RomulusIndexPage: React.FC = () => {
   }
 
   const onCreateClick = async () => {
-    await performActions(async (connectedKit) => {
-      const romulusKit = new RomulusKit(
-        connectedKit,
-        romulusAddress.toString()
-      );
-      try {
-        const tx = await romulusKit
-          ?.propose(targets, values, signatures, calldatas as any, description) // TODO: Hardcoded type
-          ?.send({
-            from: connectedKit.defaultAccount,
-            gasPrice: toWei("0.1", "gwei"),
-          });
-        await tx?.waitReceipt();
-        goBack();
-      } catch (e) {
-        alert(e);
+    try {
+      if (!romulusAddress) {
+        console.warn("No romulus address");
+        return;
       }
-    });
+      const signer = await getConnectedSigner();
+      const romulus = RomulusDelegate__factory.connect(
+        romulusAddress as string,
+        signer
+      );
+      await romulus.propose(
+        targets,
+        values,
+        signatures,
+        calldatas,
+        description
+      );
+      goBack();
+    } catch (e) {
+      alert(e);
+    }
   };
 
   return (
