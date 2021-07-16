@@ -136,7 +136,7 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
   if (proposalEvent.args.startBlock.gt(latestBlockNumber)) {
     voteContent = <Text>Voting has not started yet.</Text>;
   } else if (votingPower.add(releaseVotingPower).lte(BIG_ZERO)) {
-    voteContent = <Text>You have no voting power for this proposalEvent.</Text>;
+    voteContent = <Text>You have no voting power for this proposal.</Text>;
   } else if (vote) {
     let supportText = <></>;
     if (vote.args.support === Support.FOR) {
