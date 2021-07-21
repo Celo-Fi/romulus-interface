@@ -12,7 +12,8 @@ type Governance = {
 const governances: Governance[] = [
   {
     name: "Poof.cash",
-    address: "0x1fDf21dac8424cfd8FDB5706824a62CE980fd8a2",
+    // TODO: undo
+    address: "0x125A2e7C1DBAC09740cA2D38d6972fBd6DA5ba69",
     icon: "/assets/asset_POOF.png",
   },
   {
