@@ -67,7 +67,7 @@ export const useTopDelegates = (
       .filter((v) => !v[1].eq(BIG_ZERO))
       .sort((a: any, b: any) => b[1].sub(a[1]))
       .slice(0, numDelegates);
-  }, []);
+  }, [romulusAddress, provider]);
 
   return useAsyncState([], eventsCall);
 };
