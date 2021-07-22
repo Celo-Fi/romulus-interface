@@ -43,6 +43,6 @@ export const useVotingTokens = (
       );
     }
     return { balance, releaseBalance, votingPower, releaseVotingPower };
-  }, [romulusAddress, provider, address]);
+  }, [romulusAddress, provider, address, latestBlockNumber]);
   return useAsyncState(initialVotingTokens, votingPowerCallback);
 };
