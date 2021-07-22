@@ -24,6 +24,7 @@ import {
   RomulusDelegate__factory,
 } from "../../../generated";
 import { Address } from "../../../components/common/Address";
+import { useLatestBlockNumber } from "../../../hooks/useLatestBlockNumber";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -46,10 +47,15 @@ const RomulusIndexPage: React.FC = () => {
     ],
     refetchRomulus,
   ] = useRomulus((romulusAddress as string) || "");
+  const [latestBlockNumber] = useLatestBlockNumber();
   const [
     { balance, releaseBalance, votingPower, releaseVotingPower },
     refetchVotingTokens,
-  ] = useVotingTokens((romulusAddress as string) || "", address);
+  ] = useVotingTokens(
+    (romulusAddress as string) || "",
+    address,
+    latestBlockNumber
+  );
   const totalVotingPower = votingPower.add(releaseVotingPower);
 
   const {

@@ -57,7 +57,8 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
   );
   const [{ votingPower, releaseVotingPower }] = useVotingTokens(
     (romulusAddress as string) || "",
-    address
+    address,
+    proposalEvent.args.startBlock
   );
   const [voteCasts] = useVoteCasts((romulusAddress as string) || "");
   const vote = voteCasts[proposalEvent.args.id.toString()];
