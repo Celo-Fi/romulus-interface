@@ -44,6 +44,8 @@ const RomulusIndexPage: React.FC = () => {
       releaseTokenSymbol,
       tokenDelegate,
       releaseTokenDelegate,
+      quorumVotes,
+      proposalThreshold,
     ],
     refetchRomulus,
   ] = useRomulus((romulusAddress as string) || "");
@@ -124,7 +126,7 @@ const RomulusIndexPage: React.FC = () => {
           </Box>
           <Box my="md">
             <Heading as="h2" mb={3}>
-              Details
+              User details
             </Heading>
           </Box>
           <Box sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}>
@@ -149,6 +151,25 @@ const RomulusIndexPage: React.FC = () => {
                 change
               </Button>
             </Flex>
+          </Box>
+          <Box my="md">
+            <Heading as="h2" mb={3}>
+              Governance details
+            </Heading>
+          </Box>
+          <Box sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}>
+            <Box mb={2}>
+              <Text>Quorum: </Text>
+              <Text sx={{ fontWeight: "display" }}>
+                {humanFriendlyWei(quorumVotes.toString())} {tokenSymbol}
+              </Text>{" "}
+            </Box>
+            <Box mb={2}>
+              <Text>Proposal threshold: </Text>
+              <Text sx={{ fontWeight: "display" }}>
+                {humanFriendlyWei(proposalThreshold.toString())} {tokenSymbol}
+              </Text>{" "}
+            </Box>
           </Box>
           {hasReleaseToken && releaseBalance.gt(BIG_ZERO) && (
             <Box
