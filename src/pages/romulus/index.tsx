@@ -17,7 +17,7 @@ const governances: Governance[] = [
   },
   {
     name: "Ubeswap",
-    address: "0xa54555d9c13294326452fd8dEaC4bF9334c7BaCb",
+    address: "0xa7581d8E26007f4D2374507736327f5b46Dd6bA8 ",
     icon: "/assets/asset_UBE.png",
   },
 ];
