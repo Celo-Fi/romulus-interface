@@ -31,16 +31,15 @@ export const useRomulus = (romulusAddress: Address) => {
   const { address } = useContractKit();
   const provider = useProvider();
   const romulusCalls = React.useCallback(async (): Promise<Romulus> => {
-    if (!address) {
-      return initialRomulus;
-    }
     const romulus = RomulusDelegate__factory.connect(
       romulusAddress as string,
       provider
     );
     const token = PoofToken__factory.connect(await romulus.token(), provider);
     const tokenSymbol = await token.symbol();
-    const tokenDelegate = await token.delegates(address);
+    const tokenDelegate = address
+      ? await token.delegates(address)
+      : ZERO_ADDRESS;
 
     let releaseTokenSymbol = "";
     let releaseTokenDelegate = "";
@@ -52,7 +51,9 @@ export const useRomulus = (romulusAddress: Address) => {
         provider
       );
       releaseTokenSymbol = await releaseToken.symbol();
-      releaseTokenDelegate = await releaseToken.delegates(address);
+      releaseTokenDelegate = address
+        ? await releaseToken.delegates(address)
+        : ZERO_ADDRESS;
     }
 
     const quorumVotes = await romulus.quorumVotes();
