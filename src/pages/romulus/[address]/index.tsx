@@ -2,7 +2,6 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { Box, Button, Flex, Grid, Heading, Text } from "theme-ui";
-import { toWei, fromWei } from "web3-utils";
 
 import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
 import { ProposalCard } from "../../../components/pages/romulus/ProposalCard";
@@ -23,8 +22,8 @@ import {
   PoofToken__factory,
   RomulusDelegate__factory,
 } from "../../../generated";
-import { Address } from "../../../components/common/Address";
 import { useLatestBlockNumber } from "../../../hooks/useLatestBlockNumber";
+import { TopDelegates } from "../../../components/pages/romulus/TopDelegates";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -35,7 +34,6 @@ const RomulusIndexPage: React.FC = () => {
     ? governanceLookup[romulusAddress.toString()]
     : "Unknown";
   const { address } = useContractKit();
-  const [topDelegates] = useTopDelegates((romulusAddress as string) || "", 5);
   const [proposals] = useProposals((romulusAddress as string) || "");
   const [
     [
@@ -204,24 +202,7 @@ const RomulusIndexPage: React.FC = () => {
           <Heading as="h2" mb={3}>
             Top delegates
           </Heading>
-          <Grid columns={[3, "auto auto 1fr"]} mb={4}>
-            {topDelegates.map((delegate, idx) => {
-              return (
-                <React.Fragment key={idx}>
-                  <Text mr={2}>
-                    {idx + 1}. <Address value={delegate[0]} />
-                  </Text>
-                  <Box sx={{ textAlign: "right" }}>
-                    <Text sx={{ fontWeight: "bold", mr: 2 }}>
-                      {Number(fromWei(delegate[1].toString())).toLocaleString()}
-                    </Text>
-                    <Text>Voting power</Text>
-                  </Box>
-                  <Box />
-                </React.Fragment>
-              );
-            })}
-          </Grid>
+          <TopDelegates romulusAddress={romulusAddress as string} />
         </Box>
         <Box
           mb={4}
