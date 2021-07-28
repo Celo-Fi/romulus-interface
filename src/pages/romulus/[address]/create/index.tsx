@@ -102,7 +102,9 @@ const RomulusIndexPage: React.FC = () => {
             <Button mr={2} variant="outline" onClick={() => goBack()}>
               Back
             </Button>
-            <Button onClick={onCreateClick}>Create</Button>
+            <Button disabled={targets.length === 0} onClick={onCreateClick}>
+              Create
+            </Button>
           </Flex>
         </Box>
       </Box>
