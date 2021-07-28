@@ -56,6 +56,8 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
     proposalEvent.args.id
   );
 
+  console.log(proposalEvent.args.description);
+
   const onCancelClick = React.useCallback(async () => {
     if (!romulusAddress) {
       return;
@@ -156,7 +158,9 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
 
   let voteContent;
 
-  if (proposalEvent.args.startBlock.gt(latestBlockNumber)) {
+  if (proposalState === ProposalState.CANCELED) {
+    voteContent = <Text>Proposal has been canceled.</Text>;
+  } else if (proposalEvent.args.startBlock.gt(latestBlockNumber)) {
     voteContent = <Text>Voting has not started yet.</Text>;
   } else if (votingPower.add(releaseVotingPower).lte(BIG_ZERO)) {
     voteContent = <Text>You have no voting power for this proposal.</Text>;
@@ -220,27 +224,27 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
           <u>X Cancel</u>
         </Text>
       </Flex>
-      <Box>
+      <Box mb={1}>
         <Text mr={2}>Proposed by:</Text>
         <Text sx={{ fontWeight: "display" }}>
           {proposalEvent.args.proposer}
         </Text>
       </Box>
       {timeText && (
-        <Box>
+        <Box mb={1}>
           <Text mr={2}>Status:</Text>
           <Text sx={{ fontWeight: "display" }}>{timeText}</Text>
         </Box>
       )}
       {proposal && (
         <>
-          <Box>
+          <Box mb={1}>
             <Text mr={2}>For votes:</Text>
             <Text sx={{ fontWeight: "display" }}>
               {humanFriendlyWei(proposal?.forVotes.toString())}
             </Text>
           </Box>
-          <Box>
+          <Box mb={1}>
             <Text mr={2}>Against votes: </Text>
             <Text sx={{ fontWeight: "display" }}>
               {humanFriendlyWei(proposal?.againstVotes.toString())}
@@ -248,12 +252,16 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
           </Box>
         </>
       )}
-      <Box>
+      <Box mb={1}>
         <Text mr={2}>Description:</Text>
         <Text>
           {proposalEvent.args.description === ""
             ? "No description."
-            : proposalEvent.args.description}
+            : proposalEvent.args.description.split("\n").map((line, idx) => (
+                <Text sx={{ display: "block" }} key={idx}>
+                  {line}
+                </Text>
+              ))}
         </Text>
       </Box>
       <Flex sx={{ justifyContent: "center" }} mt={4}>
