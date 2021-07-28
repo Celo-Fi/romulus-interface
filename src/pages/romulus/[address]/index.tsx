@@ -236,7 +236,7 @@ const RomulusIndexPage: React.FC = () => {
                   .catch(console.error);
               }
             }}
-            disabled={totalVotingPower.lt(BigNumber.from(toWei("1000000")))} // TODO: Hardcode
+            disabled={totalVotingPower.lt(BigNumber.from(proposalThreshold))}
           >
             Create Proposal
           </Button>
