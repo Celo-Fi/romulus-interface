@@ -55,6 +55,28 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
     (romulusAddress as string) || "",
     proposalEvent.args.id
   );
+
+  const onCancelClick = React.useCallback(async () => {
+    if (!romulusAddress) {
+      return;
+    }
+    const signer = await getConnectedSigner();
+    if (!signer) {
+      throw new Error("no signer");
+    }
+    const romulus = RomulusDelegate__factory.connect(
+      romulusAddress as string,
+      signer
+    );
+    try {
+      await romulus.cancel(proposalEvent.args.id);
+    } catch (e) {
+      console.warn(e);
+      alert(e);
+    }
+    refetchProposal();
+  }, []);
+
   const [{ votingPower, releaseVotingPower }] = useVotingTokens(
     (romulusAddress as string) || "",
     address,
@@ -190,9 +212,14 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
 
   return (
     <Card>
-      <Heading>
-        Proposal #{proposalEvent.args.id.toString()} ({stateStr})
-      </Heading>{" "}
+      <Flex sx={{ justifyContent: "space-between" }}>
+        <Heading>
+          Proposal #{proposalEvent.args.id.toString()} ({stateStr})
+        </Heading>
+        <Text sx={{ cursor: "pointer" }} onClick={onCancelClick}>
+          <u>X Cancel</u>
+        </Text>
+      </Flex>
       <Box>
         <Text mr={2}>Proposed by:</Text>
         <Text sx={{ fontWeight: "display" }}>
