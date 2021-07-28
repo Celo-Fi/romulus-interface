@@ -1,7 +1,7 @@
 import { Fragment, getAddress, Interface } from "ethers/lib/utils";
 import { useEffect, useState } from "react";
 
-import { knownABIs } from "../components/common/FunctionCall/knownABIs";
+import { knownABIUrls } from "../components/common/FunctionCall/knownABIs";
 
 export const useAbi = (address: string): Interface | null => {
   const [abi, setAbi] = useState<Interface | null>(null);
@@ -11,7 +11,7 @@ export const useAbi = (address: string): Interface | null => {
       if (!address) {
         return;
       }
-      const abiURL = knownABIs[getAddress(address)];
+      const abiURL = knownABIUrls[getAddress(address)];
       if (!abiURL) {
         return;
       }

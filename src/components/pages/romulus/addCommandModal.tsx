@@ -1,7 +1,7 @@
-import { BytesLike, ethers } from "ethers";
+import { BytesLike } from "ethers";
 import React from "react";
 import Modal from "react-modal";
-import { Box, Button, Flex, Heading, Input, Text } from "theme-ui";
+import { Box, Heading } from "theme-ui";
 import { TransactionBuilder } from "../../common/TransactionBuilder";
 
 interface IProps {
