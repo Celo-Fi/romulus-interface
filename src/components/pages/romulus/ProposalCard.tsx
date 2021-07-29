@@ -187,8 +187,7 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
     }
     voteContent = (
       <Text>
-        You made {humanFriendlyWei(fromWei(vote.args.votes.toString()))}{" "}
-        {supportText}.
+        You made {humanFriendlyWei(vote.args.votes.toString())} {supportText}.
       </Text>
     );
   } else if (proposalEvent.args.endBlock.lt(latestBlockNumber)) {
