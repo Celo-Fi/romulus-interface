@@ -4,9 +4,10 @@ import { Link } from "theme-ui";
 
 interface IProps {
   value: string | null;
+  truncate?: boolean;
 }
 
-export const Address: React.FC<IProps> = ({ value }: IProps) => {
+export const Address: React.FC<IProps> = ({ value, truncate }: IProps) => {
   if (!value) {
     return <>--</>;
   }
@@ -18,7 +19,9 @@ export const Address: React.FC<IProps> = ({ value }: IProps) => {
       rel="noopener noreferrer"
       style={{ textDecoration: "none" }}
     >
-      {fmt}
+      {truncate
+        ? `${fmt.slice(0, 6)}...${fmt.slice(fmt.length - 5, fmt.length)}`
+        : fmt}
     </Link>
   );
 };

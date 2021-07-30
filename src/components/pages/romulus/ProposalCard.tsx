@@ -5,7 +5,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { Box, Button, Card, Flex, Heading, Text } from "theme-ui";
-import { fromWei } from "web3-utils";
+import { Address } from "../../../components/common/Address";
 import { RomulusDelegate__factory } from "../../../generated";
 import { TypedEvent } from "../../../generated/commons";
 import { useVoteCasts } from "../../../hooks/romulus/useVoteCasts";
@@ -224,7 +224,7 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
       <Box mb={1}>
         <Text mr={2}>Proposed by:</Text>
         <Text sx={{ fontWeight: "display" }}>
-          {proposalEvent.args.proposer}
+          <Address value={proposalEvent.args.proposer} truncate />
         </Text>
       </Box>
       {timeText && (
@@ -255,7 +255,10 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
           {proposalEvent.args.description === ""
             ? "No description."
             : proposalEvent.args.description.split("\n").map((line, idx) => (
-                <Text sx={{ display: "block" }} key={idx}>
+                <Text
+                  sx={{ display: "block", overflowWrap: "anywhere" }}
+                  key={idx}
+                >
                   {line}
                 </Text>
               ))}
