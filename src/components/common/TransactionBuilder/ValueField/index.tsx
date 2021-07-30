@@ -16,19 +16,6 @@ export const ValueField = <T extends unknown>({
   value,
   onChange,
 }: Props<T>): React.ReactElement => {
-  if (param.components !== null) {
-    const tupleValue =
-      (value as readonly unknown[]) ??
-      Array(param.components.length).fill(null);
-    return (
-      <ParamsForm
-        params={param.components}
-        values={tupleValue}
-        onChange={onChange as (data: readonly unknown[]) => void}
-      />
-    );
-  }
-
   if (param.arrayChildren !== null) {
     const arrayValue =
       (value as readonly unknown[]) ??
@@ -38,6 +25,19 @@ export const ValueField = <T extends unknown>({
         arrayLength={param.arrayLength}
         arrayChildren={param.arrayChildren}
         values={arrayValue}
+        onChange={onChange as (data: readonly unknown[]) => void}
+      />
+    );
+  }
+
+  if (param.components !== null) {
+    const tupleValue =
+      (value as readonly unknown[]) ??
+      Array(param.components.length).fill(null);
+    return (
+      <ParamsForm
+        params={param.components}
+        values={tupleValue}
         onChange={onChange as (data: readonly unknown[]) => void}
       />
     );
