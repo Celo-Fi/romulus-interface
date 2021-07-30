@@ -8,7 +8,6 @@ import { ProposalCard } from "../../../components/pages/romulus/ProposalCard";
 import { humanFriendlyWei } from "../../../util/number";
 import { governanceLookup } from "..";
 import { truncateAddress } from "../../../components/layouts/MainLayout/Header";
-import { useTopDelegates } from "../../../hooks/romulus/useTopDelegates";
 import { useProposals } from "../../../hooks/romulus/useProposals";
 import { BIG_ZERO } from "../../../util/constants";
 import { useRomulus } from "../../../hooks/romulus/useRomulus";

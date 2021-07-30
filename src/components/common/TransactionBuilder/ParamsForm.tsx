@@ -18,7 +18,6 @@ export const ParamsForm = <T extends readonly unknown[]>({
   values,
   onChange,
 }: Props<T>): React.ReactElement => {
-  console.log(params);
   return (
     <Grid>
       {params.map((param, i) => {

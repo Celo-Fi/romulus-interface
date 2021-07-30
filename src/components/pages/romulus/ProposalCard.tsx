@@ -56,8 +56,6 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
     proposalEvent.args.id
   );
 
-  console.log(proposalEvent.args.description);
-
   const onCancelClick = React.useCallback(async () => {
     if (!romulusAddress) {
       return;
