@@ -58,18 +58,20 @@ export const ArrayInput = <T extends readonly unknown[]>({
 
   return (
     <Wrapper>
-      {Array(arrayLength).map((_, i) => (
-        <ValueField
-          key={i}
-          param={arrayChildren}
-          value={values[i]}
-          onChange={(newV) => {
-            const copy = [...values];
-            copy[i] = newV;
-            onChange(copy as unknown as T);
-          }}
-        />
-      ))}
+      {Array(arrayLength)
+        .fill(null)
+        .map((_, i) => (
+          <ValueField
+            key={i}
+            param={arrayChildren}
+            value={values[i]}
+            onChange={(newV) => {
+              const copy = [...values];
+              copy[i] = newV;
+              onChange(copy as unknown as T);
+            }}
+          />
+        ))}
     </Wrapper>
   );
 };
