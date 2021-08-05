@@ -11,8 +11,7 @@ import Link from "next/link";
 import React from "react";
 import { Box, Button, Container, Flex, Select, Text } from "theme-ui";
 
-const truncateAddress = (addr: string) =>
-  addr.slice(0, 6) + "..." + addr.slice(addr.length - 4);
+import { truncateAddress } from "../../../util/address";
 
 const NETWORKS = [Mainnet, Alfajores, Baklava];
 
@@ -90,7 +89,7 @@ export const Header: React.FC = () => {
               <ClickableText
                 color="secondary"
                 onClick={() => {
-                  destroy();
+                  void destroy();
                 }}
               >
                 (disconnect)

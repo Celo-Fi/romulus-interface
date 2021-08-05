@@ -11,7 +11,7 @@ export const UbeswapAdmin: React.FC = () => {
     <div
       css={css`
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 100%;
         grid-gap: 12px;
       `}
     >

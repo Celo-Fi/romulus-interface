@@ -10,8 +10,7 @@ import {
 } from "../../../../hooks/useProviderOrSigner";
 import { Address } from "../../../common/Address";
 import { TransactionHash } from "../../../common/blockchain/TransactionHash";
-
-const MINING_RELEASE_ESCROW = "0x9d0a92AA8832518328D14Ed5930eC6B44448165e";
+import { MINING_RELEASE_ESCROW } from "./config";
 
 export const RefreshPools: React.FC = () => {
   const provider = useProvider();
