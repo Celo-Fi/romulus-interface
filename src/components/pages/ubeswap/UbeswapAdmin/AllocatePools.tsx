@@ -48,6 +48,8 @@ export const AllocatePools: React.FC = () => {
   const { poolManager } = usePoolManager();
   const [tx, setTx] = useState<ContractTransaction | null>(null);
 
+  const weightSum = POOL_WEIGHTS.reduce((acc, { weight }) => acc + weight, 0);
+
   return (
     <Card p={4}>
       <Heading as="h2" pb={2}>
@@ -61,6 +63,7 @@ export const AllocatePools: React.FC = () => {
             <th>Pool Name</th>
             <th>LP token address</th>
             <th>Weight</th>
+            <th>Rate</th>
           </tr>
         </thead>
         <tbody>
@@ -71,6 +74,7 @@ export const AllocatePools: React.FC = () => {
                 <Address value={address} />
               </td>
               <td>{weight}</td>
+              <td>{((weight * 654_005) / weightSum).toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
