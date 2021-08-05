@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
 import React from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 import { FunctionCall } from "../../../common/FunctionCall";
 import { Submission } from ".";
+import { Card, Link, Text } from "theme-ui";
 
 interface Props {
   submission: Submission;
@@ -11,39 +11,20 @@ interface Props {
 
 export const SubmissionCard: React.FC<Props> = ({ submission }: Props) => {
   return (
-    <Wrapper>
-      <Title>
-        <ID>{submission.id}</ID>
-        <a
-          href={`https://alfajores-blockscout.celo-testnet.org/tx/${submission.submissionHash}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <FaExternalLinkAlt />
-        </a>
-      </Title>
+    <Card>
+      <Text mr={2}>{submission.id}</Text>
+      <Link
+        href={`https://explorer.celo.org/tx/${submission.submissionHash}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <FaExternalLinkAlt />
+      </Link>
       <FunctionCall
         address={submission.destination}
         data={submission.data}
         value={submission.value}
       />
-    </Wrapper>
+    </Card>
   );
 };
-
-const ID = styled.span`
-  font-weight: 600;
-  color: blue;
-`;
-
-const Title = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Wrapper = styled.div`
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  padding: 16px;
-`;

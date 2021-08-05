@@ -1,5 +1,6 @@
-import styled from "@emotion/styled";
 import { FunctionFragment } from "ethers/lib/utils";
+import React from "react";
+import { Box, Text } from "theme-ui";
 
 interface Props {
   callee?: string;
@@ -18,26 +19,30 @@ export const FunctionWithArgs = ({
   args,
 }: Props): React.ReactElement => {
   if (!args || args.length === 0) {
-    return <Wrapper>{frag.name}()</Wrapper>;
+    return (
+      <Box>
+        <Text>{frag.name}()</Text>
+      </Box>
+    );
   }
   return (
-    <Wrapper>
-      {callee ? callee + "." : ""}
-      {frag.name}(
+    <Box>
+      <Text>
+        {callee ? callee + "." : ""}
+        {frag.name}(
+      </Text>
       <br />
       {frag.inputs.map((input, i) => (
-        <Param key={i}>
+        <Text key={i}>
           {input.format("full")} {renderValue(args[i])}
           {i !== frag.inputs.length - 1 ? ", " : ""}
           <br />
-        </Param>
+        </Text>
       ))}
-      )
-    </Wrapper>
+      <Text>)</Text>
+    </Box>
   );
 };
-
-const Wrapper = styled.div``;
 
 const renderValue = (value: unknown): React.ReactNode => {
   if (
@@ -45,7 +50,7 @@ const renderValue = (value: unknown): React.ReactNode => {
     value === null ||
     (Array.isArray(value) && value.length === 0)
   ) {
-    return <Empty>(EMPTY)</Empty>;
+    return <Text>(EMPTY)</Text>;
   }
 
   if (Array.isArray(value)) {
@@ -64,20 +69,8 @@ const renderValue = (value: unknown): React.ReactNode => {
   }
 
   if (typeof value === "string" || typeof value === "number") {
-    return <Arg>{value}</Arg>;
+    return <Text variant="highlight">{value}</Text>;
   }
 
-  return <Arg>{JSON.stringify(value)}</Arg>;
+  return <Text variant="highlight">{JSON.stringify(value)}</Text>;
 };
-
-const Param = styled.span`
-  margin-left: 8px;
-`;
-
-const Arg = styled.span`
-  color: blue;
-`;
-
-const Empty = styled.span`
-  color: #aaa;
-`;

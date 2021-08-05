@@ -8,7 +8,7 @@ import { Box, Button, Card, Grid, Heading, Text } from "theme-ui";
 import { Address } from "../../components/common/Address";
 import { TransactionHash } from "../../components/common/blockchain/TransactionHash";
 import { LinearReleaseToken__factory } from "../../generated/factories/LinearReleaseToken__factory";
-import { UbeToken__factory } from "../../generated/factories/UbeToken__factory";
+import { PoofToken__factory } from "../../generated/factories/PoofToken__factory";
 import {
   useLazyConnectedSigner,
   useProvider,
@@ -39,18 +39,20 @@ const PoofIndexPage: React.FC = () => {
   const [stats, setStats] = useState<IReleaseStats | null>(null);
 
   useEffect(() => {
-    const ube = UbeToken__factory.connect(POOF_ADDRESS, provider);
+    const ube = PoofToken__factory.connect(POOF_ADDRESS, provider);
     const releasePOOF = LinearReleaseToken__factory.connect(
       RELEASE_POOF_ADDRESS,
       provider
     );
     void (async () => {
-      setStats({
-        ubeBalance: await ube.balanceOf(address),
-        balance: await releasePOOF.balanceOf(address),
-        earned: await releasePOOF.earned(address),
-        claimed: await releasePOOF.totalClaimed(address),
-      });
+      if (address) {
+        setStats({
+          ubeBalance: await ube.balanceOf(address),
+          balance: await releasePOOF.balanceOf(address),
+          earned: await releasePOOF.earned(address),
+          claimed: await releasePOOF.totalClaimed(address),
+        });
+      }
     })();
   }, [address, provider]);
 

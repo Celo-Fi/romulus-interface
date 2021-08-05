@@ -53,6 +53,10 @@ export default {
       color: "primary",
       fontFamily: "Cinzel",
     },
+    highlight: {
+      variant: "text.default",
+      color: "primary",
+    },
   },
   buttons: {
     primary: {
@@ -60,11 +64,12 @@ export default {
         bg: "muted",
       },
       bg: "primary",
-      py: 3,
-      px: 4,
+      py: [2, 3],
+      px: [3, 4],
       cursor: "pointer",
     },
     outline: {
+      variant: "buttons.primary",
       cursor: "pointer",
       bg: "background",
       border: "1px solid",
@@ -186,6 +191,20 @@ export default {
     },
     ".selector,.attr-name,.string,.char,.builtin,.inserted": {
       color: "secondary",
+    },
+  },
+  forms: {
+    label: {
+      color: "text",
+    },
+    input: {
+      color: "text",
+    },
+    textarea: {
+      color: "text",
+    },
+    select: {
+      color: "text",
     },
   },
 };

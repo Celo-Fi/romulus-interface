@@ -109,7 +109,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
           name: "Celo",
           symbol: "CELO",
           userBalance:
-            address !== "" ? await provider.getBalance(address) : null,
+            address !== null ? await provider.getBalance(address) : null,
         });
       } else {
         const tokenRaw = ERC20__factory.connect(reserve, provider);
@@ -117,13 +117,13 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
           name: await tokenRaw.name(),
           symbol: await tokenRaw.symbol(),
           userBalance:
-            address !== "" ? await tokenRaw.balanceOf(address) : null,
+            address !== null ? await tokenRaw.balanceOf(address) : null,
         });
       }
       setPrice(await priceOracle.getAssetPrice(reserve));
       setConfig(await lendingPool.getReserveConfigurationData(reserve));
       setData(await lendingPool.getReserveData(reserve));
-      if (address !== "") {
+      if (address !== null) {
         setUserData(await lendingPool.getUserReserveData(reserve, address));
       }
     } catch (e) {
@@ -380,7 +380,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
                 signer
               );
               const amount = prompt("How much do you want to repay?");
-              if (amount) {
+              if (amount && address) {
                 const rawAmount = parseEther(amount);
                 alert(`Approving ${formatEther(rawAmount)}`);
                 await runTx(
