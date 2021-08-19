@@ -4,6 +4,7 @@ import React from "react";
 import { AllocatePools } from "./AllocatePools";
 import { RefreshPools } from "./RefreshPools";
 import { ReleaseUbe } from "./ReleaseUbe";
+import { SetOperator } from "./SetOperator";
 import { TransferOwnership } from "./TransferOwnership";
 
 export const UbeswapAdmin: React.FC = () => {
@@ -19,6 +20,7 @@ export const UbeswapAdmin: React.FC = () => {
       <RefreshPools />
       <TransferOwnership />
       <AllocatePools />
+      <SetOperator />
     </div>
   );
 };
