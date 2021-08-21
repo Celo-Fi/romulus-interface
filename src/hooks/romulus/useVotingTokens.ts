@@ -42,7 +42,15 @@ export const useVotingTokens = (
         blockNumber
       );
     }
-    return { balance, releaseBalance, votingPower, releaseVotingPower };
+    return {
+      address,
+      romulusAddress,
+      provider,
+      balance,
+      releaseBalance,
+      votingPower,
+      releaseVotingPower,
+    };
   }, [romulusAddress, provider, address, blockNumber]);
   return useAsyncState(initialVotingTokens, votingPowerCallback);
 };
