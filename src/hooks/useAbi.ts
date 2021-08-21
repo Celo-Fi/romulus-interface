@@ -1,7 +1,10 @@
 import { Fragment, getAddress, Interface } from "ethers/lib/utils";
 import { useEffect, useState } from "react";
 
-import { knownABIUrls } from "../components/common/FunctionCall/knownABIs";
+import {
+  knownABIs,
+  knownABIUrls,
+} from "../components/common/FunctionCall/knownABIs";
 
 export const useAbi = (address: string): Interface | null => {
   const [abi, setAbi] = useState<Interface | null>(null);
@@ -11,13 +14,16 @@ export const useAbi = (address: string): Interface | null => {
       if (!address) {
         return;
       }
-      const abiURL = knownABIUrls[getAddress(address)];
-      if (!abiURL) {
-        return;
+      const abi = knownABIs[getAddress(address)];
+      if (abi) {
+        setAbi(new Interface(abi));
       }
-      const result = await fetch(abiURL);
-      const json = (await result.json()) as readonly Fragment[];
-      setAbi(new Interface(json));
+      const abiURL = knownABIUrls[getAddress(address)];
+      if (abiURL) {
+        const result = await fetch(abiURL);
+        const json = (await result.json()) as readonly Fragment[];
+        setAbi(new Interface(json));
+      }
     })();
   }, [address]);
 
