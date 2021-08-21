@@ -3,6 +3,7 @@ import ReleasePOOFMetadata from "../../../abis/poof/ReleasePOOF.json";
 import TokenAllocatorMetadata from "../../../abis/poof/TokenAllocator.json";
 import MinerMetadata from "../../../abis/poof/Miner.json";
 import TornadoProxyMetadata from "../../../abis/poof/TornadoProxy.json";
+import TimelockAbi from "../../../abis/ITimelock.json";
 import ERC20Abi from "../../../abis/ERC20.json";
 
 const MULTISIG_ABI =
@@ -30,4 +31,6 @@ export const knownABIs: Record<string, Fragment[]> = {
     MinerMetadata.abi as unknown as Fragment[],
   "0xbF4cb62Ab7E6EfDd496142Ef26589dF06F1467bc":
     TornadoProxyMetadata.abi as unknown as Fragment[],
+  "0xAFB9EAa0A60b07AD29084055930D797D4Dc3E378":
+    TimelockAbi as unknown as Fragment[],
 };
