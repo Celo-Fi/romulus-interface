@@ -1,7 +1,7 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
-import { Box, Button, Flex, Grid, Heading, Text } from "theme-ui";
+import { Box, Button, Flex, Heading, Text } from "theme-ui";
 
 import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
 import { ProposalCard } from "../../../components/pages/romulus/ProposalCard";

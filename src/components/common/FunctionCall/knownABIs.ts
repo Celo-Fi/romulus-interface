@@ -1,6 +1,9 @@
 import { Fragment } from "ethers/lib/utils";
 import ReleasePOOFMetadata from "../../../abis/poof/ReleasePOOF.json";
 import TokenAllocatorMetadata from "../../../abis/poof/TokenAllocator.json";
+import MinerMetadata from "../../../abis/poof/Miner.json";
+import TornadoProxyMetadata from "../../../abis/poof/TornadoProxy.json";
+import ERC20Abi from "../../../abis/ERC20.json";
 
 const MULTISIG_ABI =
   "https://gist.githubusercontent.com/macalinao/265ef9f40d13b28a64e5ad19eec94f62/raw/4723e984481558895728542304a9727d85d9c259/multisig.json";
@@ -21,4 +24,10 @@ export const knownABIs: Record<string, Fragment[]> = {
     TokenAllocatorMetadata.abi as unknown as Fragment[],
   "0x06c2B37ef603F1f817F229112AAb2D57dF0091F9":
     TokenAllocatorMetadata.abi as unknown as Fragment[],
+  "0x00400FcbF0816bebB94654259de7273f4A05c762":
+    ERC20Abi as unknown as Fragment[],
+  "0x4415062d2AABDE111B2952d4428571bB289dD1Dc":
+    MinerMetadata.abi as unknown as Fragment[],
+  "0xbF4cb62Ab7E6EfDd496142Ef26589dF06F1467bc":
+    TornadoProxyMetadata.abi as unknown as Fragment[],
 };
