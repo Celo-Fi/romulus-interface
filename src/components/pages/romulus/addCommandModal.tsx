@@ -32,12 +32,7 @@ const AddCommandModal: React.FC<IProps> = ({
         </Heading>
         <TransactionBuilder
           onSubmit={async ({ call, data }) => {
-            onAddCommandClick(
-              call.target,
-              call.value.toString(),
-              call.signature,
-              data
-            );
+            onAddCommandClick(call.target, call.value.toString(), "", data);
             setIsOpen(false);
           }}
           onCancel={() => setIsOpen(false)}

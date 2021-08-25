@@ -25,13 +25,7 @@ export const TimelockQueueTransaction: React.FC<Props> = ({
             const signer = await getConnectedSigner();
             const tx = await timelock
               .connect(signer)
-              .queueTransaction(
-                call.target,
-                call.value,
-                call.signature,
-                data,
-                call.eta
-              );
+              .queueTransaction(call.target, call.value, "", data, call.eta);
             console.log("Queued", tx);
           }}
         />
