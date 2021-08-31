@@ -11,7 +11,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@celo-tools/use-contractkit": "^1.0.6",
+    "@celo-tools/use-contractkit": "^1.1.0",
     "@celo/contractkit": "^1.2.4",
     "@celo/contracts": "^0.0.8",
     "@emotion/react": "^11.1.5",
