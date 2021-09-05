@@ -36,9 +36,7 @@ export const MultisigAddTransaction: React.FC<Props> = ({
             const signer = await getConnectedSigner();
             const tx = await multisig
               .connect(signer)
-              .submitTransaction(call.target, call.value, data, {
-                gasLimit: 2e7,
-              });
+              .submitTransaction(call.target, call.value, data);
             console.log("Submit TX", tx);
           }}
         />
