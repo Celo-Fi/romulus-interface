@@ -45,10 +45,14 @@ import { POOL_WEIGHTS } from "./config";
 
 export const AllocatePools: React.FC = () => {
   const getConnectedSigner = useGetConnectedSigner();
-  const { poolManager } = usePoolManager();
+  const { poolManager, poolInfo } = usePoolManager();
   const [tx, setTx] = useState<ContractTransaction | null>(null);
 
   const weightSum = POOL_WEIGHTS.reduce((acc, { weight }) => acc + weight, 0);
+  const weightSumOnChain = Object.values(poolInfo).reduce(
+    (acc, { weight }) => acc + weight,
+    0
+  );
 
   return (
     <Card p={4}>
@@ -67,21 +71,61 @@ export const AllocatePools: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {POOL_WEIGHTS.map(({ name, address, weight }) => (
-            <tr key={address}>
-              <td>{name}</td>
-              <td>
-                <Address value={address} />
-              </td>
-              <td>{weight}</td>
-              <td>{((weight * 654_005) / weightSum).toLocaleString()}</td>
-            </tr>
-          ))}
+          {POOL_WEIGHTS.sort((a, b) => a.address.localeCompare(b.address))
+            .sort((a, b) => a.weight - b.weight)
+            .map(({ name, address, weight }) => (
+              <tr key={address}>
+                <td>{name}</td>
+                <td>
+                  <Address value={address} />
+                </td>
+                <td>{weight}</td>
+                <td>{((weight * 654_005) / weightSum).toLocaleString()}</td>
+              </tr>
+            ))}
         </tbody>
       </NextPoolWeights>
 
       <Text sx={{ display: "block", textAlign: "right" }} my={2}>
-        Total weight: {weightSum / 10_000}
+        Desired total weight: {weightSum / 10_000}
+      </Text>
+
+      <NextPoolWeights>
+        <thead>
+          <tr>
+            <th>Pool Name</th>
+            <th>LP token address</th>
+            <th>Weight</th>
+            <th>Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.values(poolInfo)
+            .sort((a, b) => a.stakingToken.localeCompare(b.stakingToken))
+            .sort((a, b) => a.weight - b.weight)
+            .map((info) => (
+              <tr key={info.stakingToken}>
+                <td>
+                  {POOL_WEIGHTS.find(
+                    (w) =>
+                      w.address.toLowerCase() ===
+                      info.stakingToken.toLowerCase()
+                  )?.name ?? "Inactive pool"}
+                </td>
+                <td>
+                  <Address value={info.stakingToken} />
+                </td>
+                <td>{info.weight}</td>
+                <td>
+                  {((info.weight * 654_005) / weightSum).toLocaleString()}
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </NextPoolWeights>
+
+      <Text sx={{ display: "block", textAlign: "right" }} my={2}>
+        On-chain total weight: {weightSumOnChain / 10_000}
       </Text>
 
       <Button
