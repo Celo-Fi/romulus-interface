@@ -1,5 +1,7 @@
 const WEIGHTS = [
-  ["UBE-CELO", 0.39],
+  ["cETH-mcUSD", 0], // REMOVE
+  ["mcUSD-cBTC", 0], // REMOVE
+  ["UBE-CELO", 0.37],
   ["POOF-UBE", 0.05],
   ["CELO-mcUSD", 0.12],
   ["CELO-mcEUR", 0.06],
@@ -12,12 +14,17 @@ const WEIGHTS = [
 
   ["WBTC-CELO", 0.09],
   ["WETH-CELO", 0.09],
-  ["DAI-CELO", 0.01],
-  ["USDC-CELO", 0.01],
-  ["USDT-CELO", 0.01],
+  ["DAI-CELO", 0.005],
+  ["USDC-CELO", 0.02],
+  ["USDT-CELO", 0.005],
+  ["UBE-SBR", 0.01],
+  ["SOL-CELO", 0.01],
 ] as const;
 
 const POOL_ADDRESSES = {
+  "cETH-mcUSD": "0xb5108b01280f994e67dc8bc3cd1e2433fa3a1b41",
+  "mcUSD-cBTC": "0x83CF02F79Be87A7402A3Cac013d0e1C95FeFcAba",
+
   "UBE-CELO": "0xe7b5ad135fa22678f426a381c7748f6a5f2c9e6c",
   "POOF-UBE": "0x573bcebd09ff805ed32df2cb1a968418dc74dcf7",
   "CELO-mcUSD": "0xf5b1bc6c9c180b64f5711567b1d6a51a350f8422",
@@ -33,6 +40,8 @@ const POOL_ADDRESSES = {
   "DAI-CELO": "0xe81e989deea15646c9305053b6adbe13b1446d71",
   "USDC-CELO": "0x684da04524b1a6baf99566d722de94ce989ea722",
   "USDT-CELO": "0x2967f068a981e597bedf3cf746fe7476bb6fcb90",
+  "UBE-SBR": "0x218aed024d51ecbd6a82d143be04cd25d563628e",
+  "SOL-CELO": "0x01522c42ca43d7bfd34f373d41ad7d90a95e714c",
 } as const;
 
 export const POOL_WEIGHTS: { name: string; address: string; weight: number }[] =

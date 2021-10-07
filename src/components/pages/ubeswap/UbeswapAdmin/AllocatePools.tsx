@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { ContractTransaction } from "ethers";
 import { getAddress } from "ethers/lib/utils";
 import React, { useState } from "react";
-import { Button, Card, Heading } from "theme-ui";
+import { Button, Card, Heading, Text } from "theme-ui";
 
 import { usePoolManager } from "../../../../hooks/usePoolManager";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
@@ -79,6 +79,10 @@ export const AllocatePools: React.FC = () => {
           ))}
         </tbody>
       </NextPoolWeights>
+
+      <Text sx={{ display: "block", textAlign: "right" }} my={2}>
+        Total weight: {weightSum / 10_000}
+      </Text>
 
       <Button
         onClick={async () => {
