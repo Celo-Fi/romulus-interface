@@ -46,7 +46,7 @@ export const D4P = () => {
     async (pool: Pool) => {
       const signer = await getConnectedSigner();
       await multisig
-        .connect(signer)
+        .connect(signer as any)
         .submitTransaction(
           "0x471ece3750da237f93b8e339c536989b8978a438",
           0,
@@ -59,7 +59,7 @@ export const D4P = () => {
     async (pool: Pool) => {
       const signer = await getConnectedSigner();
       await multisig
-        .connect(signer)
+        .connect(signer as any)
         .submitTransaction(calls[pool].farm, 0, calls[pool].notify);
     },
     [multisig, getConnectedSigner]
