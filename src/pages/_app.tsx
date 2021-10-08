@@ -19,6 +19,7 @@ const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
         name: "Romulus",
         description: "A governance management system",
         url: "https://romulus.page",
+        icon: "",
       }}
     >
       <ThemeProvider theme={theme}>
