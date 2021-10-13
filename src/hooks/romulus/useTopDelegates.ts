@@ -7,6 +7,7 @@ import { useProvider } from "../useProviderOrSigner";
 import { BIG_ZERO, ZERO_ADDRESS } from "../../util/constants";
 import { BigNumber } from "ethers";
 import { TypedEvent } from "../../generated/commons";
+import { getPastEvents } from "../../util/events";
 
 type DelegateChangeEvent = TypedEvent<
   [string, BigNumber, BigNumber] & {
@@ -25,10 +26,16 @@ export const useTopDelegates = (
     if (!romulusAddress) {
       return [];
     }
+    const latestBlockNumber = await provider.getBlockNumber();
     const romulus = RomulusDelegate__factory.connect(romulusAddress, provider);
     const token = PoofToken__factory.connect(await romulus.token(), provider);
     const filter = token.filters.DelegateVotesChanged(null, null, null);
-    const tokenEvents = await token.queryFilter(filter);
+    const tokenEvents = await getPastEvents<DelegateChangeEvent>(
+      token,
+      filter,
+      0,
+      latestBlockNumber
+    );
 
     const releaseTokenAddress = await romulus.releaseToken();
     let releaseTokenEvents: DelegateChangeEvent[] = [];
@@ -37,7 +44,12 @@ export const useTopDelegates = (
         await romulus.releaseToken(),
         provider
       );
-      releaseTokenEvents = await releaseToken.queryFilter(filter);
+      releaseTokenEvents = await getPastEvents<DelegateChangeEvent>(
+        releaseToken,
+        filter,
+        0,
+        latestBlockNumber
+      );
     }
     const delegateToPower: Record<string, BigNumber> = tokenEvents.reduce(
       (acc, event) => ({
