@@ -14,9 +14,9 @@ const WEIGHTS = [
 
   ["WBTC-CELO", 0.09],
   ["WETH-CELO", 0.09],
-  ["DAI-CELO", 0.005],
-  ["USDC-CELO", 0.02],
-  ["USDT-CELO", 0.005],
+  ["DAI-CELO", 0], // REMOVE
+  ["USDC-CELO", 0.03],
+  ["USDT-CELO", 0], // REMOVE
   ["UBE-SBR", 0.01],
   ["SOL-CELO", 0.01],
 ] as const;
