@@ -19,6 +19,7 @@ const WEIGHTS = [
   ["USDT-CELO", 0], // REMOVE
   ["UBE-SBR", 0.01],
   ["SOL-CELO", 0.01],
+  ["KNX-CELO", 0],
 ] as const;
 
 const POOL_ADDRESSES = {
@@ -42,6 +43,7 @@ const POOL_ADDRESSES = {
   "USDT-CELO": "0x2967f068a981e597bedf3cf746fe7476bb6fcb90",
   "UBE-SBR": "0x218aed024d51ecbd6a82d143be04cd25d563628e",
   "SOL-CELO": "0x01522c42ca43d7bfd34f373d41ad7d90a95e714c",
+  "KNX-CELO": "0x806e181798465edf56c66e29e2df01caf4013f76",
 } as const;
 
 export const POOL_WEIGHTS: { name: string; address: string; weight: number }[] =
