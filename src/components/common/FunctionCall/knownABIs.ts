@@ -59,6 +59,9 @@ export const KNOWN_ADDRESSES: Record<
     name: "Ubeswap Celo Reserve Timelock",
     abi: TimelockAbi as unknown as Fragment[],
   },
+  "0x489AAc7Cb9A3B233e4a289Ec92284C8d83d49c6f": {
+    name: "Ubeswap Founding Operator",
+  },
 };
 
 export const knownABIs: Record<string, Fragment[]> = {
