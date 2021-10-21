@@ -95,11 +95,12 @@ export const handleException = (
   console.error(captured);
   console.error(captured.originalError);
 
-  toast({
-    message: userMessage?.title ?? name ?? captured.message,
-    description: userMessage?.description,
-    type: "error",
-  });
+  toast(
+    <div>
+      <span>{userMessage?.title ?? name ?? captured.message}</span>
+      <p>{userMessage?.description ?? captured.message}</p>
+    </div>
+  );
 
   const sentryArgs: CaptureContext = {
     tags: {

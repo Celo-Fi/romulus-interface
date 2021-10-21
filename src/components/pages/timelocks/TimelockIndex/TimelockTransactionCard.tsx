@@ -33,6 +33,7 @@ export const TimelockTransactionCard: React.FC<Props> = ({
       <FunctionCall address={tx.target} data={tx.data} value={tx.value} />
       <p>{tx.signature}</p>
       <AsyncButton
+        errorTitle="Error executing Timelock transaction"
         onClick={async () => {
           const signer = await getConnectedSigner();
           const result = await timelock

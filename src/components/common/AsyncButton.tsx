@@ -4,10 +4,12 @@ import { handleException } from "../../util/handleException";
 
 interface Props extends ButtonProps {
   onClick?: () => Promise<void>;
+  errorTitle?: string;
 }
 
 export const AsyncButton: React.FC<Props> = ({
   onClick,
+  errorTitle,
   ...restProps
 }: Props) => {
   return (
@@ -19,7 +21,13 @@ export const AsyncButton: React.FC<Props> = ({
               try {
                 await onClick?.();
               } catch (e) {
-                handleException(e);
+                handleException(e, {
+                  userMessage: errorTitle
+                    ? {
+                        title: errorTitle,
+                      }
+                    : undefined,
+                });
               }
             }
           : undefined
