@@ -10,6 +10,11 @@ import { Address } from "../../../common/Address";
 import { TimelockTransactionCard } from "./TimelockTransactionCard";
 
 export interface TimelockTransaction {
+  /**
+   * Title to use when describing this transaction.
+   */
+  title: string;
+
   txHash: string;
   target: string;
   value: BigNumber;
@@ -74,29 +79,42 @@ export const TimelockIndex: React.FC<Props> = ({
       ]);
 
       setTransactions(
-        prevQueued.map((queued) => {
-          const execution = prevExecuted.find(
-            (tx) => tx.args.txHash === queued.args.txHash
-          );
-          const cancellation = prevCancelled.find(
-            (tx) => tx.args.txHash === queued.args.txHash
-          );
+        prevQueued
+          .map((queued) => {
+            const execution = prevExecuted.find(
+              (tx) => tx.args.txHash === queued.args.txHash
+            );
+            const cancellation = prevCancelled.find(
+              (tx) => tx.args.txHash === queued.args.txHash
+            );
 
-          return {
-            target: queued.args.target,
-            txHash: queued.args.txHash,
-            value: queued.args.value,
-            signature: queued.args.signature,
-            data: queued.args.data,
-            eta: queued.args.eta.toNumber(),
+            return {
+              title: queued.args.signature
+                ? queued.args.signature
+                : queued.args.txHash,
 
-            queuedTxHash: queued.transactionHash,
-            queuedAt: queued.blockNumber,
-            cancelledTxHash: cancellation?.transactionHash,
-            executedTxHash: execution?.transactionHash,
-            executedAt: execution?.blockNumber,
-          };
-        })
+              target: queued.args.target,
+              txHash: queued.args.txHash,
+              value: queued.args.value,
+              signature: queued.args.signature,
+              data: queued.args.data,
+              eta: queued.args.eta.toNumber(),
+
+              queuedTxHash: queued.transactionHash,
+              queuedAt: queued.blockNumber,
+              cancelledTxHash: cancellation?.transactionHash,
+              executedTxHash: execution?.transactionHash,
+              executedAt: execution?.blockNumber,
+            };
+          })
+          .sort((a, b) => {
+            // reverse chronological order
+            return a.queuedAt > b.queuedAt
+              ? -1
+              : a.queuedAt === b.queuedAt
+              ? 0
+              : 1;
+          })
       );
     })();
   }, [timelock, provider]);

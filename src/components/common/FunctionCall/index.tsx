@@ -1,8 +1,7 @@
 import { BigNumberish } from "ethers";
-import { TransactionDescription } from "ethers/lib/utils";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-import { useAbi } from "../../../hooks/useAbi";
+import { useParsedTransaction } from "../../../hooks/useParsedTransaction";
 import { FunctionWithArgs } from "../FunctionWithArgs";
 
 interface Props {
@@ -16,19 +15,7 @@ export const FunctionCall: React.FC<Props> = ({
   data,
   value,
 }: Props) => {
-  const abi = useAbi(address);
-  const [parsedTx, setParsedTx] = useState<TransactionDescription | null>(null);
-
-  useEffect(() => {
-    try {
-      const theTx = abi?.parseTransaction({ data, value });
-      if (theTx) {
-        setParsedTx(theTx);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [abi, data, value]);
+  const parsedTx = useParsedTransaction({ address, data, value });
 
   if (!parsedTx) {
     return (

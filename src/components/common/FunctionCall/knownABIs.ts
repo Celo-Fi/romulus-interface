@@ -1,4 +1,5 @@
 import { Fragment } from "ethers/lib/utils";
+import { mapValues } from "lodash";
 
 import ERC20Abi from "../../../abis/ERC20.json";
 import TimelockAbi from "../../../abis/ITimelock.json";
@@ -22,6 +23,44 @@ export const knownABIUrls: Record<string, string> = {
   "0xDd038bd0244fFB7c6736439fB217586207979f9C": TIMELOCK_ABI,
 };
 
+export const KNOWN_ADDRESSES: Record<
+  string,
+  {
+    name: string;
+    abi?: Fragment[];
+  }
+> = {
+  // Ubeswap
+  // https://docs.ubeswap.org/code-and-contracts/contract-addresses
+  "0x00Be915B9dCf56a3CBE739D9B9c202ca692409EC": {
+    name: "UBE Token",
+    abi: ERC20Abi as unknown as Fragment[],
+  },
+  "0x5Ed248077bD07eE9B530f7C40BE0c1dAE4c131C0": {
+    name: "Release UBE",
+  },
+  "0x62d5b84bE28a183aBB507E125B384122D2C25fAE": {
+    name: "Ubeswap Factory",
+    abi: UbeswapFactory as unknown as Fragment[],
+  },
+  "0x9Ee3600543eCcc85020D6bc77EB553d1747a65D2": {
+    name: "Ubeswap Pool Manager",
+    abi: PoolManager as unknown as Fragment[],
+  },
+  "0x1BDB37DAA42E37bFCa4C5536AcF93b1173588981": {
+    name: "Ubeswap Executive Timelock",
+    abi: TimelockAbi as unknown as Fragment[],
+  },
+  "0x177B042b284dD9B830d4eb179695bCC14044fD1A": {
+    name: "Ubeswap Community Timelock",
+    abi: TimelockAbi as unknown as Fragment[],
+  },
+  "0xC45Cc58205132Fe29e0F96BAA3f4FA2BD88cD6D9": {
+    name: "Ubeswap Celo Reserve Timelock",
+    abi: TimelockAbi as unknown as Fragment[],
+  },
+};
+
 export const knownABIs: Record<string, Fragment[]> = {
   "0x695218A22c805Bab9C6941546CF5395F169Ad871":
     ReleasePOOFMetadata.abi as unknown as Fragment[],
@@ -40,11 +79,5 @@ export const knownABIs: Record<string, Fragment[]> = {
   "0x1a8Dbe5958c597a744Ba51763AbEBD3355996c3e":
     RewardsCELOMetadata.abi as unknown as Fragment[],
 
-  // ube token
-  "0x00Be915B9dCf56a3CBE739D9B9c202ca692409EC":
-    ERC20Abi as unknown as Fragment[],
-  "0x62d5b84bE28a183aBB507E125B384122D2C25fAE":
-    UbeswapFactory as unknown as Fragment[],
-  "0x9Ee3600543eCcc85020D6bc77EB553d1747a65D2":
-    PoolManager as unknown as Fragment[],
+  ...mapValues(KNOWN_ADDRESSES, (addr) => addr.abi),
 };

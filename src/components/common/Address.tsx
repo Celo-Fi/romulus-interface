@@ -2,12 +2,19 @@ import { getAddress } from "ethers/lib/utils";
 import React from "react";
 import { Link } from "theme-ui";
 
+import { KNOWN_ADDRESSES } from "./FunctionCall/knownABIs";
+
 interface IProps {
   value: string | null;
   truncate?: boolean;
+  label?: string;
 }
 
-export const Address: React.FC<IProps> = ({ value, truncate }: IProps) => {
+export const Address: React.FC<IProps> = ({
+  value,
+  truncate,
+  label,
+}: IProps) => {
   if (!value) {
     return <>--</>;
   }
@@ -19,9 +26,11 @@ export const Address: React.FC<IProps> = ({ value, truncate }: IProps) => {
       rel="noopener noreferrer"
       style={{ textDecoration: "none" }}
     >
-      {truncate
-        ? `${fmt.slice(0, 6)}...${fmt.slice(fmt.length - 5, fmt.length)}`
-        : fmt}
+      {label ??
+        KNOWN_ADDRESSES[fmt]?.name ??
+        (truncate
+          ? `${fmt.slice(0, 6)}...${fmt.slice(fmt.length - 5, fmt.length)}`
+          : fmt)}
     </Link>
   );
 };
