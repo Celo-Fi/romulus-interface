@@ -1,10 +1,14 @@
 import React from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 import { ITimelock } from "../../../../generated";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
 import { AsyncButton } from "../../../common/AsyncButton";
+import { AttributeList } from "../../../common/AttributeList";
+import { TransactionHash } from "../../../common/blockchain/TransactionHash";
 import { FunctionCall } from "../../../common/FunctionCall";
+import { TXHash } from "../../../common/TXHash";
 import { TimelockTransaction } from ".";
 
 interface Props {
@@ -33,31 +37,26 @@ export const TimelockTransactionCard: React.FC<Props> = ({
         <span tw="text-gray-100 text-base font-medium mb-2">
           Transaction Details
         </span>
-        <div tw="grid gap-2">
-          {Object.entries({
+        <AttributeList
+          data={{
             Signature: tx.signature,
             Target: tx.target,
             ETA: new Date(tx.eta * 1_000).toLocaleString(),
             Value: tx.value.toNumber(),
-          }).map(([k, v]) => {
-            return (
-              <div key={k} tw="flex justify-between">
-                <div tw="text-gray-300">{k}</div>
-                {v ? (
-                  <div>{v}</div>
-                ) : (
-                  <div tw="text-gray-400">
-                    {v === null
-                      ? "(null)"
-                      : v === undefined
-                      ? "(undefined)"
-                      : v}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+          }}
+        />
+      </div>
+      <div tw="flex flex-col">
+        <span tw="text-gray-100 text-base font-medium mb-2">
+          Transaction Lifecycle
+        </span>
+        <AttributeList
+          data={{
+            "Executed TX": <TXHash value={tx.executedTxHash} />,
+            "Cancelled TX": <TXHash value={tx.cancelledTxHash} />,
+            "Queued TX": <TXHash value={tx.queuedTxHash} />,
+          }}
+        />
       </div>
       <div tw="max-w-full w-full flex flex-col gap-1">
         <span tw="text-gray-100 text-base font-medium">Transaction Data</span>
@@ -70,8 +69,14 @@ export const TimelockTransactionCard: React.FC<Props> = ({
             const signer = await getConnectedSigner();
             const result = await timelock
               .connect(signer)
-              .executeTransaction(tx.target, tx.value, "", tx.data, tx.eta);
-            console.log(result);
+              .executeTransaction(
+                tx.target,
+                tx.value,
+                tx.signature,
+                tx.data,
+                tx.eta
+              );
+            toast(<TransactionHash value={result} />);
           }}
         >
           Execute

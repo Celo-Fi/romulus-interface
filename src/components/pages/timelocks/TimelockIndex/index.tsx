@@ -94,6 +94,7 @@ export const TimelockIndex: React.FC<Props> = ({
             queuedAt: queued.blockNumber,
             cancelledTxHash: cancellation?.transactionHash,
             executedTxHash: execution?.transactionHash,
+            executedAt: execution?.blockNumber,
           };
         })
       );
