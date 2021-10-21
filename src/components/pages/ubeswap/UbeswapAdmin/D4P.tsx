@@ -1,13 +1,16 @@
 import { useGetConnectedSigner } from "@celo-tools/use-contractkit";
 import React from "react";
-import { Button, Flex, Heading } from "theme-ui";
+import { Button, Flex, Heading, Text } from "theme-ui";
 import { useMultisigContract } from "../../../../hooks/useMultisigContract";
 import ERC20Abi from "../../../../abis/ERC20.json";
 import MSRAbi from "../../../../abis/MoolaStakingRewards.json";
 import { AbiItem, toWei, fromWei } from "web3-utils";
 import Web3 from "web3";
 import { MultiSig as MultisigContract } from "../../../../generated";
-const web3 = new Web3();
+import { useAsyncState } from "../../../../hooks/useAsyncState";
+import moment from "moment";
+
+const web3 = new Web3("https://forno.celo.org"); // TODO: HARDCODE
 
 // == UTILS ==
 const transferInterface = ERC20Abi.find((f) => f.name === "transfer");
@@ -57,6 +60,7 @@ type Farm = {
 };
 
 // == CONSTANTS ==
+const SECONDS_PER_WEEK = 60 * 60 * 24 * 7;
 const tokenName: Record<Token, string> = {
   [Token.CELO]: "CELO",
   [Token.POOF]: "POOF",
@@ -157,22 +161,107 @@ export const D4P = () => {
     },
     [multisigLookup, getConnectedSigner]
   );
+  const periodEndCall = React.useCallback(async () => {
+    const lookup: Record<string, number> = {};
+    await Promise.all(
+      farms.map(async (farm) => {
+        const contract = new web3.eth.Contract(
+          MSRAbi as AbiItem[],
+          farm.farmAddress
+        );
+        const periodEnd = await contract.methods.periodFinish().call();
+        lookup[farm.pool] = Number(periodEnd);
+      })
+    );
+    return lookup;
+  }, []);
+  const [periodEndLookup, refetch1] = useAsyncState(null, periodEndCall);
+
+  const rewardRateCall = React.useCallback(async () => {
+    const lookup: Record<string, number> = {};
+    await Promise.all(
+      farms.map(async (farm) => {
+        const contract = new web3.eth.Contract(
+          MSRAbi as AbiItem[],
+          farm.farmAddress
+        );
+        const rewardRate = await contract.methods.rewardRate().call();
+        lookup[farm.pool] = Number(fromWei(rewardRate)) * SECONDS_PER_WEEK;
+      })
+    );
+    return lookup;
+  }, []);
+  const [rewardRateLookup, refetch2] = useAsyncState(null, rewardRateCall);
+
+  const rewardBalanceCall = React.useCallback(async () => {
+    const lookup: Record<string, number> = {};
+    await Promise.all(
+      farms.map(async (farm) => {
+        const contract = new web3.eth.Contract(
+          ERC20Abi as AbiItem[],
+          farm.rewardToken
+        );
+        const balance = await contract.methods
+          .balanceOf(farm.farmAddress)
+          .call();
+        lookup[farm.pool] = Number(fromWei(balance));
+      })
+    );
+    return lookup;
+  }, []);
+  const [rewardBalanceLookup, refetch3] = useAsyncState(
+    null,
+    rewardBalanceCall
+  );
+
   return (
     <div>
       <Heading as="h2" mb={2}>
         Multi reward pools
       </Heading>
       {farms.map((farm, idx) => {
+        const periodEnd = periodEndLookup?.[farm.pool];
+        const rewardRate = rewardRateLookup?.[farm.pool];
+        const rewardBalance = rewardBalanceLookup?.[farm.pool];
+
         return (
-          <Flex mb={2} key={idx}>
+          <Flex mb={2} key={idx} sx={{ alignItems: "center" }}>
             <Button onClick={() => sendCELO(farm)} mr={1}>
               Transfer {fromWei(farm.amount)} {tokenName[farm.rewardToken]} to{" "}
               {farm.pool}
             </Button>
-            <Button onClick={() => notify(farm)}>
+            <Button
+              onClick={() => {
+                notify(farm);
+                refetch1();
+                refetch2();
+                refetch3();
+              }}
+              mr={2}
+            >
               Notify {fromWei(farm.amount)} {tokenName[farm.rewardToken]} to{" "}
               {farm.pool}
             </Button>
+            <div>
+              {periodEnd && (
+                <Text sx={{ display: "block" }}>
+                  Period end:{" "}
+                  {moment
+                    .unix(periodEnd)
+                    .format("dddd, MMMM Do YYYY, h:mm:ss a")}
+                </Text>
+              )}
+              {rewardRate && (
+                <Text sx={{ display: "block" }}>
+                  Rewards per week: {rewardRate} {tokenName[farm.rewardToken]}
+                </Text>
+              )}
+              {rewardBalance && (
+                <Text sx={{ display: "block" }}>
+                  Farm balance: {rewardBalance} {tokenName[farm.rewardToken]}
+                </Text>
+              )}
+            </div>
           </Flex>
         );
       })}
