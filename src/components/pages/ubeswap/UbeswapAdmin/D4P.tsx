@@ -1,11 +1,12 @@
 import { useGetConnectedSigner } from "@celo-tools/use-contractkit";
 import React from "react";
-import { Button, Flex } from "theme-ui";
+import { Button, Flex, Heading } from "theme-ui";
 import { useMultisigContract } from "../../../../hooks/useMultisigContract";
 import ERC20Abi from "../../../../abis/ERC20.json";
 import MSRAbi from "../../../../abis/MoolaStakingRewards.json";
 import { AbiItem, toWei, fromWei } from "web3-utils";
 import Web3 from "web3";
+import { MultiSig as MultisigContract } from "../../../../generated";
 const web3 = new Web3();
 
 // == UTILS ==
@@ -42,15 +43,20 @@ enum Token {
   POOF = "0x00400fcbf0816bebb94654259de7273f4a05c762",
 }
 
+enum Multisig {
+  UBE = "0x0Ce41DbCEA62580Ae2C894a7D93E97da0c3daC3a",
+  POOF = "0x54c18437bC09Ee60BCd40aFe7E560010860fFC1F",
+}
+
 type Farm = {
   pool: Pool;
   farmAddress: string;
   rewardToken: Token;
   amount: string;
+  owner: Multisig;
 };
 
 // == CONSTANTS ==
-//
 const tokenName: Record<Token, string> = {
   [Token.CELO]: "CELO",
   [Token.POOF]: "POOF",
@@ -64,6 +70,7 @@ const farms: Farm[] = [
     rewardToken: Token.CELO,
     // amount: toWei("3680"),
     amount: toWei("0.01"),
+    owner: Multisig.UBE,
   },
   {
     pool: Pool.CELOEUR,
@@ -72,6 +79,7 @@ const farms: Farm[] = [
     rewardToken: Token.CELO,
     // amount: toWei("3680"),
     amount: toWei("0.01"),
+    owner: Multisig.UBE,
   },
   {
     pool: Pool.CELOUBE,
@@ -79,6 +87,7 @@ const farms: Farm[] = [
     rewardToken: Token.CELO,
     // amount: toWei("1380"),
     amount: toWei("0.01"),
+    owner: Multisig.UBE,
   },
   {
     pool: Pool.CELORCELO,
@@ -86,58 +95,73 @@ const farms: Farm[] = [
     rewardToken: Token.CELO,
     // amount: toWei("459"),
     amount: toWei("0.01"),
+    owner: Multisig.UBE,
   },
   {
     pool: Pool.POOFUBE,
     farmAddress: "0x4274AA72B12221D32ca77cB37057A9692E0b59Eb",
     rewardToken: Token.POOF,
     amount: toWei("0.01"),
+    owner: Multisig.POOF,
   },
   {
     pool: Pool.PCELOPOOF,
     farmAddress: "0x7B7F08164036abEbafD1bf75c1464c6F0d01653C",
     rewardToken: Token.POOF,
     amount: toWei("0.01"),
+    owner: Multisig.POOF,
   },
   {
     pool: Pool.pUSDUSD,
     farmAddress: "0x9d8537b7B940Bba313D4224B915a45460e17a729",
     rewardToken: Token.POOF,
     amount: toWei("0.01"),
+    owner: Multisig.POOF,
   },
 ];
 
 export const D4P = () => {
-  const multisig = useMultisigContract(
-    "0x0Ce41DbCEA62580Ae2C894a7D93E97da0c3daC3a"
+  const ubeswapMultisig = useMultisigContract(Multisig.UBE);
+  const poofMultisig = useMultisigContract(Multisig.POOF);
+
+  const multisigLookup: Record<Multisig, MultisigContract> = React.useMemo(
+    () => ({
+      [Multisig.UBE]: ubeswapMultisig,
+      [Multisig.POOF]: poofMultisig,
+    }),
+    [ubeswapMultisig, poofMultisig]
   );
+
   const getConnectedSigner = useGetConnectedSigner();
   const sendCELO = React.useCallback(
     async (farm: Farm) => {
       const signer = await getConnectedSigner();
       const data = getTransferData(farm.farmAddress, farm.amount);
       if (data) {
-        await multisig
+        await multisigLookup[farm.owner]
           .connect(signer as any)
           .submitTransaction(farm.rewardToken, 0, data);
       }
     },
-    [multisig, getConnectedSigner]
+    [multisigLookup, getConnectedSigner]
   );
   const notify = React.useCallback(
     async (farm: Farm) => {
       const signer = await getConnectedSigner();
       const data = getNotifyData(farm.amount);
       if (data) {
-        await multisig
+        await multisigLookup[farm.owner]
           .connect(signer as any)
           .submitTransaction(farm.farmAddress, 0, data);
       }
     },
-    [multisig, getConnectedSigner]
+    [multisigLookup, getConnectedSigner]
   );
   return (
     <div>
+      <Heading as="h2" mb={2}>
+        Multi reward pools
+      </Heading>
       {farms.map((farm, idx) => {
         return (
           <Flex mb={2} key={idx}>
