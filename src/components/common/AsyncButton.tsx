@@ -19,12 +19,14 @@ export const AsyncButton: React.FC<Props> = ({
   onClick,
   errorTitle,
   children,
+  disabled,
   ...restProps
 }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   return (
     <Button
       {...restProps}
+      disabled={disabled || loading}
       onClick={
         onClick
           ? async (e) => {
