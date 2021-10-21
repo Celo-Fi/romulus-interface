@@ -38,54 +38,64 @@ export const TimelockIndex: React.FC<Props> = ({
   const [transactions, setTransactions] =
     useState<readonly TimelockTransaction[]>();
 
+  // run this whenever the timelock changes
   useEffect(() => {
     void (async () => {
-      provider.resetEventsBlock(1000000);
+      // first block to fetch from
+      const fromBlock = 1_000_000;
       const provTimelock = timelock.connect(provider);
-      const prevQueued = await provTimelock.queryFilter(
-        timelock.filters.QueueTransaction(null, null, null, null, null, null)
-      );
-      const prevExecuted = await provTimelock.queryFilter(
-        timelock.filters.ExecuteTransaction(null, null, null, null, null, null)
-      );
-      const prevCancelled = await provTimelock.queryFilter(
-        timelock.filters.CancelTransaction(null, null, null, null, null, null)
-      );
+      const [prevQueued, prevExecuted, prevCancelled] = await Promise.all([
+        provTimelock.queryFilter(
+          timelock.filters.QueueTransaction(null, null, null, null, null, null),
+          fromBlock
+        ),
+        provTimelock.queryFilter(
+          timelock.filters.ExecuteTransaction(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ),
+          fromBlock
+        ),
+        provTimelock.queryFilter(
+          timelock.filters.CancelTransaction(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ),
+          fromBlock
+        ),
+      ]);
 
       setTransactions(
-        await Promise.all(
-          // eslint-disable-next-line @typescript-eslint/require-await
-          prevQueued.map(async (queued) => {
-            const execution = prevExecuted.find(
-              (tx) => tx.args.txHash === queued.args.txHash
-            );
-            const cancellation = prevCancelled.find(
-              (tx) => tx.args.txHash === queued.args.txHash
-            );
+        prevQueued.map((queued) => {
+          const execution = prevExecuted.find(
+            (tx) => tx.args.txHash === queued.args.txHash
+          );
+          const cancellation = prevCancelled.find(
+            (tx) => tx.args.txHash === queued.args.txHash
+          );
 
-            return {
-              target: queued.args.target,
-              txHash: queued.args.txHash,
-              value: queued.args.value,
-              signature: queued.args.signature,
-              data: queued.args.data,
-              eta: queued.args.eta.toNumber(),
+          return {
+            target: queued.args.target,
+            txHash: queued.args.txHash,
+            value: queued.args.value,
+            signature: queued.args.signature,
+            data: queued.args.data,
+            eta: queued.args.eta.toNumber(),
 
-              queuedTxHash: queued.transactionHash,
-              queuedAt: queued.blockNumber,
-              cancelledTxHash: cancellation?.transactionHash,
-              executedTxHash: execution?.transactionHash,
-
-              // queuedAt: (await queued.getBlock()).timestamp,
-              // cancelledAt: cancellation
-              //   ? (await cancellation.getBlock()).timestamp
-              //   : undefined,
-              // executedAt: execution
-              //   ? (await execution.getBlock()).timestamp
-              //   : undefined,
-            };
-          })
-        )
+            queuedTxHash: queued.transactionHash,
+            queuedAt: queued.blockNumber,
+            cancelledTxHash: cancellation?.transactionHash,
+            executedTxHash: execution?.transactionHash,
+          };
+        })
       );
     })();
   }, [timelock, provider]);
@@ -104,34 +114,36 @@ export const TimelockIndex: React.FC<Props> = ({
         </Heading>
         {config && (
           <table css={{ borderSpacing: 4 }}>
-            <tr>
-              <td>
-                <Text>Admin</Text>
-              </td>
-              <td>
-                <Text>
-                  <Address value={config.admin} />
-                </Text>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Text>Pending Admin</Text>
-              </td>
-              <td>
-                <Text>
-                  <Address value={config.pendingAdmin} />
-                </Text>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Text>Delay</Text>
-              </td>
-              <td>
-                <Text>{formatDuration(config.delay)}</Text>
-              </td>
-            </tr>
+            <tbody>
+              <tr>
+                <td>
+                  <Text>Admin</Text>
+                </td>
+                <td>
+                  <Text>
+                    <Address value={config.admin} />
+                  </Text>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <Text>Pending Admin</Text>
+                </td>
+                <td>
+                  <Text>
+                    <Address value={config.pendingAdmin} />
+                  </Text>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <Text>Delay</Text>
+                </td>
+                <td>
+                  <Text>{formatDuration(config.delay)}</Text>
+                </td>
+              </tr>
+            </tbody>
           </table>
         )}
       </Card>
@@ -147,12 +159,4 @@ export const TimelockIndex: React.FC<Props> = ({
 const Submissions = styled.div`
   display: grid;
   grid-row-gap: 24px;
-`;
-
-const Nav = styled.div`
-  display: flex;
-  align-items: center;
-  a {
-    margin-right: 12px;
-  }
 `;
