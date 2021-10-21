@@ -23,7 +23,6 @@ export const useTimelock = (
   const [config, setConfig] = useState<ITimelockConfig | null>(null);
 
   useEffect(() => {
-    console.log("run 0");
     void (async () => {
       const gracePeriod = (await timelock.callStatic.GRACE_PERIOD()).toNumber();
       const maximumDelay = (
