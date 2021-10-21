@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { Button } from "theme-ui";
 
 import { ITimelock } from "../../../../generated";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
+import { AsyncButton } from "../../../common/AsyncButton";
 import { FunctionCall } from "../../../common/FunctionCall";
 import { TimelockTransaction } from ".";
 
@@ -32,7 +32,7 @@ export const TimelockTransactionCard: React.FC<Props> = ({
       </Title>
       <FunctionCall address={tx.target} data={tx.data} value={tx.value} />
       <p>{tx.signature}</p>
-      <Button
+      <AsyncButton
         onClick={async () => {
           const signer = await getConnectedSigner();
           const result = await timelock
@@ -42,7 +42,7 @@ export const TimelockTransactionCard: React.FC<Props> = ({
         }}
       >
         Execute
-      </Button>
+      </AsyncButton>
     </Wrapper>
   );
 };

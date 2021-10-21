@@ -16,6 +16,8 @@
     "@celo/contracts": "^0.0.8",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
+    "@sentry/react": "^6.13.3",
+    "@sentry/tracing": "^6.13.3",
     "@types/react-modal": "^3.12.0",
     "@ubeswap/sdk": "^2.1.0",
     "@ubeswap/solidity-create2-deployer": "^0.6.1",
@@ -31,6 +33,7 @@
     "react-dom": "17.0.2",
     "react-icons": "^4.2.0",
     "react-modal": "^3.14.3",
+    "react-toastify": "^8.0.3",
     "react-window": "^1.8.6",
     "regl": "1",
     "theme-ui": "^0.10.0"
