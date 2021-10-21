@@ -64,7 +64,7 @@ export const POOL_WEIGHTS: { name: string; address: string; weight: number }[] =
   WEIGHTS.map(([name, w]) => ({
     name,
     address: POOL_ADDRESSES[name],
-    weight: w * 10_000,
+    weight: Math.floor(w * 10_000),
   }));
 
 export const MINING_RELEASE_ESCROW =
