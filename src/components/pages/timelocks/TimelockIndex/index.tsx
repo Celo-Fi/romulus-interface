@@ -40,10 +40,10 @@ export const TimelockIndex: React.FC<Props> = ({
 
   // run this whenever the timelock changes
   useEffect(() => {
+    // first block to fetch from
+    const fromBlock = 1_000_000;
+    const provTimelock = timelock.connect(provider);
     void (async () => {
-      // first block to fetch from
-      const fromBlock = 1_000_000;
-      const provTimelock = timelock.connect(provider);
       const [prevQueued, prevExecuted, prevCancelled] = await Promise.all([
         provTimelock.queryFilter(
           timelock.filters.QueueTransaction(null, null, null, null, null, null),
@@ -141,6 +141,30 @@ export const TimelockIndex: React.FC<Props> = ({
                 </td>
                 <td>
                   <Text>{formatDuration(config.delay)}</Text>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <Text>Grace Period</Text>
+                </td>
+                <td>
+                  <Text>{formatDuration(config.gracePeriod)}</Text>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <Text>Maximum Delay</Text>
+                </td>
+                <td>
+                  <Text>{formatDuration(config.maximumDelay)}</Text>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <Text>Minimum Delay</Text>
+                </td>
+                <td>
+                  <Text>{formatDuration(config.minimumDelay)}</Text>
                 </td>
               </tr>
             </tbody>
