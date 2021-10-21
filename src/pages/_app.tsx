@@ -1,3 +1,4 @@
+import "../styles/globals.css";
 import "normalize.css/normalize.css";
 import "@celo-tools/use-contractkit/lib/styles.css";
 import "react-toastify/dist/ReactToastify.css";
