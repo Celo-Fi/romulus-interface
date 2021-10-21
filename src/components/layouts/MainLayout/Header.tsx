@@ -11,7 +11,7 @@ import Link from "next/link";
 import React from "react";
 import { Box, Button, Container, Flex, Select, Text } from "theme-ui";
 
-export const truncateAddress = (addr: string) =>
+export const truncateAddress = (addr: string): string =>
   addr.slice(0, 6) + "..." + addr.slice(addr.length - 4);
 
 const NETWORKS = [Mainnet, Alfajores, Baklava];
@@ -48,6 +48,7 @@ export const Header: React.FC = () => {
           }}
         >
           <Select
+            value={network.name}
             sx={{
               minWidth: "fit-content",
               pr: 4,
@@ -55,8 +56,7 @@ export const Header: React.FC = () => {
             }}
             onChange={(e) => {
               const nextNetwork = NETWORKS.find(
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                (n) => n.name === (e.target as any).value
+                (n) => n.name === e.target.value
               );
               if (nextNetwork) {
                 updateNetwork(nextNetwork);
@@ -90,7 +90,7 @@ export const Header: React.FC = () => {
               <ClickableText
                 color="secondary"
                 onClick={() => {
-                  destroy();
+                  void destroy();
                 }}
               >
                 (disconnect)
