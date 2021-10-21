@@ -9,6 +9,7 @@ interface Props {
   callee?: string;
   frag: FunctionFragment;
   args?: readonly unknown[];
+  inline?: boolean;
 }
 
 /**
@@ -20,6 +21,7 @@ export const FunctionWithArgs = ({
   callee,
   frag,
   args,
+  inline = false,
 }: Props): React.ReactElement => {
   if (!args || args.length === 0) {
     return (
@@ -28,6 +30,22 @@ export const FunctionWithArgs = ({
       </Box>
     );
   }
+
+  if (inline) {
+    return (
+      <>
+        {callee ? <Address value={callee} /> : ""}.{frag.name}(
+        {frag.inputs.map((input, i) => (
+          <React.Fragment key={i}>
+            <span>{renderValue(args[i])}</span>
+            {i !== frag.inputs.length - 1 ? ", " : ""}
+          </React.Fragment>
+        ))}
+        )
+      </>
+    );
+  }
+
   return (
     <div tw="flex flex-col">
       <div>

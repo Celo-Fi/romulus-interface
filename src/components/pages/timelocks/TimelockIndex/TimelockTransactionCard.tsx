@@ -1,5 +1,4 @@
 import React from "react";
-import { FaExternalLinkAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 import { ITimelock } from "../../../../generated";
@@ -10,6 +9,7 @@ import { AsyncButton } from "../../../common/AsyncButton";
 import { AttributeList } from "../../../common/AttributeList";
 import { TransactionHash } from "../../../common/blockchain/TransactionHash";
 import { FunctionCall } from "../../../common/FunctionCall";
+import { FunctionWithArgs } from "../../../common/FunctionWithArgs";
 import { TXHash } from "../../../common/TXHash";
 import { TimelockTransaction } from ".";
 
@@ -32,15 +32,17 @@ export const TimelockTransactionCard: React.FC<Props> = ({
     <div tw="bg-gray-800 text-white p-4 rounded-xl border border-gray-700 shadow flex flex-col gap-4">
       <div tw="flex items-center justify-between">
         <h2 tw="text-white font-semibold text-base">
-          {parsedTx?.signature ?? tx.title}
+          {parsedTx ? (
+            <FunctionWithArgs
+              callee={tx.target}
+              frag={parsedTx.functionFragment}
+              args={parsedTx.args}
+              inline
+            />
+          ) : (
+            tx.title
+          )}
         </h2>
-        <a
-          href={`https://explorer.celo.org/tx/${tx.queuedTxHash}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <FaExternalLinkAlt />
-        </a>
       </div>
       <div tw="flex flex-col">
         <span tw="text-gray-100 text-base font-medium mb-2">
