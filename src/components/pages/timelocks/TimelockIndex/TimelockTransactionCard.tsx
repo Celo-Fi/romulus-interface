@@ -22,7 +22,7 @@ export const TimelockTransactionCard: React.FC<Props> = ({
   tx,
   timelock,
 }: Props) => {
-  const parsedTx = useParsedTransaction({
+  const { tx: parsedTx } = useParsedTransaction({
     address: tx.target,
     data: tx.data,
     value: tx.value,
@@ -39,6 +39,10 @@ export const TimelockTransactionCard: React.FC<Props> = ({
               args={parsedTx.args}
               inline
             />
+          ) : tx.signature ? (
+            <span>
+              <Address value={tx.target} />.{tx.signature}
+            </span>
           ) : (
             tx.title
           )}

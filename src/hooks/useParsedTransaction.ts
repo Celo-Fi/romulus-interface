@@ -14,9 +14,10 @@ export const useParsedTransaction = ({
   address,
   data,
   value,
-}: Props): TransactionDescription | null => {
+}: Props): { tx: TransactionDescription | null; error: unknown | null } => {
   const abi = useAbi(address);
   const [parsedTx, setParsedTx] = useState<TransactionDescription | null>(null);
+  const [parseError, setParseError] = useState<unknown | null>(null);
 
   useEffect(() => {
     try {
@@ -25,9 +26,12 @@ export const useParsedTransaction = ({
         setParsedTx(theTx);
       }
     } catch (e) {
-      console.error(e);
+      setParseError(e);
     }
   }, [abi, data, value]);
 
-  return parsedTx;
+  return {
+    tx: parsedTx,
+    error: parseError,
+  };
 };
