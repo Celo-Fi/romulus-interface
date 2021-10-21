@@ -4,20 +4,11 @@ import { Button, Flex } from "theme-ui";
 import { useMultisigContract } from "../../../../hooks/useMultisigContract";
 import ERC20Abi from "../../../../abis/ERC20.json";
 import MSRAbi from "../../../../abis/MoolaStakingRewards.json";
-import { AbiItem, toWei } from "web3-utils";
+import { AbiItem, toWei, fromWei } from "web3-utils";
 import Web3 from "web3";
 const web3 = new Web3();
 
-enum Pool {
-  // Ubeswap controlled
-  CELOUSD,
-  CELOEUR,
-  CELOUBE,
-  CELORCELO,
-
-  // Poof controlled
-}
-
+// == UTILS ==
 const transferInterface = ERC20Abi.find((f) => f.name === "transfer");
 const getTransferData = (recipient: string, amount: string) =>
   transferInterface
@@ -32,36 +23,89 @@ const getNotifyData = (amount: string) =>
     ? web3.eth.abi.encodeFunctionCall(notifyInterface as AbiItem, [amount])
     : null;
 
+// == TYPES ==
+enum Pool {
+  // Ubeswap controlled
+  CELOUSD = "CELO-mcUSD",
+  CELOEUR = "CELO-mcEUR",
+  CELOUBE = "UBE-CELO",
+  CELORCELO = "rCELO-CELO",
+
+  // Poof controlled
+  POOFUBE = "POOF-UBE",
+  PCELOPOOF = "pCELO-POOF",
+  pUSDUSD = "pUSD-USDC-cUSD",
+}
+
+enum Token {
+  CELO = "0x471ece3750da237f93b8e339c536989b8978a438",
+  POOF = "0x00400fcbf0816bebb94654259de7273f4a05c762",
+}
+
 type Farm = {
+  pool: Pool;
   farmAddress: string;
-  rewardToken: string;
+  rewardToken: Token;
   amount: string;
 };
 
-const farms: Record<Pool, Farm> = {
-  [Pool.CELOUSD]: {
+// == CONSTANTS ==
+//
+const tokenName: Record<Token, string> = {
+  [Token.CELO]: "CELO",
+  [Token.POOF]: "POOF",
+};
+
+const farms: Farm[] = [
+  {
+    pool: Pool.CELOUSD,
     // farm: "0xbbC8C824c638fd238178a71F5b1E5Ce7e4Ce586B", // OLD
     farmAddress: "0x161c77b4919271B7ED59AdB2151FdaDe3F907a1F",
-    rewardToken: "0x471ece3750da237f93b8e339c536989b8978a438",
-    amount: toWei("3680"),
+    rewardToken: Token.CELO,
+    // amount: toWei("3680"),
+    amount: toWei("0.01"),
   },
-  [Pool.CELOEUR]: {
+  {
+    pool: Pool.CELOEUR,
     // farm: "0x0F3d01aea89dA0b6AD81712Edb96FA7AF1c17E9B", // OLD
     farmAddress: "0x728C650D1Fb4da2D18ccF4DF45Af70c5AEb09f81",
-    rewardToken: "0x471ece3750da237f93b8e339c536989b8978a438",
-    amount: toWei("3680"),
+    rewardToken: Token.CELO,
+    // amount: toWei("3680"),
+    amount: toWei("0.01"),
   },
-  [Pool.CELOUBE]: {
+  {
+    pool: Pool.CELOUBE,
     farmAddress: "0x9D87c01672A7D02b2Dc0D0eB7A145C7e13793c3B",
-    rewardToken: "0x471ece3750da237f93b8e339c536989b8978a438",
-    amount: toWei("1380"),
+    rewardToken: Token.CELO,
+    // amount: toWei("1380"),
+    amount: toWei("0.01"),
   },
-  [Pool.CELORCELO]: {
+  {
+    pool: Pool.CELORCELO,
     farmAddress: "0x194478Aa91e4D7762c3E51EeE57376ea9ac72761",
-    rewardToken: "0x471ece3750da237f93b8e339c536989b8978a438",
-    amount: toWei("459"),
+    rewardToken: Token.CELO,
+    // amount: toWei("459"),
+    amount: toWei("0.01"),
   },
-};
+  {
+    pool: Pool.POOFUBE,
+    farmAddress: "0x4274AA72B12221D32ca77cB37057A9692E0b59Eb",
+    rewardToken: Token.POOF,
+    amount: toWei("0.01"),
+  },
+  {
+    pool: Pool.PCELOPOOF,
+    farmAddress: "0x7B7F08164036abEbafD1bf75c1464c6F0d01653C",
+    rewardToken: Token.POOF,
+    amount: toWei("0.01"),
+  },
+  {
+    pool: Pool.pUSDUSD,
+    farmAddress: "0x9d8537b7B940Bba313D4224B915a45460e17a729",
+    rewardToken: Token.POOF,
+    amount: toWei("0.01"),
+  },
+];
 
 export const D4P = () => {
   const multisig = useMultisigContract(
@@ -69,66 +113,45 @@ export const D4P = () => {
   );
   const getConnectedSigner = useGetConnectedSigner();
   const sendCELO = React.useCallback(
-    async (pool: Pool) => {
+    async (farm: Farm) => {
       const signer = await getConnectedSigner();
-      const data = getTransferData(farms[pool].farmAddress, farms[pool].amount);
+      const data = getTransferData(farm.farmAddress, farm.amount);
       if (data) {
         await multisig
           .connect(signer as any)
-          .submitTransaction(farms[pool].rewardToken, 0, data);
+          .submitTransaction(farm.rewardToken, 0, data);
       }
     },
     [multisig, getConnectedSigner]
   );
   const notify = React.useCallback(
-    async (pool: Pool) => {
+    async (farm: Farm) => {
       const signer = await getConnectedSigner();
-      const data = getNotifyData(farms[pool].amount);
+      const data = getNotifyData(farm.amount);
       if (data) {
         await multisig
           .connect(signer as any)
-          .submitTransaction(farms[pool].farmAddress, 0, data);
+          .submitTransaction(farm.farmAddress, 0, data);
       }
     },
     [multisig, getConnectedSigner]
   );
   return (
     <div>
-      <Flex>
-        <Button onClick={() => sendCELO(Pool.CELOUSD)} m={1}>
-          Transfer CELO to CELO-mcUSD
-        </Button>
-        <Button onClick={() => notify(Pool.CELOUSD)} m={1}>
-          Notify CELO to CELO-mcUSD
-        </Button>
-      </Flex>
-      <br />
-      <Flex>
-        <Button onClick={() => sendCELO(Pool.CELOEUR)} m={1}>
-          Transfer CELO to CELO-mcEUR
-        </Button>
-        <Button onClick={() => notify(Pool.CELOEUR)} m={1}>
-          Notify CELO to CELO-mcEUR
-        </Button>
-      </Flex>
-      <br />
-      <Flex>
-        <Button onClick={() => sendCELO(Pool.CELOUBE)} m={1}>
-          Transfer CELO to UBE-CELO
-        </Button>
-        <Button onClick={() => notify(Pool.CELOUBE)} m={1}>
-          Notify CELO to UBE-CELO
-        </Button>
-      </Flex>
-      <br />
-      <Flex>
-        <Button onClick={() => sendCELO(Pool.CELORCELO)} m={1}>
-          Transfer CELO to rCELO-CELO
-        </Button>
-        <Button onClick={() => notify(Pool.CELORCELO)} m={1}>
-          Notify CELO to rCELO-CELO
-        </Button>
-      </Flex>
+      {farms.map((farm, idx) => {
+        return (
+          <Flex mb={2} key={idx}>
+            <Button onClick={() => sendCELO(farm)} mr={1}>
+              Transfer {fromWei(farm.amount)} {tokenName[farm.rewardToken]} to{" "}
+              {farm.pool}
+            </Button>
+            <Button onClick={() => notify(farm)}>
+              Notify {fromWei(farm.amount)} {tokenName[farm.rewardToken]} to{" "}
+              {farm.pool}
+            </Button>
+          </Flex>
+        );
+      })}
     </div>
   );
 };
