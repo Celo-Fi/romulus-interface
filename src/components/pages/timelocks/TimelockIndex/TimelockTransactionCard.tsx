@@ -53,12 +53,12 @@ export const TimelockTransactionCard: React.FC<Props> = ({
             Hash: tx.txHash,
             Signature: tx.signature,
             Target: (
-              <Address
-                value={tx.target}
-                label={
-                  tx.target === timelock.address ? "This Timelock" : undefined
-                }
-              />
+              <>
+                <Address value={tx.target} />
+                {tx.target === timelock.address && (
+                  <span tw="ml-2 text-green-400 font-semibold">(Self)</span>
+                )}
+              </>
             ),
             ETA: new Date(tx.eta * 1_000).toLocaleString(),
             Value: tx.value.toNumber(),
