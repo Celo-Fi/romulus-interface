@@ -29,7 +29,36 @@ export const TimelockTransactionCard: React.FC<Props> = ({
           <FaExternalLinkAlt />
         </a>
       </div>
-      <p tw="break-all">{tx.signature}</p>
+      <div tw="flex flex-col">
+        <span tw="text-gray-100 text-base font-medium mb-2">
+          Transaction Details
+        </span>
+        <div tw="grid gap-2">
+          {Object.entries({
+            Signature: tx.signature,
+            Target: tx.target,
+            ETA: new Date(tx.eta * 1_000).toLocaleString(),
+            Value: tx.value.toNumber(),
+          }).map(([k, v]) => {
+            return (
+              <div key={k} tw="flex justify-between">
+                <div tw="text-gray-300">{k}</div>
+                {v ? (
+                  <div>{v}</div>
+                ) : (
+                  <div tw="text-gray-400">
+                    {v === null
+                      ? "(null)"
+                      : v === undefined
+                      ? "(undefined)"
+                      : v}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
       <div tw="max-w-full w-full flex flex-col gap-1">
         <span tw="text-gray-100 text-base font-medium">Transaction Data</span>
         <FunctionCall address={tx.target} data={tx.data} value={tx.value} />
