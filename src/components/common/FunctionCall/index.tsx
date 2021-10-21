@@ -32,9 +32,8 @@ export const FunctionCall: React.FC<Props> = ({
 
   if (!parsedTx) {
     return (
-      <div>
-        <h3 tw="text-white text-base font-medium">Raw Bytes</h3>
-        <div tw="break-all text-gray-400">{data}</div>
+      <div tw="flex flex-col gap-1">
+        <div tw="break-all text-gray-400 text-sm">{data}</div>
       </div>
     );
   }
