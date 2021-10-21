@@ -29,9 +29,9 @@ export const TimelockTransactionCard: React.FC<Props> = ({
   });
   const getConnectedSigner = useGetConnectedSigner();
   return (
-    <div tw="bg-gray-800 text-white p-4 rounded-xl border border-gray-700 shadow flex flex-col gap-4">
+    <div tw="bg-gray-800 text-white p-6 rounded-xl border border-gray-700 shadow flex flex-col gap-4">
       <div tw="flex items-center justify-between">
-        <h2 tw="text-white font-semibold text-base">
+        <h2 tw="text-white font-semibold text-base m-0">
           {parsedTx ? (
             <FunctionWithArgs
               callee={tx.target}

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { BigNumber } from "ethers";
 import React, { useEffect, useState } from "react";
-import { Box, Button, Card, Heading, Link, Text } from "theme-ui";
+import { Button, Card, Heading, Link, Text } from "theme-ui";
 
 import { useProvider } from "../../../../hooks/useProviderOrSigner";
 import { useTimelock } from "../../../../hooks/useTimelock";
@@ -120,7 +120,7 @@ export const TimelockIndex: React.FC<Props> = ({
   }, [timelock, provider]);
 
   return (
-    <Box>
+    <div tw="w-11/12 md:(w-full mx-auto max-w-[1100px])">
       <Heading as="h2" mb={2}>
         Timelock: <Address value={timelock.address} link={false} />
       </Heading>
@@ -195,7 +195,7 @@ export const TimelockIndex: React.FC<Props> = ({
           <TimelockTransactionCard key={i} tx={tx} timelock={timelock} />
         ))}
       </Submissions>
-    </Box>
+    </div>
   );
 };
 
