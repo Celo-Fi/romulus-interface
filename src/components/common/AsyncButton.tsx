@@ -26,8 +26,8 @@ export const AsyncButton: React.FC<Props> = ({
           ? async (e) => {
               try {
                 await onClick?.(e);
-              } catch (e) {
-                handleException(e, {
+              } catch (err) {
+                handleException(err, {
                   userMessage: errorTitle
                     ? {
                         title: errorTitle,
