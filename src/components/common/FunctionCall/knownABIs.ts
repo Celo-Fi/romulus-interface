@@ -3,6 +3,7 @@ import { mapValues } from "lodash";
 
 import ERC20Abi from "../../../abis/ERC20.json";
 import TimelockAbi from "../../../abis/ITimelock.json";
+import MultiSig from "../../../abis/MultiSig.json";
 import MinerMetadata from "../../../abis/poof/Miner.json";
 import ReleasePOOFMetadata from "../../../abis/poof/ReleasePOOF.json";
 import RewardsCELOMetadata from "../../../abis/poof/RewardsCELO.json";
@@ -61,6 +62,14 @@ export const KNOWN_ADDRESSES: Record<
   },
   "0x489AAc7Cb9A3B233e4a289Ec92284C8d83d49c6f": {
     name: "Ubeswap Founding Operator",
+  },
+  "0x97A9681612482A22b7877afbF8430EDC76159Cae": {
+    name: "Ubeswap Governance Fees Timelock",
+    abi: TimelockAbi as unknown as Fragment[],
+  },
+  "0xB58DA472Fd4ba76696DbF8Ba3cC23580C26093dA": {
+    name: "Ubeswap Multisig 1",
+    abi: MultiSig as unknown as Fragment[],
   },
 };
 
