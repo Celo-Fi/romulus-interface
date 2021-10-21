@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import React from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
@@ -19,9 +18,9 @@ export const TimelockTransactionCard: React.FC<Props> = ({
 }: Props) => {
   const getConnectedSigner = useGetConnectedSigner();
   return (
-    <Wrapper>
-      <Title>
-        <ID>{tx.txHash}</ID>
+    <div tw="bg-gray-900 text-white p-4 rounded-xl border border-gray-700 shadow">
+      <div tw="flex items-center justify-between">
+        <h2 tw="text-white font-semibold text-base">{tx.txHash}</h2>
         <a
           href={`https://explorer.celo.org/tx/${tx.queuedTxHash}`}
           target="_blank"
@@ -29,9 +28,12 @@ export const TimelockTransactionCard: React.FC<Props> = ({
         >
           <FaExternalLinkAlt />
         </a>
-      </Title>
-      <FunctionCall address={tx.target} data={tx.data} value={tx.value} />
-      <p>{tx.signature}</p>
+      </div>
+      <div tw="max-w-full w-full flex flex-col gap-3">
+        <span tw="text-gray-100 text-base font-medium">Transaction Data</span>
+        <FunctionCall address={tx.target} data={tx.data} value={tx.value} />
+      </div>
+      <p tw="break-all">{tx.signature}</p>
       <AsyncButton
         errorTitle="Error executing Timelock transaction"
         onClick={async () => {
@@ -44,23 +46,6 @@ export const TimelockTransactionCard: React.FC<Props> = ({
       >
         Execute
       </AsyncButton>
-    </Wrapper>
+    </div>
   );
 };
-
-const ID = styled.span`
-  font-weight: 600;
-  color: blue;
-`;
-
-const Title = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Wrapper = styled.div`
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  padding: 16px;
-`;

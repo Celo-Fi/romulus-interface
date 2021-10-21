@@ -1,5 +1,5 @@
 import { BigNumberish } from "ethers";
-import { Fragment, TransactionDescription } from "ethers/lib/utils";
+import { TransactionDescription } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
 
 import { useAbi } from "../../../hooks/useAbi";
@@ -31,7 +31,12 @@ export const FunctionCall: React.FC<Props> = ({
   }, [abi, data, value]);
 
   if (!parsedTx) {
-    return <>{data}</>;
+    return (
+      <div>
+        <h3 tw="text-white text-base font-medium">Raw Bytes</h3>
+        <div tw="break-all text-gray-400">{data}</div>
+      </div>
+    );
   }
 
   return (
