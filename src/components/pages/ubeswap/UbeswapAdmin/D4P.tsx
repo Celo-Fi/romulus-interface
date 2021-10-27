@@ -34,6 +34,7 @@ enum Pool {
   CELOEUR = "CELO-mcEUR",
   CELOUBE = "UBE-CELO",
   CELORCELO = "rCELO-CELO",
+  UBE = "UBE",
 
   // Poof controlled
   POOFUBE = "POOF-UBE",
@@ -44,6 +45,7 @@ enum Pool {
 enum Token {
   CELO = "0x471ece3750da237f93b8e339c536989b8978a438",
   POOF = "0x00400fcbf0816bebb94654259de7273f4a05c762",
+  UBE = "0x00be915b9dcf56a3cbe739d9b9c202ca692409ec",
 }
 
 enum Multisig {
@@ -64,6 +66,7 @@ const SECONDS_PER_WEEK = 60 * 60 * 24 * 7;
 const tokenName: Record<Token, string> = {
   [Token.CELO]: "CELO",
   [Token.POOF]: "POOF",
+  [Token.UBE]: "UBE",
 };
 
 const farms: Farm[] = [
@@ -97,6 +100,14 @@ const farms: Farm[] = [
     amount: toWei("459"),
     owner: Multisig.UBE,
   },
+  {
+    pool: Pool.UBE,
+    farmAddress: "0x25e18159Ce62cB815df0E3582a6CFCA5735c65F4",
+    rewardToken: Token.UBE,
+    amount: toWei("0.1"),
+    owner: Multisig.UBE,
+  },
+
   {
     pool: Pool.POOFUBE,
     farmAddress: "0x4274AA72B12221D32ca77cB37057A9692E0b59Eb",
