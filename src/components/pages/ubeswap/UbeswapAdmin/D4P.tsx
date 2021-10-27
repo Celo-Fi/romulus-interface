@@ -9,6 +9,7 @@ import Web3 from "web3";
 import { MultiSig as MultisigContract } from "../../../../generated";
 import { useAsyncState } from "../../../../hooks/useAsyncState";
 import moment from "moment";
+import { Address } from "../../../../components/common/Address";
 
 const web3 = new Web3("https://forno.celo.org"); // TODO: HARDCODE
 
@@ -40,6 +41,8 @@ enum Pool {
   POOFUBE = "POOF-UBE",
   PCELOPOOF = "pCELO-POOF",
   pUSDUSD = "pUSD-USDC-cUSD",
+  pEUREUR = "pEUR-cEUR",
+  pCELOCELO = "pCELO-CELO",
 }
 
 enum Token {
@@ -127,6 +130,20 @@ const farms: Farm[] = [
     farmAddress: "0x9d8537b7B940Bba313D4224B915a45460e17a729",
     rewardToken: Token.POOF,
     amount: toWei("7142.8"),
+    owner: Multisig.POOF,
+  },
+  {
+    pool: Pool.pEUREUR,
+    farmAddress: "0xA1e9175ad10fBdA9Fa042269c2AB7DaFB54dc164",
+    rewardToken: Token.POOF,
+    amount: toWei("0.1"),
+    owner: Multisig.POOF,
+  },
+  {
+    pool: Pool.pCELOCELO,
+    farmAddress: "0xb86e373b209fb2C4cbE17d68d52A59798E4A9640",
+    rewardToken: Token.POOF,
+    amount: toWei("0.1"),
     owner: Multisig.POOF,
   },
 ];
@@ -221,6 +238,22 @@ export const D4P = () => {
     rewardBalanceCall
   );
 
+  const stakingTokenCall = React.useCallback(async () => {
+    const lookup: Record<string, number> = {};
+    await Promise.all(
+      farms.map(async (farm) => {
+        const contract = new web3.eth.Contract(
+          MSRAbi as AbiItem[],
+          farm.farmAddress
+        );
+        const stakingToken = await contract.methods.stakingToken().call();
+        lookup[farm.pool] = stakingToken;
+      })
+    );
+    return lookup;
+  }, []);
+  const [stakingTokenLookup] = useAsyncState(null, stakingTokenCall);
+
   return (
     <div>
       <Heading as="h2" mb={2}>
@@ -230,6 +263,7 @@ export const D4P = () => {
         const periodEnd = periodEndLookup?.[farm.pool];
         const rewardRate = rewardRateLookup?.[farm.pool];
         const rewardBalance = rewardBalanceLookup?.[farm.pool];
+        const stakingToken = stakingTokenLookup?.[farm.pool];
 
         return (
           <Flex mb={2} key={idx} sx={{ alignItems: "center" }}>
@@ -266,6 +300,12 @@ export const D4P = () => {
               {rewardBalance && (
                 <Text sx={{ display: "block" }}>
                   Farm balance: {rewardBalance} {tokenName[farm.rewardToken]}
+                </Text>
+              )}
+              {stakingToken && (
+                <Text sx={{ display: "block" }}>
+                  Staking token address:{" "}
+                  <Address value={stakingToken.toString()} />
                 </Text>
               )}
             </div>
