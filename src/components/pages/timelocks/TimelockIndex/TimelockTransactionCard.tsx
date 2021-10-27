@@ -37,13 +37,7 @@ export const TimelockTransactionCard: React.FC<Props> = ({
           const signer = await getConnectedSigner();
           const result = await timelock
             .connect(signer)
-            .executeTransaction(
-              tx.target,
-              tx.value,
-              tx.signature,
-              tx.data,
-              tx.eta
-            );
+            .executeTransaction(tx.target, tx.value, "", tx.data, tx.eta);
           console.log(result);
         }}
       >
