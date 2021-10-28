@@ -76,7 +76,7 @@ export const RefreshPools: React.FC = () => {
       <Button
         onClick={async () => {
           const contract = poolManager.connect(await getConnectedSigner());
-          const batchSize = 10;
+          const batchSize = 20;
           for (
             let i = 0;
             i < Math.ceil(poolsToRefresh.length / batchSize);
@@ -104,7 +104,7 @@ export const RefreshPools: React.FC = () => {
           console.log(`Commited period: ${tx.hash}`);
         }}
       >
-        Begin initialize period
+        Commit initialize period
       </Button>
       <p>
         Owner: <Address value={owner} />
