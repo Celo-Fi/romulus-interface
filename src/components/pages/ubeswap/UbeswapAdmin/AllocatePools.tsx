@@ -64,6 +64,7 @@ export const AllocatePools: React.FC = () => {
       <NextPoolWeights>
         <thead>
           <tr>
+            <th>idx</th>
             <th>Pool Name</th>
             <th>LP token address</th>
             <th>Weight</th>
@@ -73,8 +74,9 @@ export const AllocatePools: React.FC = () => {
         <tbody>
           {POOL_WEIGHTS.sort((a, b) => a.address.localeCompare(b.address))
             .sort((a, b) => a.weight - b.weight)
-            .map(({ name, address, weight }) => (
+            .map(({ name, address, weight }, idx) => (
               <tr key={address}>
+                <td>{idx}</td>
                 <td>{name}</td>
                 <td>
                   <Address value={address} />
@@ -93,8 +95,10 @@ export const AllocatePools: React.FC = () => {
       <NextPoolWeights>
         <thead>
           <tr>
+            <th>idx</th>
             <th>Pool Name</th>
             <th>LP token address</th>
+            <th>Farm address</th>
             <th>Weight</th>
             <th>Rate</th>
           </tr>
@@ -103,24 +107,36 @@ export const AllocatePools: React.FC = () => {
           {Object.values(poolInfo)
             .sort((a, b) => a.stakingToken.localeCompare(b.stakingToken))
             .sort((a, b) => a.weight - b.weight)
-            .map((info) => (
-              <tr key={info.stakingToken}>
-                <td>
-                  {POOL_WEIGHTS.find(
-                    (w) =>
-                      w.address.toLowerCase() ===
-                      info.stakingToken.toLowerCase()
-                  )?.name ?? "Inactive pool"}
-                </td>
-                <td>
-                  <Address value={info.stakingToken} />
-                </td>
-                <td>{info.weight}</td>
-                <td>
-                  {((info.weight * 654_005) / weightSum).toLocaleString()}
-                </td>
-              </tr>
-            ))}
+            .filter((info) => {
+              return (
+                POOL_WEIGHTS.find(
+                  (w) =>
+                    w.address.toLowerCase() === info.stakingToken.toLowerCase()
+                ) !== undefined
+              );
+            })
+            .map((info, idx) => {
+              const name = POOL_WEIGHTS.find(
+                (w) =>
+                  w.address.toLowerCase() === info.stakingToken.toLowerCase()
+              )?.name;
+              return (
+                <tr key={info.stakingToken}>
+                  <td>{idx}</td>
+                  <td>{name}</td>
+                  <td>
+                    <Address value={info.stakingToken} />
+                  </td>
+                  <td>
+                    <Address value={info.poolAddress} />
+                  </td>
+                  <td>{info.weight}</td>
+                  <td>
+                    {((info.weight * 654_005) / weightSum).toLocaleString()}
+                  </td>
+                </tr>
+              );
+            })}
         </tbody>
       </NextPoolWeights>
 
