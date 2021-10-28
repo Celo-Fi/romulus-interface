@@ -35,6 +35,11 @@ enum Pool {
   CELOEUR = "CELO-mcEUR",
   CELOUBE = "UBE-CELO",
   CELORCELO = "rCELO-CELO",
+  WBTCMCUSD = "WBTC-mcUSD",
+  WETHMCUSD = "WETH-mcUSD",
+  SUSHIMCUSD = "SUSHI-mcUSD",
+  CRVMCUSD = "CRV-mcUSD",
+  AAVEMCUSD = "AAVE-mcUSD",
   UBE = "UBE",
 
   // Poof controlled
@@ -101,6 +106,41 @@ const farms: Farm[] = [
     farmAddress: "0x194478Aa91e4D7762c3E51EeE57376ea9ac72761",
     rewardToken: Token.CELO,
     amount: toWei("459"),
+    owner: Multisig.UBE,
+  },
+  {
+    pool: Pool.WBTCMCUSD,
+    farmAddress: "0xf3D9E027B131Af5162451601038EddBF456d824B",
+    rewardToken: Token.CELO,
+    amount: toWei("0.01"),
+    owner: Multisig.UBE,
+  },
+  {
+    pool: Pool.WETHMCUSD,
+    farmAddress: "0xD6E28720Fcd1C1aB6da2d1043a6763FDBb67b3aA",
+    rewardToken: Token.CELO,
+    amount: toWei("0.01"),
+    owner: Multisig.UBE,
+  },
+  {
+    pool: Pool.SUSHIMCUSD,
+    farmAddress: "0x0E83662A17B8A3a0585DcA34E5BE81ea6bd59556",
+    rewardToken: Token.CELO,
+    amount: toWei("0.01"),
+    owner: Multisig.UBE,
+  },
+  {
+    pool: Pool.CRVMCUSD,
+    farmAddress: "0x85B21208C0058019bc8004D85eFEa881E7598D17",
+    rewardToken: Token.CELO,
+    amount: toWei("0.01"),
+    owner: Multisig.UBE,
+  },
+  {
+    pool: Pool.AAVEMCUSD,
+    farmAddress: "0x09c1cF8669f9A026c59EDd4792944a9aCd2d2a2E",
+    rewardToken: Token.CELO,
+    amount: toWei("0.01"),
     owner: Multisig.UBE,
   },
   {
