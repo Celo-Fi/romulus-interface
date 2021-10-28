@@ -66,6 +66,16 @@ export const RefreshPools: React.FC = () => {
       )}
       <Button
         onClick={async () => {
+          const contract = poolManager.connect(await getConnectedSigner());
+          const tx = await contract.beginInitializePeriod();
+          console.log(`Initialized period: ${tx.hash}`);
+        }}
+      >
+        Begin initialize period
+      </Button>
+      <Button
+        onClick={async () => {
+          const contract = poolManager.connect(await getConnectedSigner());
           const batchSize = 10;
           for (
             let i = 0;
@@ -74,17 +84,27 @@ export const RefreshPools: React.FC = () => {
           ) {
             const start = i * batchSize;
             const end = Math.min(poolsToRefresh.length, (i + 1) * batchSize);
-            const tx = await poolManager
-              .connect(await getConnectedSigner())
-              .initializePeriod(poolsToRefresh.slice(start, end), {
+            const tx = await contract.batchRefreshPools(
+              poolsToRefresh.slice(start, end),
+              {
                 gasLimit: 10_000_000,
-              });
+              }
+            );
             console.log(`Refreshed from ${start} to ${end}`);
             console.log(`Tx: ${tx.hash}`);
           }
         }}
       >
         Refresh pool manager
+      </Button>
+      <Button
+        onClick={async () => {
+          const contract = poolManager.connect(await getConnectedSigner());
+          const tx = await contract.commitInitializePeriod();
+          console.log(`Commited period: ${tx.hash}`);
+        }}
+      >
+        Begin initialize period
       </Button>
       <p>
         Owner: <Address value={owner} />
