@@ -122,7 +122,7 @@ const farms: Farm[] = [
     pool: Pool.PCELOPOOF,
     farmAddress: "0x7B7F08164036abEbafD1bf75c1464c6F0d01653C",
     rewardToken: Token.POOF,
-    amount: toWei("57142.4"),
+    amount: toWei("42856.8"),
     owner: Multisig.POOF,
   },
   {
@@ -136,14 +136,14 @@ const farms: Farm[] = [
     pool: Pool.pEUREUR,
     farmAddress: "0xA1e9175ad10fBdA9Fa042269c2AB7DaFB54dc164",
     rewardToken: Token.POOF,
-    amount: toWei("0.1"),
+    amount: toWei("7142.8"),
     owner: Multisig.POOF,
   },
   {
     pool: Pool.pCELOCELO,
     farmAddress: "0xb86e373b209fb2C4cbE17d68d52A59798E4A9640",
     rewardToken: Token.POOF,
-    amount: toWei("0.1"),
+    amount: toWei("7142.8"),
     owner: Multisig.POOF,
   },
 ];
