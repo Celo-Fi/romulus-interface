@@ -66,9 +66,14 @@ export const RefreshPools: React.FC = () => {
       )}
       <Button
         onClick={async () => {
-          for (let i = 0; i < Math.ceil(poolsToRefresh.length / 20); i++) {
-            const start = i * 20;
-            const end = Math.min(poolsToRefresh.length, (i + 1) * 20);
+          const batchSize = 10;
+          for (
+            let i = 0;
+            i < Math.ceil(poolsToRefresh.length / batchSize);
+            i++
+          ) {
+            const start = i * batchSize;
+            const end = Math.min(poolsToRefresh.length, (i + 1) * batchSize);
             const tx = await poolManager
               .connect(await getConnectedSigner())
               .initializePeriod(poolsToRefresh.slice(start, end), {
