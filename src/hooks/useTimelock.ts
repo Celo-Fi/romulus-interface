@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ITimelock, ITimelock__factory } from "../generated";
 import { useProvider } from "./useProviderOrSigner";
@@ -16,7 +16,10 @@ export const useTimelock = (
   address: string
 ): { timelock: ITimelock; config: ITimelockConfig | null } => {
   const provider = useProvider();
-  const timelock = ITimelock__factory.connect(address, provider);
+  const timelock = useMemo(
+    () => ITimelock__factory.connect(address, provider),
+    [address, provider]
+  );
   const [config, setConfig] = useState<ITimelockConfig | null>(null);
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export const useTimelock = (
         delay,
       });
     })();
-  });
+  }, [timelock]);
 
   return { timelock, config };
 };

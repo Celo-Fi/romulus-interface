@@ -1,11 +1,15 @@
-import { FunctionFragment } from "ethers/lib/utils";
+import { BigNumber } from "@ethersproject/bignumber";
+import { FunctionFragment, isAddress } from "ethers/lib/utils";
 import React from "react";
 import { Box, Text } from "theme-ui";
+
+import { Address } from "../Address";
 
 interface Props {
   callee?: string;
   frag: FunctionFragment;
   args?: readonly unknown[];
+  inline?: boolean;
 }
 
 /**
@@ -17,6 +21,7 @@ export const FunctionWithArgs = ({
   callee,
   frag,
   args,
+  inline = false,
 }: Props): React.ReactElement => {
   if (!args || args.length === 0) {
     return (
@@ -25,22 +30,42 @@ export const FunctionWithArgs = ({
       </Box>
     );
   }
+
+  if (inline) {
+    return (
+      <>
+        {callee ? <Address value={callee} /> : ""}.{frag.name}(
+        {frag.inputs.map((input, i) => (
+          <React.Fragment key={i}>
+            <span>{renderValue(args[i])}</span>
+            {i !== frag.inputs.length - 1 ? ", " : ""}
+          </React.Fragment>
+        ))}
+        )
+      </>
+    );
+  }
+
   return (
-    <Box>
-      <Text>
-        {callee ? callee + "." : ""}
+    <div tw="flex flex-col">
+      <div>
+        {callee ? (
+          <>
+            <Address value={callee} />.
+          </>
+        ) : (
+          ""
+        )}
         {frag.name}(
-      </Text>
-      <br />
+      </div>
       {frag.inputs.map((input, i) => (
-        <Text key={i}>
+        <div key={i} tw="ml-4">
           {input.format("full")} {renderValue(args[i])}
           {i !== frag.inputs.length - 1 ? ", " : ""}
-          <br />
-        </Text>
+        </div>
       ))}
-      <Text>)</Text>
-    </Box>
+      <div>)</div>
+    </div>
   );
 };
 
@@ -68,8 +93,16 @@ const renderValue = (value: unknown): React.ReactNode => {
     );
   }
 
+  if (typeof value === "string" && isAddress(value)) {
+    return <Address truncate value={value} />;
+  }
+
   if (typeof value === "string" || typeof value === "number") {
     return <Text variant="highlight">{value}</Text>;
+  }
+
+  if (BigNumber.isBigNumber(value)) {
+    return <Text variant="highlight">{value.toString()}</Text>;
   }
 
   return <Text variant="highlight">{JSON.stringify(value)}</Text>;
