@@ -20,7 +20,11 @@ export const TransactionHash: React.FC<IProps> = ({ value }: IProps) => {
     return <Text sx={{ display: "block" }}>--</Text>;
   }
   return (
-    <Link href={`https://explorer.celo.org/tx/${value.hash}`}>
+    <Link
+      href={`https://explorer.celo.org/tx/${value.hash}`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       {value.hash}
       {receipt ? " (completed)" : ""}
     </Link>

@@ -1,9 +1,10 @@
 import Head from "next/head";
 import React from "react";
-import { Flex, Box } from "theme-ui";
+import { Box, Flex } from "theme-ui";
 
-import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { Header } from "./Header";
+
 interface Props {
   title?: string;
   children?: React.ReactNode;

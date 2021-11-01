@@ -1,21 +1,21 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { useGetConnectedSigner } from "../../../hooks/useProviderOrSigner";
 import { BigNumber } from "ethers";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { Box, Button, Card, Flex, Heading, Text } from "theme-ui";
+
 import { Address } from "../../../components/common/Address";
 import { RomulusDelegate__factory } from "../../../generated";
 import { TypedEvent } from "../../../generated/commons";
+import { useProposal } from "../../../hooks/romulus/useProposal";
 import { useVoteCasts } from "../../../hooks/romulus/useVoteCasts";
 import { useVotingTokens } from "../../../hooks/romulus/useVotingTokens";
-
 import { useAsyncState } from "../../../hooks/useAsyncState";
+import { useGetConnectedSigner } from "../../../hooks/useProviderOrSigner";
+import { ProposalState, Support } from "../../../types/romulus";
 import { BIG_ZERO } from "../../../util/constants";
 import { humanFriendlyWei } from "../../../util/number";
-import { useProposal } from "../../../hooks/romulus/useProposal";
-import { ProposalState, Support } from "../../../types/romulus";
 
 interface IProps {
   proposalEvent: TypedEvent<

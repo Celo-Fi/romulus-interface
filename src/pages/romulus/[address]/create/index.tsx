@@ -1,12 +1,12 @@
+import { BytesLike } from "ethers";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { Box, Button, Card, Flex, Heading, Text, Textarea } from "theme-ui";
 
 import { useAddCommandModal } from "../../../../components/pages/romulus/addCommandModal";
-import { governanceLookup } from "../..";
-import { BytesLike } from "ethers";
 import { RomulusDelegate__factory } from "../../../../generated";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
+import { governanceLookup } from "../..";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();

@@ -10,8 +10,7 @@ import {
 } from "../../../../hooks/useProviderOrSigner";
 import { Address } from "../../../common/Address";
 import { TransactionHash } from "../../../common/blockchain/TransactionHash";
-
-const MINING_RELEASE_ESCROW = "0x9d0a92AA8832518328D14Ed5930eC6B44448165e";
+import { MINING_RELEASE_ESCROW } from "./config";
 
 export const RefreshPools: React.FC = () => {
   const provider = useProvider();
@@ -67,15 +66,45 @@ export const RefreshPools: React.FC = () => {
       )}
       <Button
         onClick={async () => {
-          const tx = await poolManager
-            .connect(await getConnectedSigner())
-            .initializePeriod(poolsToRefresh, {
-              gasLimit: 10_000_000,
-            });
-          setTx(tx);
+          const contract = poolManager.connect(await getConnectedSigner());
+          const tx = await contract.beginInitializePeriod();
+          console.log(`Initialized period: ${tx.hash}`);
+        }}
+      >
+        Begin initialize period
+      </Button>
+      <Button
+        onClick={async () => {
+          const contract = poolManager.connect(await getConnectedSigner());
+          const batchSize = 20;
+          for (
+            let i = 0;
+            i < Math.ceil(poolsToRefresh.length / batchSize);
+            i++
+          ) {
+            const start = i * batchSize;
+            const end = Math.min(poolsToRefresh.length, (i + 1) * batchSize);
+            const tx = await contract.batchRefreshPools(
+              poolsToRefresh.slice(start, end),
+              {
+                gasLimit: 10_000_000,
+              }
+            );
+            console.log(`Refreshed from ${start} to ${end}`);
+            console.log(`Tx: ${tx.hash}`);
+          }
         }}
       >
         Refresh pool manager
+      </Button>
+      <Button
+        onClick={async () => {
+          const contract = poolManager.connect(await getConnectedSigner());
+          const tx = await contract.commitInitializePeriod();
+          console.log(`Commited period: ${tx.hash}`);
+        }}
+      >
+        Commit initialize period
       </Button>
       <p>
         Owner: <Address value={owner} />

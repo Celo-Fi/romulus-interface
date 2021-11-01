@@ -1,28 +1,28 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
+import { BigNumber } from "ethers";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { Box, Button, Flex, Heading, Text } from "theme-ui";
 
 import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
 import { ProposalCard } from "../../../components/pages/romulus/ProposalCard";
-import { humanFriendlyWei } from "../../../util/number";
-import { governanceLookup } from "..";
-import { truncateAddress } from "../../../components/layouts/MainLayout/Header";
-import { useProposals } from "../../../hooks/romulus/useProposals";
-import { BIG_ZERO } from "../../../util/constants";
-import { useRomulus } from "../../../hooks/romulus/useRomulus";
-import { useVotingTokens } from "../../../hooks/romulus/useVotingTokens";
-import { BigNumber } from "ethers";
-import {
-  useGetConnectedSigner,
-  useProvider,
-} from "../../../hooks/useProviderOrSigner";
+import { TopDelegates } from "../../../components/pages/romulus/TopDelegates";
 import {
   PoofToken__factory,
   RomulusDelegate__factory,
 } from "../../../generated";
+import { useProposals } from "../../../hooks/romulus/useProposals";
+import { useRomulus } from "../../../hooks/romulus/useRomulus";
+import { useVotingTokens } from "../../../hooks/romulus/useVotingTokens";
 import { useLatestBlockNumber } from "../../../hooks/useLatestBlockNumber";
-import { TopDelegates } from "../../../components/pages/romulus/TopDelegates";
+import {
+  useGetConnectedSigner,
+  useProvider,
+} from "../../../hooks/useProviderOrSigner";
+import { truncateAddress } from "../../../util/address";
+import { BIG_ZERO } from "../../../util/constants";
+import { humanFriendlyWei } from "../../../util/number";
+import { governanceLookup } from "..";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();

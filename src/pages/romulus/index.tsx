@@ -1,5 +1,5 @@
-import { ChainId, useContractKit } from "@celo-tools/use-contractkit";
 import { Address } from "@celo/contractkit";
+import { ChainId, useContractKit } from "@celo-tools/use-contractkit";
 import { useRouter } from "next/router";
 import React from "react";
 import { Box, Flex, Heading, Image, Text } from "theme-ui";
@@ -69,7 +69,7 @@ const RomulusIndexPage: React.FC = () => {
               }}
               onClick={() =>
                 void router.push(
-                  `/romulus/${governance.addresses[network.chainId]}`
+                  `/romulus/${governance.addresses[network.chainId] ?? ""}`
                 )
               }
             >

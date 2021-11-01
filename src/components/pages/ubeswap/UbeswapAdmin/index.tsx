@@ -2,8 +2,10 @@ import { css } from "@emotion/react";
 import React from "react";
 
 import { AllocatePools } from "./AllocatePools";
+import { D4P } from "./D4P";
 import { RefreshPools } from "./RefreshPools";
 import { ReleaseUbe } from "./ReleaseUbe";
+import { SetOperator } from "./SetOperator";
 import { TransferOwnership } from "./TransferOwnership";
 
 export const UbeswapAdmin: React.FC = () => {
@@ -11,7 +13,7 @@ export const UbeswapAdmin: React.FC = () => {
     <div
       css={css`
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 100%;
         grid-gap: 12px;
       `}
     >
@@ -19,6 +21,8 @@ export const UbeswapAdmin: React.FC = () => {
       <RefreshPools />
       <TransferOwnership />
       <AllocatePools />
+      <SetOperator />
+      <D4P />
     </div>
   );
 };
