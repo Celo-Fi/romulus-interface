@@ -27,6 +27,8 @@ const multisigOwners = [
   "0x98002Bc97eE37914cFd29b853792eA880101e57f",
   "0x9eb32a2962f006bD6F8357ae7AB0954e9999fC15",
 ];
+const MCUSD = "0x918146359264C492BD6934071c6Bd31C854EDBc3";
+const CELO = "0x471EcE3750Da237f93B8E339c536989b8978a438";
 
 const transferInterface = ERC20Abi.find((f) => f.name === "transfer");
 const getTransferData = (recipient: string, amount: string) =>
@@ -232,6 +234,8 @@ const UbeswapBuybackPage: React.FC = () => {
               const buybackBalance = toBN(
                 buybackBalanceLookup?.[info.stakingToken] ?? "0"
               );
+              const token0Bridge = tokenBridgeLookup?.[token0Symbol] ?? "";
+              const token1Bridge = tokenBridgeLookup?.[token1Symbol] ?? "";
 
               return (
                 <tr key={info.stakingToken}>
@@ -302,20 +306,18 @@ const UbeswapBuybackPage: React.FC = () => {
                                 0,
                                 getSetBridgeData(
                                   await lpToken.token0(),
-                                  "0x918146359264c492bd6934071c6bd31c854edbc3"
+                                  token0Bridge === MCUSD ? CELO : MCUSD
                                 )!
                               );
                             refetchBridge();
                           }}
                         >
-                          Set {token0Symbol} bridge to mcUSD
+                          Set {token0Symbol} bridge to{" "}
+                          {token0Bridge === MCUSD ? "CELO" : "mcUSD"}
                         </Button>
                         <Text sx={{ display: "block", mb: 2 }}>
                           Current bridge:{" "}
-                          <Address
-                            value={tokenBridgeLookup?.[token0Symbol] ?? ""}
-                            truncate
-                          />
+                          <Address value={token0Bridge} truncate />
                         </Text>
                       </td>
                       <td>
@@ -333,20 +335,18 @@ const UbeswapBuybackPage: React.FC = () => {
                                 0,
                                 getSetBridgeData(
                                   await lpToken.token1(),
-                                  "0x918146359264c492bd6934071c6bd31c854edbc3"
+                                  token1Bridge === MCUSD ? CELO : MCUSD
                                 )!
                               );
                             refetchBridge();
                           }}
                         >
-                          Set {token1Symbol} bridge to mcUSD
+                          Set {token1Symbol} bridge to{" "}
+                          {token1Bridge === MCUSD ? "CELO" : "mcUSD"}
                         </Button>
                         <Text sx={{ display: "block", mb: 2 }}>
                           Current bridge:{" "}
-                          <Address
-                            value={tokenBridgeLookup?.[token1Symbol] ?? ""}
-                            truncate
-                          />
+                          <Address value={token1Bridge} truncate />
                         </Text>
                       </td>
                     </>
