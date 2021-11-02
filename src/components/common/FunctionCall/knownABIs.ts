@@ -37,6 +37,14 @@ export const KNOWN_ADDRESSES: Record<
     name: "UBE Token",
     abi: ERC20Abi as unknown as Fragment[],
   },
+  "0x471EcE3750Da237f93B8E339c536989b8978a438": {
+    name: "CELO",
+    abi: ERC20Abi as unknown as Fragment[],
+  },
+  "0x918146359264c492bd6934071c6bd31c854edbc3": {
+    name: "mcUSD",
+    abi: ERC20Abi as unknown as Fragment[],
+  },
   "0x5Ed248077bD07eE9B530f7C40BE0c1dAE4c131C0": {
     name: "Release UBE",
   },

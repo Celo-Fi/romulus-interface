@@ -23,8 +23,8 @@ export const Address: React.FC<Props> = ({
   const fmt = getAddress(value);
 
   const text =
-    label ??
     KNOWN_ADDRESSES[fmt]?.name ??
+    label ??
     (truncate
       ? `${fmt.slice(0, 6)}...${fmt.slice(fmt.length - 5, fmt.length)}`
       : fmt);
