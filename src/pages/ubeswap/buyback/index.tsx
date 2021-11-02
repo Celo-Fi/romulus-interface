@@ -247,6 +247,7 @@ const UbeswapBuybackPage: React.FC = () => {
                                     ""
                                 )!
                               );
+                            refetchBuybackBalance();
                             refetchMultisigBalance();
                           }}
                           disabled={multisigBalance.eq(toBN(0))}
