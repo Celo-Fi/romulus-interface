@@ -73,7 +73,7 @@ const UbeswapBuybackPage: React.FC = () => {
     );
     return lookup;
   }, [web3, poolInfo]);
-  const [buybackBalanceLookup, refetch] = useAsyncState(
+  const [buybackBalanceLookup, refetchBuybackBalance] = useAsyncState(
     null,
     buybackBalanceCall
   );
@@ -163,7 +163,7 @@ const UbeswapBuybackPage: React.FC = () => {
       await lpToken.token1()
     );
     setTx(tx);
-    refetch();
+    refetchBuybackBalance();
   }, []);
 
   return (
