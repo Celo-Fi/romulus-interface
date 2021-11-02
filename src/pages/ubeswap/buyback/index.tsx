@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { ContractTransaction } from "ethers";
 import React, { useState } from "react";
-import { Button, Card, Heading, Text } from "theme-ui";
+import { Box, Button, Card, Heading, Text } from "theme-ui";
 import Web3 from "web3";
 import { AbiItem, fromWei, toBN } from "web3-utils";
 
@@ -55,10 +55,9 @@ const UbeswapBuybackPage: React.FC = () => {
   const [tx, setTx] = useState<ContractTransaction | null>(null);
   const ubeswapMultisig = useMultisigContract(UBE_MULTISIG);
 
-  // TODO: remove
-  const isMultisigOwner =
-    multisigOwners.some((a) => a.toLowerCase() === address?.toLowerCase()) ||
-    true;
+  const isMultisigOwner = multisigOwners.some(
+    (a) => a.toLowerCase() === address?.toLowerCase()
+  );
 
   const buybackBalanceCall = React.useCallback(async () => {
     const lookup: Record<string, string> = {};
@@ -156,24 +155,125 @@ const UbeswapBuybackPage: React.FC = () => {
     tokenBridgeCall
   );
 
-  const buyback = React.useCallback(async (lpTokenAddress: string) => {
-    const signer = await getConnectedSigner();
-    const lpToken = IUniswapV2Pair__factory.connect(lpTokenAddress, signer);
-    const ubeMaker = UbeMaker__factory.connect(UBE_MAKER, signer);
-    const tx = await ubeMaker.convert(
-      await lpToken.token0(),
-      await lpToken.token1()
-    );
-    setTx(tx);
-    refetchBuybackBalance();
-  }, []);
+  const filteredPools = Object.values(poolInfo)
+    .sort((a, b) => {
+      const multisigBalanceA = toBN(
+        multisigBalanceLookup?.[a.stakingToken] ?? "0"
+      );
+      const multisigBalanceB = toBN(
+        multisigBalanceLookup?.[b.stakingToken] ?? "0"
+      );
+      const buybackBalanceA = toBN(
+        buybackBalanceLookup?.[a.stakingToken] ?? "0"
+      );
+      const buybackBalanceB = toBN(
+        buybackBalanceLookup?.[b.stakingToken] ?? "0"
+      );
+
+      if (buybackBalanceA.lt(buybackBalanceB)) {
+        return 1;
+      } else if (buybackBalanceA.gt(buybackBalanceB)) {
+        return -1;
+      } else {
+        if (multisigBalanceA.lt(multisigBalanceB)) {
+          return 1;
+        } else if (multisigBalanceA.gt(multisigBalanceB)) {
+          return -1;
+        }
+      }
+      return 0;
+    })
+    .filter((info) => {
+      const multisigBalance = toBN(
+        multisigBalanceLookup?.[info.stakingToken] ?? "0"
+      );
+      const buybackBalance = toBN(
+        buybackBalanceLookup?.[info.stakingToken] ?? "0"
+      );
+
+      return multisigBalance.gt(toBN(0)) || buybackBalance.gt(toBN(0));
+    });
 
   return (
     <Card p={4}>
-      <Heading as="h2" pb={2}>
+      <Heading as="h1" pb={2}>
         Ubeswap Buyback Dashboard
       </Heading>
-      <TransactionHash value={tx} />
+      <Heading as="h3" pb={2}>
+        Last transaction hash
+        <TransactionHash value={tx} />
+      </Heading>
+
+      <Heading as="h3" pb={2}>
+        Bulk controls
+      </Heading>
+      <Box mb={4}>
+        {isMultisigOwner && (
+          <Button
+            onClick={async () => {
+              const signer = await getConnectedSigner();
+              const multisig = ubeswapMultisig.connect(signer as any);
+              filteredPools.forEach(async (info) => {
+                const multisigBalance = toBN(
+                  multisigBalanceLookup?.[info.stakingToken] ?? "0"
+                );
+                if (multisigBalance.gt(toBN(0))) {
+                  multisig.submitTransaction(
+                    info.stakingToken,
+                    0,
+                    getTransferData(
+                      UBE_MAKER,
+                      multisigBalanceLookup?.[info.stakingToken] ?? ""
+                    )!
+                  );
+                  refetchBuybackBalance();
+                  refetchMultisigBalance();
+                }
+              });
+            }}
+            mr={2}
+          >
+            Transfer All
+          </Button>
+        )}
+        <Button
+          onClick={async () => {
+            const signer = await getConnectedSigner();
+            const ubeMaker = UbeMaker__factory.connect(UBE_MAKER, signer);
+            const bucketSize = 10;
+            for (
+              let i = 0;
+              i < Math.ceil(filteredPools.length / bucketSize);
+              i++
+            ) {
+              const pools = filteredPools.slice(
+                i * bucketSize,
+                Math.min((i + 1) * bucketSize, filteredPools.length)
+              );
+              const token0s = [];
+              const token1s = [];
+              for (const pool of pools) {
+                const buybackBalance = toBN(
+                  buybackBalanceLookup?.[pool.stakingToken] ?? "0"
+                );
+                if (buybackBalance.gt(toBN(0))) {
+                  const lpToken = IUniswapV2Pair__factory.connect(
+                    pool.stakingToken,
+                    signer
+                  );
+                  token0s.push(await lpToken.token0());
+                  token1s.push(await lpToken.token1());
+                }
+              }
+              const tx = await ubeMaker.convertMultiple(token0s, token1s);
+              setTx(tx);
+              refetchBuybackBalance();
+            }
+          }}
+        >
+          Buyback All
+        </Button>
+      </Box>
 
       <NextPoolWeights>
         <thead>
@@ -185,175 +285,150 @@ const UbeswapBuybackPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {Object.values(poolInfo)
-            .sort((a, b) => {
-              const multisigBalanceA = toBN(
-                multisigBalanceLookup?.[a.stakingToken] ?? "0"
-              );
-              const multisigBalanceB = toBN(
-                multisigBalanceLookup?.[b.stakingToken] ?? "0"
-              );
-              const buybackBalanceA = toBN(
-                buybackBalanceLookup?.[a.stakingToken] ?? "0"
-              );
-              const buybackBalanceB = toBN(
-                buybackBalanceLookup?.[b.stakingToken] ?? "0"
-              );
+          {filteredPools.map((info, idx) => {
+            const [token0Symbol, token1Symbol] = tokenSymbolLookup?.[
+              info.stakingToken
+            ] ?? ["???", "???"];
+            const name = `${token0Symbol}-${token1Symbol}`;
+            const multisigBalance = toBN(
+              multisigBalanceLookup?.[info.stakingToken] ?? "0"
+            );
+            const buybackBalance = toBN(
+              buybackBalanceLookup?.[info.stakingToken] ?? "0"
+            );
+            const token0Bridge = tokenBridgeLookup?.[token0Symbol] ?? "";
+            const token1Bridge = tokenBridgeLookup?.[token1Symbol] ?? "";
 
-              if (buybackBalanceA.lt(buybackBalanceB)) {
-                return 1;
-              } else if (buybackBalanceA.gt(buybackBalanceB)) {
-                return -1;
-              } else {
-                if (multisigBalanceA.lt(multisigBalanceB)) {
-                  return 1;
-                } else if (multisigBalanceA.gt(multisigBalanceB)) {
-                  return -1;
-                }
-              }
-              return 0;
-            })
-            .filter((info) => {
-              const multisigBalance = toBN(
-                multisigBalanceLookup?.[info.stakingToken] ?? "0"
-              );
-              const buybackBalance = toBN(
-                buybackBalanceLookup?.[info.stakingToken] ?? "0"
-              );
-
-              return multisigBalance.gt(toBN(0)) || buybackBalance.gt(toBN(0));
-            })
-            .map((info, idx) => {
-              const [token0Symbol, token1Symbol] = tokenSymbolLookup?.[
-                info.stakingToken
-              ] ?? ["???", "???"];
-              const name = `${token0Symbol}-${token1Symbol}`;
-              const multisigBalance = toBN(
-                multisigBalanceLookup?.[info.stakingToken] ?? "0"
-              );
-              const buybackBalance = toBN(
-                buybackBalanceLookup?.[info.stakingToken] ?? "0"
-              );
-              const token0Bridge = tokenBridgeLookup?.[token0Symbol] ?? "";
-              const token1Bridge = tokenBridgeLookup?.[token1Symbol] ?? "";
-
-              return (
-                <tr key={info.stakingToken}>
-                  <td>{idx}</td>
-                  <td>
-                    <Address value={info.stakingToken} label={name} />
-                  </td>
-                  <td>
-                    {Number(fromWei(buybackBalance)).toLocaleString(undefined, {
-                      maximumSignificantDigits: 2,
-                    })}{" "}
-                    ULP
-                  </td>
-                  <td>
-                    <Button
-                      onClick={async () => {
-                        buyback(info.stakingToken);
-                      }}
-                      disabled={buybackBalance.eq(toBN(0))}
-                    >
-                      Buyback UBE
-                    </Button>
-                  </td>
-                  {isMultisigOwner && (
-                    <>
-                      <td>
-                        <Button
-                          onClick={async () => {
-                            const signer = await getConnectedSigner();
-                            await ubeswapMultisig
-                              .connect(signer as any)
-                              .submitTransaction(
-                                info.stakingToken,
-                                0,
-                                getTransferData(
-                                  UBE_MAKER,
-                                  multisigBalanceLookup?.[info.stakingToken] ??
-                                    ""
-                                )!
-                              );
-                            refetchBuybackBalance();
-                            refetchMultisigBalance();
-                          }}
-                          disabled={multisigBalance.eq(toBN(0))}
-                        >
-                          Transfer{" "}
-                          {Number(fromWei(multisigBalance)).toLocaleString(
-                            undefined,
-                            {
-                              maximumSignificantDigits: 2,
-                            }
-                          )}{" "}
-                          ULP
-                        </Button>
-                      </td>
-                      <td>
-                        <Button
-                          onClick={async () => {
-                            const signer = await getConnectedSigner();
-                            const lpToken = IUniswapV2Pair__factory.connect(
+            return (
+              <tr key={info.stakingToken}>
+                <td>{idx}</td>
+                <td>
+                  <Address value={info.stakingToken} label={name} />
+                </td>
+                <td>
+                  {Number(fromWei(buybackBalance)).toLocaleString(undefined, {
+                    maximumSignificantDigits: 2,
+                  })}{" "}
+                  ULP
+                </td>
+                <td>
+                  <Button
+                    onClick={async () => {
+                      const signer = await getConnectedSigner();
+                      const lpToken = IUniswapV2Pair__factory.connect(
+                        info.stakingToken,
+                        signer
+                      );
+                      const ubeMaker = UbeMaker__factory.connect(
+                        UBE_MAKER,
+                        signer
+                      );
+                      const tx = await ubeMaker.convert(
+                        await lpToken.token0(),
+                        await lpToken.token1()
+                      );
+                      setTx(tx);
+                      refetchBuybackBalance();
+                    }}
+                    disabled={buybackBalance.eq(toBN(0))}
+                  >
+                    Buyback UBE
+                  </Button>
+                </td>
+                {isMultisigOwner && (
+                  <>
+                    <td>
+                      <Button
+                        onClick={async () => {
+                          const signer = await getConnectedSigner();
+                          await ubeswapMultisig
+                            .connect(signer as any)
+                            .submitTransaction(
                               info.stakingToken,
-                              signer
-                            );
-                            await ubeswapMultisig
-                              .connect(signer as any)
-                              .submitTransaction(
+                              0,
+                              getTransferData(
                                 UBE_MAKER,
-                                0,
-                                getSetBridgeData(
-                                  await lpToken.token0(),
-                                  token0Bridge === MCUSD ? CELO : MCUSD
-                                )!
-                              );
-                            refetchBridge();
-                          }}
-                        >
-                          Set {token0Symbol} bridge to{" "}
-                          {token0Bridge === MCUSD ? "CELO" : "mcUSD"}
-                        </Button>
-                        <Text sx={{ display: "block", mb: 2 }}>
-                          Current bridge:{" "}
-                          <Address value={token0Bridge} truncate />
-                        </Text>
-                      </td>
-                      <td>
-                        <Button
-                          onClick={async () => {
-                            const signer = await getConnectedSigner();
-                            const lpToken = IUniswapV2Pair__factory.connect(
-                              info.stakingToken,
-                              signer
+                                multisigBalanceLookup?.[info.stakingToken] ?? ""
+                              )!
                             );
-                            await ubeswapMultisig
-                              .connect(signer as any)
-                              .submitTransaction(
-                                UBE_MAKER,
-                                0,
-                                getSetBridgeData(
-                                  await lpToken.token1(),
-                                  token1Bridge === MCUSD ? CELO : MCUSD
-                                )!
-                              );
-                            refetchBridge();
-                          }}
-                        >
-                          Set {token1Symbol} bridge to{" "}
-                          {token1Bridge === MCUSD ? "CELO" : "mcUSD"}
-                        </Button>
-                        <Text sx={{ display: "block", mb: 2 }}>
-                          Current bridge:{" "}
-                          <Address value={token1Bridge} truncate />
-                        </Text>
-                      </td>
-                    </>
-                  )}
-                </tr>
-              );
-            })}
+                          refetchBuybackBalance();
+                          refetchMultisigBalance();
+                        }}
+                        disabled={multisigBalance.eq(toBN(0))}
+                      >
+                        Transfer{" "}
+                        {Number(fromWei(multisigBalance)).toLocaleString(
+                          undefined,
+                          {
+                            maximumSignificantDigits: 2,
+                          }
+                        )}{" "}
+                        ULP
+                      </Button>
+                    </td>
+                    <td>
+                      <Button
+                        onClick={async () => {
+                          const signer = await getConnectedSigner();
+                          const lpToken = IUniswapV2Pair__factory.connect(
+                            info.stakingToken,
+                            signer
+                          );
+                          await ubeswapMultisig
+                            .connect(signer as any)
+                            .submitTransaction(
+                              UBE_MAKER,
+                              0,
+                              getSetBridgeData(
+                                await lpToken.token0(),
+                                token0Bridge === MCUSD ? CELO : MCUSD
+                              )!
+                            );
+                          refetchBridge();
+                        }}
+                      >
+                        Set {token0Symbol} bridge to{" "}
+                        {token0Bridge === MCUSD ? "CELO" : "mcUSD"}
+                      </Button>
+                      <Text sx={{ display: "block", mb: 2 }}>
+                        Current bridge:{" "}
+                        <Address value={token0Bridge} truncate />
+                      </Text>
+                    </td>
+                    <td>
+                      <Button
+                        onClick={async () => {
+                          const signer = await getConnectedSigner();
+                          const lpToken = IUniswapV2Pair__factory.connect(
+                            info.stakingToken,
+                            signer
+                          );
+                          await ubeswapMultisig
+                            .connect(signer as any)
+                            .submitTransaction(
+                              UBE_MAKER,
+                              0,
+                              getSetBridgeData(
+                                await lpToken.token1(),
+                                token1Bridge === MCUSD ? CELO : MCUSD
+                              )!
+                            );
+                          refetchBridge();
+                        }}
+                      >
+                        Set {token1Symbol} bridge to{" "}
+                        {token1Bridge === MCUSD ? "CELO" : "mcUSD"}
+                      </Button>
+                      <Text sx={{ display: "block", mb: 2 }}>
+                        Current bridge:{" "}
+                        <Address value={token1Bridge} truncate />
+                      </Text>
+                    </td>
+                  </>
+                )}
+              </tr>
+            );
+          })}
         </tbody>
       </NextPoolWeights>
     </Card>
