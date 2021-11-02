@@ -41,7 +41,7 @@ export const KNOWN_ADDRESSES: Record<
     name: "CELO",
     abi: ERC20Abi as unknown as Fragment[],
   },
-  "0x918146359264c492bd6934071c6bd31c854edbc3": {
+  "0x918146359264C492BD6934071c6Bd31C854EDBc3": {
     name: "mcUSD",
     abi: ERC20Abi as unknown as Fragment[],
   },
