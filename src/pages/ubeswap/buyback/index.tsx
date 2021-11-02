@@ -184,8 +184,33 @@ const UbeswapBuybackPage: React.FC = () => {
         </thead>
         <tbody>
           {Object.values(poolInfo)
-            .sort((a, b) => a.stakingToken.localeCompare(b.stakingToken))
-            .sort((a, b) => a.weight - b.weight)
+            .sort((a, b) => {
+              const multisigBalanceA = toBN(
+                multisigBalanceLookup?.[a.stakingToken] ?? "0"
+              );
+              const multisigBalanceB = toBN(
+                multisigBalanceLookup?.[b.stakingToken] ?? "0"
+              );
+              const buybackBalanceA = toBN(
+                buybackBalanceLookup?.[a.stakingToken] ?? "0"
+              );
+              const buybackBalanceB = toBN(
+                buybackBalanceLookup?.[b.stakingToken] ?? "0"
+              );
+
+              if (buybackBalanceA.lt(buybackBalanceB)) {
+                return 1;
+              } else if (buybackBalanceA.gt(buybackBalanceB)) {
+                return -1;
+              } else {
+                if (multisigBalanceA.lt(multisigBalanceB)) {
+                  return 1;
+                } else if (multisigBalanceA.gt(multisigBalanceB)) {
+                  return -1;
+                }
+              }
+              return 0;
+            })
             .filter((info) => {
               const multisigBalance = toBN(
                 multisigBalanceLookup?.[info.stakingToken] ?? "0"
