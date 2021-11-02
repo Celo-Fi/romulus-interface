@@ -218,7 +218,7 @@ const UbeswapBuybackPage: React.FC = () => {
                   multisigBalanceLookup?.[info.stakingToken] ?? "0"
                 );
                 if (multisigBalance.gt(toBN(0))) {
-                  multisig.submitTransaction(
+                  const tx = await multisig.submitTransaction(
                     info.stakingToken,
                     0,
                     getTransferData(
@@ -226,6 +226,7 @@ const UbeswapBuybackPage: React.FC = () => {
                       multisigBalanceLookup?.[info.stakingToken] ?? ""
                     )!
                   );
+                  setTx(tx);
                   refetchBuybackBalance();
                   refetchMultisigBalance();
                 }
@@ -240,32 +241,39 @@ const UbeswapBuybackPage: React.FC = () => {
           onClick={async () => {
             const signer = await getConnectedSigner();
             const ubeMaker = UbeMaker__factory.connect(UBE_MAKER, signer);
+            const token0s = [];
+            const token1s = [];
+            for (const pool of filteredPools) {
+              const buybackBalance = toBN(
+                buybackBalanceLookup?.[pool.stakingToken] ?? "0"
+              );
+              if (buybackBalance.gt(toBN(0))) {
+                const lpToken = IUniswapV2Pair__factory.connect(
+                  pool.stakingToken,
+                  signer
+                );
+                token0s.push(await lpToken.token0());
+                token1s.push(await lpToken.token1());
+              }
+            }
             const bucketSize = 10;
             for (
               let i = 0;
               i < Math.ceil(filteredPools.length / bucketSize);
               i++
             ) {
-              const pools = filteredPools.slice(
+              const token0Segment = token0s.slice(
                 i * bucketSize,
                 Math.min((i + 1) * bucketSize, filteredPools.length)
               );
-              const token0s = [];
-              const token1s = [];
-              for (const pool of pools) {
-                const buybackBalance = toBN(
-                  buybackBalanceLookup?.[pool.stakingToken] ?? "0"
-                );
-                if (buybackBalance.gt(toBN(0))) {
-                  const lpToken = IUniswapV2Pair__factory.connect(
-                    pool.stakingToken,
-                    signer
-                  );
-                  token0s.push(await lpToken.token0());
-                  token1s.push(await lpToken.token1());
-                }
-              }
-              const tx = await ubeMaker.convertMultiple(token0s, token1s);
+              const token1Segment = token0s.slice(
+                i * bucketSize,
+                Math.min((i + 1) * bucketSize, filteredPools.length)
+              );
+              const tx = await ubeMaker.convertMultiple(
+                token0Segment,
+                token1Segment
+              );
               setTx(tx);
               refetchBuybackBalance();
             }
@@ -341,7 +349,7 @@ const UbeswapBuybackPage: React.FC = () => {
                       <Button
                         onClick={async () => {
                           const signer = await getConnectedSigner();
-                          await ubeswapMultisig
+                          const tx = await ubeswapMultisig
                             .connect(signer as any)
                             .submitTransaction(
                               info.stakingToken,
@@ -351,6 +359,7 @@ const UbeswapBuybackPage: React.FC = () => {
                                 multisigBalanceLookup?.[info.stakingToken] ?? ""
                               )!
                             );
+                          setTx(tx);
                           refetchBuybackBalance();
                           refetchMultisigBalance();
                         }}
