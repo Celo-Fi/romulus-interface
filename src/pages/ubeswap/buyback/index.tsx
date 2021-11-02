@@ -3,7 +3,7 @@ import { ContractTransaction } from "ethers";
 import React, { useState } from "react";
 import { Button, Card, Heading, Text } from "theme-ui";
 import Web3 from "web3";
-import { AbiItem, fromWei } from "web3-utils";
+import { AbiItem, fromWei, toBN } from "web3-utils";
 
 import { usePoolManager } from "../../../hooks/usePoolManager";
 import {
@@ -187,18 +187,27 @@ const UbeswapBuybackPage: React.FC = () => {
             .sort((a, b) => a.stakingToken.localeCompare(b.stakingToken))
             .sort((a, b) => a.weight - b.weight)
             .filter((info) => {
-              return (
-                POOL_WEIGHTS.find(
-                  (w) =>
-                    w.address.toLowerCase() === info.stakingToken.toLowerCase()
-                ) !== undefined
+              const multisigBalance = toBN(
+                multisigBalanceLookup?.[info.stakingToken] ?? "0"
               );
+              const buybackBalance = toBN(
+                buybackBalanceLookup?.[info.stakingToken] ?? "0"
+              );
+
+              return multisigBalance.gt(toBN(0)) || buybackBalance.gt(toBN(0));
             })
             .map((info, idx) => {
               const [token0Symbol, token1Symbol] = tokenSymbolLookup?.[
                 info.stakingToken
               ] ?? ["???", "???"];
               const name = `${token0Symbol}-${token1Symbol}`;
+              const multisigBalance = toBN(
+                multisigBalanceLookup?.[info.stakingToken] ?? "0"
+              );
+              const buybackBalance = toBN(
+                buybackBalanceLookup?.[info.stakingToken] ?? "0"
+              );
+
               return (
                 <tr key={info.stakingToken}>
                   <td>{idx}</td>
@@ -206,9 +215,7 @@ const UbeswapBuybackPage: React.FC = () => {
                     <Address value={info.stakingToken} label={name} />
                   </td>
                   <td>
-                    {Number(
-                      fromWei(buybackBalanceLookup?.[info.stakingToken] ?? "0")
-                    ).toLocaleString(undefined, {
+                    {Number(fromWei(buybackBalance)).toLocaleString(undefined, {
                       maximumSignificantDigits: 2,
                     })}{" "}
                     ULP
@@ -218,11 +225,7 @@ const UbeswapBuybackPage: React.FC = () => {
                       onClick={async () => {
                         buyback(info.stakingToken);
                       }}
-                      disabled={
-                        Number(
-                          buybackBalanceLookup?.[info.stakingToken] ?? "0"
-                        ) <= 0
-                      }
+                      disabled={buybackBalance.eq(toBN(0))}
                     >
                       Buyback UBE
                     </Button>
@@ -246,15 +249,15 @@ const UbeswapBuybackPage: React.FC = () => {
                               );
                             refetchMultisigBalance();
                           }}
+                          disabled={multisigBalance.eq(toBN(0))}
                         >
                           Transfer{" "}
-                          {Number(
-                            fromWei(
-                              multisigBalanceLookup?.[info.stakingToken] ?? "0"
-                            )
-                          ).toLocaleString(undefined, {
-                            maximumSignificantDigits: 2,
-                          })}{" "}
+                          {Number(fromWei(multisigBalance)).toLocaleString(
+                            undefined,
+                            {
+                              maximumSignificantDigits: 2,
+                            }
+                          )}{" "}
                           ULP
                         </Button>
                       </td>
