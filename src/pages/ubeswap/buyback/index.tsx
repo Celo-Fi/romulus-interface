@@ -11,8 +11,8 @@ import {
   useProvider,
 } from "../../../hooks/useProviderOrSigner";
 import { TransactionHash } from "../../../components/common/blockchain/TransactionHash";
-import { POOL_WEIGHTS } from "../../../components/pages/ubeswap/UbeswapAdmin/config";
 import ERC20Abi from "../../../abis/ERC20.json";
+import UbeMakerAbi from "../../../abis/ubeswap/UbeMaker.json";
 import { useAsyncState } from "../../../hooks/useAsyncState";
 import { ERC20__factory, UbeMaker__factory } from "../../../generated";
 import { IUniswapV2Pair__factory } from "../../../generated/factories/IUniswapV2Pair__factory";
@@ -36,7 +36,7 @@ const getTransferData = (recipient: string, amount: string) =>
         amount,
       ])
     : null;
-const setBridgeInterface = ERC20Abi.find((f) => f.name === "setBridge");
+const setBridgeInterface = UbeMakerAbi.find((f) => f.name === "setBridge");
 const getSetBridgeData = (token: string, bridge: string) =>
   setBridgeInterface
     ? web3.eth.abi.encodeFunctionCall(setBridgeInterface as AbiItem, [
