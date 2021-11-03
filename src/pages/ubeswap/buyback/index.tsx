@@ -266,7 +266,7 @@ const UbeswapBuybackPage: React.FC = () => {
                 i * bucketSize,
                 Math.min((i + 1) * bucketSize, filteredPools.length)
               );
-              const token1Segment = token0s.slice(
+              const token1Segment = token1s.slice(
                 i * bucketSize,
                 Math.min((i + 1) * bucketSize, filteredPools.length)
               );
