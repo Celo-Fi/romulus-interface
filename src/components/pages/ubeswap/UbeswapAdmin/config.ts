@@ -11,7 +11,7 @@ const WEIGHTS = [
   // ["MOO-mCELOxOLD", 0],
   // ["sCELO-CELO", 0],
 
-  ["UBE-CELO", 0.36],
+  ["UBE-CELO", 0.35],
   ["CELO-mcUSD", 0.12],
   ["mcUSD-mcEUR", 0.07],
   ["CELO-mcEUR", 0.05],
@@ -31,7 +31,7 @@ const WEIGHTS = [
   ["mcUSD-AAVE", 0.01],
   ["mcUSD-CRV", 0.01],
   ["mcUSD-SUSHI", 0.01],
-  // ["mcUSD-BNB", 0.01],
+  ["mcUSD-BNB", 0.01],
   ["mcUSD-FTM", 0.01],
   ["mcUSD-AVAX", 0.01],
   ["mcUSD-WMATIC", 0.01],
@@ -77,6 +77,7 @@ const POOL_ADDRESSES = {
   "mcUSD-FTM": "0x11A0DCe6931528fa45E5E34D79C2761Cc8b96169",
   "mcUSD-AVAX": "0x11Ce57AaAE0418d120e4415691B6F174219e4b02",
   "mcUSD-WMATIC": "0xaA2cD92f13c5bA72291b3fDa9D0D860Aa48A514a",
+  "mcUSD-BNB": "0x30F1639B42E5F14c176E47d07199F001F122238c",
   "UBE-TFBX": "0x911923b25c6ca2b916da8005f0554b365d7ddf33",
 } as const;
 
