@@ -180,7 +180,7 @@ const farms: Farm[] = [
     pool: Pool.UBE,
     farmAddress: "0xCe74d14163deb82af57f253108F7E5699e62116d",
     rewardToken: Token.UBE,
-    amount: toWei("0.1"),
+    amount: toWei("16350.14558"),
     owner: Multisig.UBE,
   },
 
