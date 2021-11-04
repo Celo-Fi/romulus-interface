@@ -40,6 +40,9 @@ enum Pool {
   SUSHIMCUSD = "SUSHI-mcUSD",
   CRVMCUSD = "CRV-mcUSD",
   AAVEMCUSD = "AAVE-mcUSD",
+  FTMMCUSD = "FTM-mcUSD",
+  AVAXMCUSD = "AVAX-mcUSD",
+  WMATICMCUSD = "WMATIC-mcUSD",
   UBE = "UBE",
 
   // Poof controlled
@@ -141,6 +144,27 @@ const farms: Farm[] = [
     farmAddress: "0x09c1cF8669f9A026c59EDd4792944a9aCd2d2a2E",
     rewardToken: Token.CELO,
     amount: toWei("500"),
+    owner: Multisig.UBE,
+  },
+  {
+    pool: Pool.FTMMCUSD,
+    farmAddress: "0x3C29593674c5c760172d354acE88Da4D9d3EB64f",
+    rewardToken: Token.CELO,
+    amount: toWei("0.1"),
+    owner: Multisig.UBE,
+  },
+  {
+    pool: Pool.AVAXMCUSD,
+    farmAddress: "0x750bB68Fa18F06d9696af85Ecc312f178E75fCfD",
+    rewardToken: Token.CELO,
+    amount: toWei("0.1"),
+    owner: Multisig.UBE,
+  },
+  {
+    pool: Pool.WMATICMCUSD,
+    farmAddress: "0x00C4aCee9eB84B1a6Cdc741AeEd19BF84CbE7bF5",
+    rewardToken: Token.CELO,
+    amount: toWei("0.1"),
     owner: Multisig.UBE,
   },
   {
