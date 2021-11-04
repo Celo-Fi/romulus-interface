@@ -45,6 +45,7 @@ enum Pool {
   AVAXMCUSD = "AVAX-mcUSD",
   WMATICMCUSD = "WMATIC-mcUSD",
   BNBMCUSD = "BNB-mcUSD",
+  SOLCELO = "SOL-CELO",
   UBE = "UBE",
 
   // Poof controlled
@@ -172,6 +173,13 @@ const farms: Farm[] = [
   {
     pool: Pool.BNBMCUSD,
     farmAddress: "0xCD2d4024A42109593301fF11967c16eA180DD381",
+    rewardToken: Token.CELO,
+    amount: toWei("100"),
+    owner: Multisig.UBE,
+  },
+  {
+    pool: Pool.SOLCELO,
+    farmAddress: "0x83470506ba97dB33Df0EBe01E876C6718C762Df6",
     rewardToken: Token.CELO,
     amount: toWei("100"),
     owner: Multisig.UBE,
