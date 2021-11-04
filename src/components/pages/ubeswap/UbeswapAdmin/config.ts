@@ -11,29 +11,32 @@ const WEIGHTS = [
   // ["MOO-mCELOxOLD", 0],
   // ["sCELO-CELO", 0],
 
-  ["UBE-CELO", 0.35],
-  ["CELO-mcUSD", 0.11],
-  ["CELO-mcEUR", 0.07],
-  ["rCELO-CELO", 0.02],
-  ["mcUSD-mcEUR", 0.06],
-  ["UBE-cMCO2", 0.005],
-  ["MOO-mCELO", 0.03],
+  ["UBE-CELO", 0.36],
+  ["CELO-mcUSD", 0.12],
+  ["mcUSD-mcEUR", 0.07],
+  ["CELO-mcEUR", 0.05],
   ["MOBI-CELO", 0.04],
+  ["WETH-CELO", 0.04],
+  ["MOO-mCELO", 0.03],
+  ["WBTC-CELO", 0.03],
+  ["USDC-CELO", 0.03],
+  ["WETH-mcUSD", 0.03],
+  ["rCELO-CELO", 0.02],
   ["POOF-UBE", 0.02],
-  ["POOF-pCELO", 0.03],
-
-  ["WBTC-CELO", 0.04],
-  ["WETH-CELO", 0.08],
-  ["WBTC-mcUSD", 0.01],
-  ["WETH-mcUSD", 0.01],
-  ["USDC-CELO", 0.05],
-  ["UBE-SBR", 0.02],
   ["SOL-CELO", 0.02],
-  ["KNX-CELO", 0.005],
-
+  ["UBE-SBR", 0.02],
+  ["WBTC-mcUSD", 0.02],
+  ["KNX-CELO", 0.015],
+  ["POOF-pCELO", 0.01],
   ["mcUSD-AAVE", 0.01],
   ["mcUSD-CRV", 0.01],
   ["mcUSD-SUSHI", 0.01],
+  // ["mcUSD-BNB", 0.01],
+  ["mcUSD-FTM", 0.01],
+  ["mcUSD-AVAX", 0.01],
+  ["mcUSD-WMATIC", 0.01],
+  ["UBE-TFBX", 0.01],
+  ["UBE-cMCO2", 0.005],
 ] as const;
 
 const POOL_ADDRESSES = {
@@ -69,6 +72,12 @@ const POOL_ADDRESSES = {
   "mcUSD-AAVE": "0xf35e9ca7ad819a748f678c6bd23a4987287c713c",
   "mcUSD-CRV": "0xda36a59ea2d8e5a4de21fb153b8ded5a62bad9d1",
   "mcUSD-SUSHI": "0x736fc67f144e208381b85dd0898fa1a6677bc437",
+
+  // "mcUSD-BNB": "",
+  "mcUSD-FTM": "0x11A0DCe6931528fa45E5E34D79C2761Cc8b96169",
+  "mcUSD-AVAX": "0x11Ce57AaAE0418d120e4415691B6F174219e4b02",
+  "mcUSD-WMATIC": "0xaA2cD92f13c5bA72291b3fDa9D0D860Aa48A514a",
+  "UBE-TFBX": "0x911923b25c6ca2b916da8005f0554b365d7ddf33",
 } as const;
 
 export const POOL_WEIGHTS: { name: string; address: string; weight: number }[] =
