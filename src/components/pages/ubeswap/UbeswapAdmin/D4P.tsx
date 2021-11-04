@@ -1,15 +1,16 @@
 import { useGetConnectedSigner } from "@celo-tools/use-contractkit";
+import moment from "moment";
 import React from "react";
 import { Button, Flex, Heading, Text } from "theme-ui";
-import { useMultisigContract } from "../../../../hooks/useMultisigContract";
+import Web3 from "web3";
+import { AbiItem, fromWei, toWei } from "web3-utils";
+
 import ERC20Abi from "../../../../abis/ERC20.json";
 import MSRAbi from "../../../../abis/MoolaStakingRewards.json";
-import { AbiItem, toWei, fromWei } from "web3-utils";
-import Web3 from "web3";
+import { Address } from "../../../../components/common/Address";
 import { MultiSig as MultisigContract } from "../../../../generated";
 import { useAsyncState } from "../../../../hooks/useAsyncState";
-import moment from "moment";
-import { Address } from "../../../../components/common/Address";
+import { useMultisigContract } from "../../../../hooks/useMultisigContract";
 
 const web3 = new Web3("https://forno.celo.org"); // TODO: HARDCODE
 
