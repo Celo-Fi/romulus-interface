@@ -196,40 +196,40 @@ const farms: Farm[] = [
     pool: Pool.POOFUBE,
     farmAddress: "0x4274AA72B12221D32ca77cB37057A9692E0b59Eb",
     rewardToken: Token.POOF,
-    amount: toWei("7142.8"),
+    amount: toWei("3571.4"),
     owner: Multisig.POOF,
   },
   {
     pool: Pool.PCELOPOOF,
     farmAddress: "0x7B7F08164036abEbafD1bf75c1464c6F0d01653C",
     rewardToken: Token.POOF,
-    amount: toWei("42856.8"),
+    amount: toWei("21428.4"),
     owner: Multisig.POOF,
   },
   {
     pool: Pool.pUSDUSD,
     farmAddress: "0x9d8537b7B940Bba313D4224B915a45460e17a729",
     rewardToken: Token.POOF,
-    amount: toWei("7142.8"),
+    amount: toWei("3571.4"),
     owner: Multisig.POOF,
   },
   {
     pool: Pool.pEUREUR,
     farmAddress: "0xA1e9175ad10fBdA9Fa042269c2AB7DaFB54dc164",
     rewardToken: Token.POOF,
-    amount: toWei("7142.8"),
+    amount: toWei("3571.4"),
     owner: Multisig.POOF,
   },
   {
     pool: Pool.pCELOCELO,
     farmAddress: "0xb86e373b209fb2C4cbE17d68d52A59798E4A9640",
     rewardToken: Token.POOF,
-    amount: toWei("7142.8"),
+    amount: toWei("3571.4"),
     owner: Multisig.POOF,
   },
 ];
 
-export const D4P = () => {
+export const D4P: React.FC = () => {
   const ubeswapMultisig = useMultisigContract(Multisig.UBE);
   const poofMultisig = useMultisigContract(Multisig.POOF);
 
