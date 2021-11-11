@@ -208,7 +208,7 @@ const farms: Farm[] = [
   },
   {
     pool: Pool.pUSDUSD,
-    farmAddress: "0x9d8537b7B940Bba313D4224B915a45460e17a729",
+    farmAddress: "0x3A7D1c18618c4f099D2703f8981CEA9c56Ac7779",
     rewardToken: Token.POOF,
     amount: toWei("3571.4"),
     owner: Multisig.POOF,
