@@ -1,5 +1,7 @@
+import { useProvider } from "@celo-tools/use-contractkit";
 import styled from "@emotion/styled";
 import React from "react";
+import { MultiSig__factory } from "../../../../generated";
 
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
 import { useTimelock } from "../../../../hooks/useTimelock";
@@ -14,6 +16,7 @@ export const TimelockQueueTransaction: React.FC<Props> = ({
 }: Props) => {
   const { timelock } = useTimelock(timelockAddress);
   const getConnectedSigner = useGetConnectedSigner();
+  const provider = useProvider();
   return (
     <Wrapper>
       <h1>Timelock {timelockAddress}</h1>
@@ -23,10 +26,34 @@ export const TimelockQueueTransaction: React.FC<Props> = ({
           hasEta
           onSubmit={async ({ call, data }) => {
             const signer = await getConnectedSigner();
-            const tx = await timelock
-              .connect(signer)
-              .queueTransaction(call.target, call.value, "", data, call.eta);
-            console.log("Queued", tx);
+            const connectedTimelock = timelock.connect(signer);
+            const admin = await timelock.admin();
+            const adminCode = await provider.getCode(admin);
+            if (adminCode === "0x") {
+              const tx = await connectedTimelock.queueTransaction(
+                call.target,
+                call.value,
+                "",
+                data,
+                call.eta
+              );
+              console.log("Queued", tx);
+            } else {
+              // Assume multisig
+              const multisig = MultiSig__factory.connect(admin, signer);
+              const tx = await multisig.submitTransaction(
+                timelockAddress,
+                0,
+                timelock.interface.encodeFunctionData("queueTransaction", [
+                  call.target,
+                  call.value,
+                  "",
+                  data,
+                  call.eta,
+                ])
+              );
+              console.log("Queued", tx);
+            }
           }}
         />
       </div>
