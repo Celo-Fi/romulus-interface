@@ -83,7 +83,7 @@ const tokenName: Record<Token, string> = {
   [Token.UBE]: "UBE",
 };
 
-const farms: Farm[] = [
+export const farms: Farm[] = [
   {
     pool: Pool.CELOUSD,
     // farm: "0xbbC8C824c638fd238178a71F5b1E5Ce7e4Ce586B", // OLD
