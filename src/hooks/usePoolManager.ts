@@ -1,11 +1,23 @@
 import { useEffect, useState } from "react";
 
-import { PoolManager, PoolManager__factory } from "../generated";
+import {
+  ERC20__factory,
+  IUniswapV2Pair__factory,
+  PoolManager,
+  PoolManager__factory,
+} from "../generated";
 import { useProviderOrSigner } from "./useProviderOrSigner";
 
 const POOL_MANAGER_ADDRESS = "0x9Ee3600543eCcc85020D6bc77EB553d1747a65D2";
 
-interface PoolInfo {
+interface LPInfo {
+  token0: string;
+  token0Symbol: string;
+  token1: string;
+  token1Symbol: string;
+}
+
+interface PoolInfo extends LPInfo {
   index: number;
   stakingToken: string;
   poolAddress: string;
@@ -48,9 +60,30 @@ export const usePoolManager = (): {
       );
 
       const poolInfo: Record<string, PoolInfo> = {};
+      const lpInfo: LPInfo[] = await Promise.all(
+        pools.map(async (p) => {
+          const lpToken = IUniswapV2Pair__factory.connect(
+            p.stakingToken,
+            provider
+          );
+          const token0 = await lpToken.token0();
+          const token1 = await lpToken.token1();
+          const [token0Symbol, token1Symbol] = await Promise.all([
+            ERC20__factory.connect(token0, provider).symbol(),
+            ERC20__factory.connect(token1, provider).symbol(),
+          ]);
+          return {
+            token0: token0,
+            token1: token1,
+            token0Symbol: token0Symbol,
+            token1Symbol: token1Symbol,
+          };
+        })
+      );
       pools.forEach(
-        (p) =>
+        (p, idx) =>
           (poolInfo[p.poolAddress] = {
+            ...lpInfo[idx]!,
             index: p.index.toNumber(),
             stakingToken: p.stakingToken,
             poolAddress: p.poolAddress,

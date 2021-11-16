@@ -2,7 +2,10 @@ import { ContractTransaction } from "ethers";
 import React, { useEffect, useState } from "react";
 import { Button, Card, Heading, Paragraph } from "theme-ui";
 
-import { ReleaseEscrow__factory } from "../../../../generated";
+import {
+  MultiSig__factory,
+  ReleaseEscrow__factory,
+} from "../../../../generated";
 import { usePoolManager } from "../../../../hooks/usePoolManager";
 import {
   useGetConnectedSigner,
@@ -51,12 +54,23 @@ export const RefreshPools: React.FC = () => {
       {numberOfWeeksWithdrawn !== null && (
         <Button
           onClick={async () => {
-            const tx = await ReleaseEscrow__factory.connect(
-              MINING_RELEASE_ESCROW,
+            const multisig = MultiSig__factory.connect(
+              operator!,
               await getConnectedSigner()
-            ).withdraw(numberOfWeeksWithdrawn + 1, {
-              gasLimit: 10_000_000,
-            });
+            );
+            const releaseEscrow = ReleaseEscrow__factory.connect(
+              MINING_RELEASE_ESCROW,
+              provider
+            );
+            const data = releaseEscrow.interface.encodeFunctionData(
+              "withdraw",
+              [numberOfWeeksWithdrawn + 1]
+            );
+            const tx = await multisig.submitTransaction(
+              releaseEscrow.address,
+              0,
+              data
+            );
             setTx(tx);
           }}
           mr={2}
@@ -66,8 +80,18 @@ export const RefreshPools: React.FC = () => {
       )}
       <Button
         onClick={async () => {
-          const contract = poolManager.connect(await getConnectedSigner());
-          const tx = await contract.beginInitializePeriod();
+          const multisig = MultiSig__factory.connect(
+            operator!,
+            await getConnectedSigner()
+          );
+          const data = poolManager.interface.encodeFunctionData(
+            "beginInitializePeriod"
+          );
+          const tx = await multisig.submitTransaction(
+            poolManager.address,
+            0,
+            data
+          );
           console.log(`Initialized period: ${tx.hash}`);
         }}
       >
@@ -75,7 +99,10 @@ export const RefreshPools: React.FC = () => {
       </Button>
       <Button
         onClick={async () => {
-          const contract = poolManager.connect(await getConnectedSigner());
+          const multisig = MultiSig__factory.connect(
+            operator!,
+            await getConnectedSigner()
+          );
           const batchSize = 20;
           for (
             let i = 0;
@@ -84,11 +111,14 @@ export const RefreshPools: React.FC = () => {
           ) {
             const start = i * batchSize;
             const end = Math.min(poolsToRefresh.length, (i + 1) * batchSize);
-            const tx = await contract.batchRefreshPools(
-              poolsToRefresh.slice(start, end),
-              {
-                gasLimit: 10_000_000,
-              }
+            const data = poolManager.interface.encodeFunctionData(
+              "batchRefreshPools",
+              [poolsToRefresh.slice(start, end)]
+            );
+            const tx = await multisig.submitTransaction(
+              poolManager.address,
+              0,
+              data
             );
             console.log(`Refreshed from ${start} to ${end}`);
             console.log(`Tx: ${tx.hash}`);
@@ -99,8 +129,18 @@ export const RefreshPools: React.FC = () => {
       </Button>
       <Button
         onClick={async () => {
-          const contract = poolManager.connect(await getConnectedSigner());
-          const tx = await contract.commitInitializePeriod();
+          const multisig = MultiSig__factory.connect(
+            operator!,
+            await getConnectedSigner()
+          );
+          const data = poolManager.interface.encodeFunctionData(
+            "commitInitializePeriod"
+          );
+          const tx = await multisig.submitTransaction(
+            poolManager.address,
+            0,
+            data
+          );
           console.log(`Commited period: ${tx.hash}`);
         }}
       >

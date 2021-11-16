@@ -75,6 +75,18 @@ type Farm = {
   owner: Multisig;
 };
 
+type FarmLookup = Record<
+  string,
+  {
+    periodEnd: number;
+    rewardRate: number;
+    rewardBalance: number;
+    stakingToken: string;
+    owner: string;
+    rewardsDistribution: string;
+  }
+>;
+
 // == CONSTANTS ==
 const SECONDS_PER_WEEK = 60 * 60 * 24 * 7;
 const tokenName: Record<Token, string> = {
@@ -266,74 +278,46 @@ export const D4P: React.FC = () => {
     },
     [multisigLookup, getConnectedSigner]
   );
-  const periodEndCall = React.useCallback(async () => {
-    const lookup: Record<string, number> = {};
+  const lookupCall = React.useCallback(async () => {
+    const lookup: FarmLookup = {};
     await Promise.all(
       farms.map(async (farm) => {
-        const contract = new web3.eth.Contract(
+        const farmContract = new web3.eth.Contract(
           MSRAbi as AbiItem[],
           farm.farmAddress
         );
-        const periodEnd = await contract.methods.periodFinish().call();
-        lookup[farm.pool] = Number(periodEnd);
-      })
-    );
-    return lookup;
-  }, []);
-  const [periodEndLookup, refetch1] = useAsyncState(null, periodEndCall);
-
-  const rewardRateCall = React.useCallback(async () => {
-    const lookup: Record<string, number> = {};
-    await Promise.all(
-      farms.map(async (farm) => {
-        const contract = new web3.eth.Contract(
-          MSRAbi as AbiItem[],
-          farm.farmAddress
-        );
-        const rewardRate = await contract.methods.rewardRate().call();
-        lookup[farm.pool] = Number(fromWei(rewardRate)) * SECONDS_PER_WEEK;
-      })
-    );
-    return lookup;
-  }, []);
-  const [rewardRateLookup, refetch2] = useAsyncState(null, rewardRateCall);
-
-  const rewardBalanceCall = React.useCallback(async () => {
-    const lookup: Record<string, number> = {};
-    await Promise.all(
-      farms.map(async (farm) => {
-        const contract = new web3.eth.Contract(
+        const rewardToken = new web3.eth.Contract(
           ERC20Abi as AbiItem[],
           farm.rewardToken
         );
-        const balance = await contract.methods
-          .balanceOf(farm.farmAddress)
-          .call();
-        lookup[farm.pool] = Number(fromWei(balance));
+        const [
+          periodEnd,
+          rewardRate,
+          balance,
+          stakingToken,
+          owner,
+          rewardsDistribution,
+        ] = await Promise.all([
+          farmContract.methods.periodFinish().call(),
+          farmContract.methods.rewardRate().call(),
+          rewardToken.methods.balanceOf(farm.farmAddress).call(),
+          farmContract.methods.stakingToken().call(),
+          farmContract.methods.owner().call(),
+          farmContract.methods.rewardsDistribution().call(),
+        ]);
+        lookup[farm.farmAddress] = {
+          periodEnd: Number(periodEnd),
+          rewardRate: Number(fromWei(rewardRate)) * SECONDS_PER_WEEK,
+          rewardBalance: Number(fromWei(balance)),
+          stakingToken,
+          owner,
+          rewardsDistribution,
+        };
       })
     );
     return lookup;
-  }, []);
-  const [rewardBalanceLookup, refetch3] = useAsyncState(
-    null,
-    rewardBalanceCall
-  );
-
-  const stakingTokenCall = React.useCallback(async () => {
-    const lookup: Record<string, number> = {};
-    await Promise.all(
-      farms.map(async (farm) => {
-        const contract = new web3.eth.Contract(
-          MSRAbi as AbiItem[],
-          farm.farmAddress
-        );
-        const stakingToken = await contract.methods.stakingToken().call();
-        lookup[farm.pool] = stakingToken;
-      })
-    );
-    return lookup;
-  }, []);
-  const [stakingTokenLookup] = useAsyncState(null, stakingTokenCall);
+  }, [farms]);
+  const [lookup, refetchLookup] = useAsyncState(null, lookupCall);
 
   return (
     <div>
@@ -341,23 +325,28 @@ export const D4P: React.FC = () => {
         Multi reward pools
       </Heading>
       {farms.map((farm, idx) => {
-        const periodEnd = periodEndLookup?.[farm.pool];
-        const rewardRate = rewardRateLookup?.[farm.pool];
-        const rewardBalance = rewardBalanceLookup?.[farm.pool];
-        const stakingToken = stakingTokenLookup?.[farm.pool];
+        if (!lookup) {
+          return;
+        }
+        const {
+          periodEnd,
+          rewardRate,
+          rewardBalance,
+          stakingToken,
+          owner,
+          rewardsDistribution,
+        } = lookup[farm.farmAddress]!;
 
         const refresh = () => {
-          refetch1();
-          refetch2();
-          refetch3();
+          refetchLookup();
         };
 
         return (
-          <Card key={idx}>
+          <Card key={idx} mb={2}>
             <Flex sx={{ alignItems: "center" }}>
               <Heading as="h3">{farm.pool}</Heading>
               <Link ml={2} onClick={refresh}>
-                Refresh
+                Reload
               </Link>
             </Flex>
             <div>
@@ -383,6 +372,17 @@ export const D4P: React.FC = () => {
                 <Text sx={{ display: "block" }}>
                   Staking token address:{" "}
                   <Address value={stakingToken.toString()} />
+                </Text>
+              )}
+              {owner && (
+                <Text sx={{ display: "block" }}>
+                  Owner address: <Address value={owner.toString()} />
+                </Text>
+              )}
+              {rewardsDistribution && (
+                <Text sx={{ display: "block" }}>
+                  Rewards distribution address:{" "}
+                  <Address value={rewardsDistribution.toString()} />
                 </Text>
               )}
             </div>

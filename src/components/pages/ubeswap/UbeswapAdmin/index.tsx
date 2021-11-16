@@ -17,12 +17,12 @@ export const UbeswapAdmin: React.FC = () => {
         grid-gap: 12px;
       `}
     >
-      <ReleaseUbe />
       <RefreshPools />
-      <TransferOwnership />
       <AllocatePools />
-      <SetOperator />
       <D4P />
+      <ReleaseUbe />
+      <TransferOwnership />
+      <SetOperator />
     </div>
   );
 };

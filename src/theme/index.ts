@@ -64,8 +64,8 @@ export default {
         bg: "muted",
       },
       bg: "primary",
-      py: [2, 3],
-      px: [3, 4],
+      py: [2, 2],
+      px: [3, 3],
       cursor: "pointer",
     },
     outline: {
