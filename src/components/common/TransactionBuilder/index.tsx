@@ -52,6 +52,8 @@ interface Props {
     call: ContractCall;
     data: BytesLike;
     encodedParams: BytesLike;
+    read?: boolean;
+    decodeFunctionResult: any;
   }) => void;
   onCancel?: () => void;
 }
@@ -101,6 +103,8 @@ export const TransactionBuilder: React.FC<Props> = ({
       const { args } = values;
       const data = abi.encodeFunctionData(fragment, args ?? []);
       const encodedParams = abi._encodeParams(fragment.inputs, args ?? []);
+      const decodeFunctionResult = (data: any) =>
+        abi.decodeFunctionResult(fragment, data);
       onSubmit({
         call: {
           ...values,
@@ -109,9 +113,10 @@ export const TransactionBuilder: React.FC<Props> = ({
             ? Math.floor(new Date(values.eta).getTime() / 1000)
             : 0,
         },
-
         data,
         encodedParams,
+        read: fragment.stateMutability === "view",
+        decodeFunctionResult,
       });
     },
   });

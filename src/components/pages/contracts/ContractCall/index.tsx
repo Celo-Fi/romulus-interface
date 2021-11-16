@@ -13,14 +13,26 @@ export const ContractCall: React.FC = () => {
       <Heading as="h1">Contract call</Heading>
       <div>
         <TransactionBuilder
-          onSubmit={async ({ call, data }) => {
+          onSubmit={async ({ call, data, read, decodeFunctionResult }) => {
             const signer = await getConnectedSigner();
-            const tx = await signer.sendTransaction({
-              to: call.target,
-              value: call.value,
-              data,
-            });
-            console.log("Submit TX", tx);
+            if (read) {
+              alert(
+                decodeFunctionResult(
+                  await signer.call({
+                    to: call.target,
+                    value: call.value,
+                    data,
+                  })
+                ).toString()
+              );
+            } else {
+              const tx = await signer.sendTransaction({
+                to: call.target,
+                value: call.value,
+                data,
+              });
+              console.log("Submit TX", tx);
+            }
           }}
         />
       </div>
