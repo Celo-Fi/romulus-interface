@@ -1,3 +1,4 @@
+import { useProvider } from "@celo-tools/use-contractkit";
 import styled from "@emotion/styled";
 import React from "react";
 import { Heading } from "theme-ui";
@@ -7,6 +8,7 @@ import { TransactionBuilder } from "../../../common/TransactionBuilder";
 
 export const ContractCall: React.FC = () => {
   const getConnectedSigner = useGetConnectedSigner();
+  const provider = useProvider();
 
   return (
     <Wrapper>
@@ -14,11 +16,10 @@ export const ContractCall: React.FC = () => {
       <div>
         <TransactionBuilder
           onSubmit={async ({ call, data, read, decodeFunctionResult }) => {
-            const signer = await getConnectedSigner();
             if (read) {
               alert(
                 decodeFunctionResult(
-                  await signer.call({
+                  await provider.call({
                     to: call.target,
                     value: call.value,
                     data,
@@ -26,6 +27,7 @@ export const ContractCall: React.FC = () => {
                 ).toString()
               );
             } else {
+              const signer = await getConnectedSigner();
               const tx = await signer.sendTransaction({
                 to: call.target,
                 value: call.value,
