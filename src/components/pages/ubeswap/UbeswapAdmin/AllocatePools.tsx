@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { ContractTransaction } from "ethers";
+import { isAddress } from "ethers/lib/utils";
 import React, { useState } from "react";
 import { Button, Card, Flex, Heading, Spinner, Text } from "theme-ui";
 import { MultiSig__factory } from "../../../../generated";
@@ -20,9 +21,11 @@ export const AllocatePools: React.FC = () => {
   );
   const updatePoolWeight = React.useCallback(
     async (stakingToken, weight) => {
-      const signer = await getConnectedSigner();
-      const owner = await poolManager.owner();
-      const multisig = MultiSig__factory.connect(owner, signer);
+      const operator = await poolManager.operator();
+      const multisig = MultiSig__factory.connect(
+        operator,
+        await getConnectedSigner()
+      );
 
       const data = poolManager.interface.encodeFunctionData("setWeight", [
         stakingToken,
@@ -33,6 +36,26 @@ export const AllocatePools: React.FC = () => {
     },
     [getConnectedSigner, poolManager]
   );
+  const addNewFarm = React.useCallback(async () => {
+    const pool = prompt("Enter LP token address of new farm");
+    if (!pool || !isAddress(pool)) {
+      console.warn("Not an address");
+      return;
+    }
+
+    const operator = await poolManager.operator();
+    const multisig = MultiSig__factory.connect(
+      operator,
+      await getConnectedSigner()
+    );
+
+    const data = poolManager.interface.encodeFunctionData("setWeight", [
+      pool,
+      0,
+    ]);
+    const tx = await multisig.submitTransaction(poolManager.address, 0, data);
+    setTx(tx);
+  }, [getConnectedSigner, poolManager]);
 
   return (
     <Card p={4}>
@@ -103,6 +126,8 @@ export const AllocatePools: React.FC = () => {
         Total weight: {weightSumOnChain.toLocaleString()} / 10,000 ={" "}
         {weightSumOnChain / 10_000}
       </Text>
+
+      <Button onClick={addNewFarm}>New Farm</Button>
     </Card>
   );
 };
