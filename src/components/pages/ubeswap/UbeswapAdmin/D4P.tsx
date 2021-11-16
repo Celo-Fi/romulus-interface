@@ -1,7 +1,7 @@
 import { useGetConnectedSigner } from "@celo-tools/use-contractkit";
 import moment from "moment";
 import React from "react";
-import { Button, Flex, Heading, Text } from "theme-ui";
+import { Box, Button, Card, Flex, Heading, Link, Text } from "theme-ui";
 import Web3 from "web3";
 import { AbiItem, fromWei, toWei } from "web3-utils";
 
@@ -346,24 +346,20 @@ export const D4P: React.FC = () => {
         const rewardBalance = rewardBalanceLookup?.[farm.pool];
         const stakingToken = stakingTokenLookup?.[farm.pool];
 
+        const refresh = () => {
+          refetch1();
+          refetch2();
+          refetch3();
+        };
+
         return (
-          <Flex mb={2} key={idx} sx={{ alignItems: "center" }}>
-            <Button onClick={() => sendCELO(farm)} mr={1}>
-              Transfer {fromWei(farm.amount)} {tokenName[farm.rewardToken]} to{" "}
-              {farm.pool}
-            </Button>
-            <Button
-              onClick={() => {
-                notify(farm);
-                refetch1();
-                refetch2();
-                refetch3();
-              }}
-              mr={2}
-            >
-              Notify {fromWei(farm.amount)} {tokenName[farm.rewardToken]} to{" "}
-              {farm.pool}
-            </Button>
+          <Card key={idx}>
+            <Flex sx={{ alignItems: "center" }}>
+              <Heading as="h3">{farm.pool}</Heading>
+              <Link ml={2} onClick={refresh}>
+                Refresh
+              </Link>
+            </Flex>
             <div>
               {periodEnd && (
                 <Text sx={{ display: "block" }}>
@@ -390,7 +386,21 @@ export const D4P: React.FC = () => {
                 </Text>
               )}
             </div>
-          </Flex>
+            <Box mt={2}>
+              <Button onClick={() => sendCELO(farm)} mr={1}>
+                Transfer {fromWei(farm.amount)} {tokenName[farm.rewardToken]}
+              </Button>
+              <Button
+                onClick={() => {
+                  notify(farm);
+                  refresh();
+                }}
+                mr={2}
+              >
+                Notify {fromWei(farm.amount)} {tokenName[farm.rewardToken]}
+              </Button>
+            </Box>
+          </Card>
         );
       })}
     </div>
