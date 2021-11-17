@@ -21,9 +21,9 @@ export const AllocatePools: React.FC = () => {
   );
   const updatePoolWeight = React.useCallback(
     async (stakingToken, weight) => {
-      const operator = await poolManager.operator();
+      const owner = await poolManager.owner();
       const multisig = MultiSig__factory.connect(
-        operator,
+        owner,
         await getConnectedSigner()
       );
 
