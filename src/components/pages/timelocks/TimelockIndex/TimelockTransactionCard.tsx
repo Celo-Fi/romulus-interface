@@ -1,9 +1,12 @@
 import React from "react";
 import { toast } from "react-toastify";
 
-import { ITimelock } from "../../../../generated";
+import { ITimelock, MultiSig__factory } from "../../../../generated";
 import { useParsedTransaction } from "../../../../hooks/useParsedTransaction";
-import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
+import {
+  useGetConnectedSigner,
+  useProvider,
+} from "../../../../hooks/useProviderOrSigner";
 import { Address } from "../../../common/Address";
 import { AsyncButton } from "../../../common/AsyncButton";
 import { AttributeList } from "../../../common/AttributeList";
@@ -28,6 +31,7 @@ export const TimelockTransactionCard: React.FC<Props> = ({
     value: tx.value,
   });
   const getConnectedSigner = useGetConnectedSigner();
+  const provider = useProvider();
   return (
     <div tw="bg-gray-800 text-white p-6 rounded-xl border border-gray-700 shadow flex flex-col gap-4">
       <div tw="flex items-center justify-between">
@@ -90,16 +94,35 @@ export const TimelockTransactionCard: React.FC<Props> = ({
           errorTitle="Error executing Timelock transaction"
           onClick={async () => {
             const signer = await getConnectedSigner();
-            const result = await timelock
-              .connect(signer)
-              .executeTransaction(
-                tx.target,
-                tx.value,
-                tx.signature,
-                tx.data,
-                tx.eta
+            const admin = await timelock.admin();
+            const adminCode = await provider.getCode(admin);
+            if (adminCode === "0x") {
+              const result = await timelock
+                .connect(signer)
+                .executeTransaction(
+                  tx.target,
+                  tx.value,
+                  tx.signature,
+                  tx.data,
+                  tx.eta
+                );
+              toast(<TransactionHash value={result} />);
+            } else {
+              // Assume multisig
+              const multisig = MultiSig__factory.connect(admin, signer);
+              const result = await multisig.submitTransaction(
+                timelock.address,
+                0,
+                timelock.interface.encodeFunctionData("executeTransaction", [
+                  tx.target,
+                  tx.value,
+                  tx.signature,
+                  tx.data,
+                  tx.eta,
+                ])
               );
-            toast(<TransactionHash value={result} />);
+              toast(<TransactionHash value={result} />);
+            }
           }}
         >
           Execute
