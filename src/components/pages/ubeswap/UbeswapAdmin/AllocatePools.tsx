@@ -43,9 +43,9 @@ export const AllocatePools: React.FC = () => {
       return;
     }
 
-    const operator = await poolManager.operator();
+    const owner = await poolManager.owner();
     const multisig = MultiSig__factory.connect(
-      operator,
+      owner,
       await getConnectedSigner()
     );
 

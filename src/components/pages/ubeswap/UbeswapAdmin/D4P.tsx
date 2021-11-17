@@ -101,7 +101,7 @@ export const farms: Farm[] = [
     // farm: "0xbbC8C824c638fd238178a71F5b1E5Ce7e4Ce586B", // OLD
     farmAddress: "0x161c77b4919271B7ED59AdB2151FdaDe3F907a1F",
     rewardToken: Token.CELO,
-    amount: toWei("9758"),
+    amount: toWei("10273"),
     owner: Multisig.UBE,
   },
   {
@@ -109,7 +109,7 @@ export const farms: Farm[] = [
     // farm: "0x0F3d01aea89dA0b6AD81712Edb96FA7AF1c17E9B", // OLD
     farmAddress: "0x728C650D1Fb4da2D18ccF4DF45Af70c5AEb09f81",
     rewardToken: Token.CELO,
-    amount: toWei("4275"),
+    amount: toWei("4474"),
     owner: Multisig.UBE,
   },
   {
