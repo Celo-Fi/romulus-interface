@@ -1,18 +1,26 @@
 import styled from "@emotion/styled";
-import { ContractTransaction } from "ethers";
+import { ContractTransaction, ethers } from "ethers";
 import { isAddress } from "ethers/lib/utils";
 import React, { useState } from "react";
 import { Button, Card, Flex, Heading, Spinner, Text } from "theme-ui";
-import { MultiSig__factory } from "../../../../generated";
 
+import {
+  FarmRegistry__factory,
+  MultiSig__factory,
+} from "../../../../generated";
 import { usePoolManager } from "../../../../hooks/usePoolManager";
 import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
+import {
+  FARM_REGISTRY_ADDRESS,
+  useRegisteredFarms,
+} from "../../../../hooks/useRegisteredFarms";
 import { Address } from "../../../common/Address";
 import { TransactionHash } from "../../../common/blockchain/TransactionHash";
 
 export const AllocatePools: React.FC = () => {
   const getConnectedSigner = useGetConnectedSigner();
   const { poolManager, poolInfo } = usePoolManager();
+  const [registeredFarms, refetch] = useRegisteredFarms();
   const [tx, setTx] = useState<ContractTransaction | null>(null);
 
   const weightSumOnChain = Object.values(poolInfo).reduce(
@@ -57,6 +65,21 @@ export const AllocatePools: React.FC = () => {
     setTx(tx);
   }, [getConnectedSigner, poolManager]);
 
+  const registerFarm = React.useCallback(
+    async (farmName: string, farmAddress: string) => {
+      const farmRegistry = FarmRegistry__factory.connect(
+        FARM_REGISTRY_ADDRESS,
+        await getConnectedSigner()
+      );
+      const tx = await farmRegistry.addFarmInfo(
+        ethers.utils.formatBytes32String(farmName),
+        farmAddress
+      );
+      setTx(tx);
+    },
+    [getConnectedSigner]
+  );
+
   return (
     <Card p={4}>
       <Heading as="h2" pb={2}>
@@ -97,6 +120,7 @@ export const AllocatePools: React.FC = () => {
                       <Flex sx={{ alignItems: "center" }}>
                         <Text mr={1}>{info.weight}</Text>
                         <Button
+                          mr={1}
                           onClick={() => {
                             const weight = prompt("Enter a new weight");
                             if (
@@ -108,11 +132,24 @@ export const AllocatePools: React.FC = () => {
                               console.warn("Invalid weight");
                               return;
                             }
-                            updatePoolWeight(info.stakingToken, weight);
+                            void updatePoolWeight(info.stakingToken, weight);
                           }}
                         >
                           change
                         </Button>
+                        {!registeredFarms[info.poolAddress.toLowerCase()] && (
+                          <Button
+                            onClick={async () => {
+                              await registerFarm(
+                                `${info.token0Symbol}-${info.token1Symbol}`,
+                                info.poolAddress
+                              );
+                              refetch();
+                            }}
+                          >
+                            register
+                          </Button>
+                        )}
                       </Flex>
                     </td>
                   </tr>
