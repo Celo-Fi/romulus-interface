@@ -14,6 +14,8 @@ import { useMultisigContract } from "../../../../hooks/useMultisigContract";
 
 const web3 = new Web3("https://forno.celo.org"); // TODO: HARDCODE
 
+const BLOCKS_PER_WEEK = (60 * 60 * 24 * 7) / 5;
+
 // == UTILS ==
 const transferInterface = ERC20Abi.find((f) => f.name === "transfer");
 const getTransferData = (recipient: string, amount: string) =>
@@ -71,7 +73,6 @@ type Farm = {
   pool: Pool;
   farmAddress: string;
   rewardToken: Token;
-  amount: string;
   owner: Multisig;
 };
 
@@ -101,7 +102,6 @@ export const farms: Farm[] = [
     // farm: "0xbbC8C824c638fd238178a71F5b1E5Ce7e4Ce586B", // OLD
     farmAddress: "0x161c77b4919271B7ED59AdB2151FdaDe3F907a1F",
     rewardToken: Token.CELO,
-    amount: toWei("10273"),
     owner: Multisig.UBE,
   },
   {
@@ -109,98 +109,84 @@ export const farms: Farm[] = [
     // farm: "0x0F3d01aea89dA0b6AD81712Edb96FA7AF1c17E9B", // OLD
     farmAddress: "0x728C650D1Fb4da2D18ccF4DF45Af70c5AEb09f81",
     rewardToken: Token.CELO,
-    amount: toWei("4474"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.CELOUBE,
     farmAddress: "0x9D87c01672A7D02b2Dc0D0eB7A145C7e13793c3B",
     rewardToken: Token.CELO,
-    amount: toWei("3118"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.CELORCELO,
     farmAddress: "0x194478Aa91e4D7762c3E51EeE57376ea9ac72761",
     rewardToken: Token.CELO,
-    amount: toWei("518"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.WBTCMCUSD,
     farmAddress: "0xf3D9E027B131Af5162451601038EddBF456d824B",
     rewardToken: Token.CELO,
-    amount: toWei("1700"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.WETHMCUSD,
     farmAddress: "0xD6E28720Fcd1C1aB6da2d1043a6763FDBb67b3aA",
     rewardToken: Token.CELO,
-    amount: toWei("5000"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.SUSHIMCUSD,
     farmAddress: "0x0E83662A17B8A3a0585DcA34E5BE81ea6bd59556",
     rewardToken: Token.CELO,
-    amount: toWei("500"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.CRVMCUSD,
     farmAddress: "0x85B21208C0058019bc8004D85eFEa881E7598D17",
     rewardToken: Token.CELO,
-    amount: toWei("500"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.AAVEMCUSD,
     farmAddress: "0x09c1cF8669f9A026c59EDd4792944a9aCd2d2a2E",
     rewardToken: Token.CELO,
-    amount: toWei("500"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.FTMMCUSD,
     farmAddress: "0x3C29593674c5c760172d354acE88Da4D9d3EB64f",
     rewardToken: Token.CELO,
-    amount: toWei("100"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.AVAXMCUSD,
     farmAddress: "0x750bB68Fa18F06d9696af85Ecc312f178E75fCfD",
     rewardToken: Token.CELO,
-    amount: toWei("100"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.WMATICMCUSD,
     farmAddress: "0x00C4aCee9eB84B1a6Cdc741AeEd19BF84CbE7bF5",
     rewardToken: Token.CELO,
-    amount: toWei("100"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.BNBMCUSD,
     farmAddress: "0xCD2d4024A42109593301fF11967c16eA180DD381",
     rewardToken: Token.CELO,
-    amount: toWei("100"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.SOLCELO,
     farmAddress: "0x83470506ba97dB33Df0EBe01E876C6718C762Df6",
     rewardToken: Token.CELO,
-    amount: toWei("100"),
     owner: Multisig.UBE,
   },
   {
     pool: Pool.UBE,
     farmAddress: "0xCe74d14163deb82af57f253108F7E5699e62116d",
     rewardToken: Token.UBE,
-    amount: toWei("16350.14558"),
     owner: Multisig.UBE,
   },
 
@@ -208,35 +194,30 @@ export const farms: Farm[] = [
     pool: Pool.POOFUBE,
     farmAddress: "0x4274AA72B12221D32ca77cB37057A9692E0b59Eb",
     rewardToken: Token.POOF,
-    amount: toWei("3571.4"),
     owner: Multisig.POOF,
   },
   {
     pool: Pool.PCELOPOOF,
     farmAddress: "0x7B7F08164036abEbafD1bf75c1464c6F0d01653C",
     rewardToken: Token.POOF,
-    amount: toWei("21428.4"),
     owner: Multisig.POOF,
   },
   {
     pool: Pool.pUSDUSD,
     farmAddress: "0x3A7D1c18618c4f099D2703f8981CEA9c56Ac7779",
     rewardToken: Token.POOF,
-    amount: toWei("3571.4"),
     owner: Multisig.POOF,
   },
   {
     pool: Pool.pEUREUR,
     farmAddress: "0xA1e9175ad10fBdA9Fa042269c2AB7DaFB54dc164",
     rewardToken: Token.POOF,
-    amount: toWei("3571.4"),
     owner: Multisig.POOF,
   },
   {
     pool: Pool.pCELOCELO,
     farmAddress: "0xb86e373b209fb2C4cbE17d68d52A59798E4A9640",
     rewardToken: Token.POOF,
-    amount: toWei("3571.4"),
     owner: Multisig.POOF,
   },
 ];
@@ -255,9 +236,9 @@ export const D4P: React.FC = () => {
 
   const getConnectedSigner = useGetConnectedSigner();
   const sendCELO = React.useCallback(
-    async (farm: Farm) => {
+    async (farm: Farm, amount: string) => {
       const signer = await getConnectedSigner();
-      const data = getTransferData(farm.farmAddress, farm.amount);
+      const data = getTransferData(farm.farmAddress, amount);
       if (data) {
         await multisigLookup[farm.owner]
           .connect(signer as any)
@@ -267,9 +248,9 @@ export const D4P: React.FC = () => {
     [multisigLookup, getConnectedSigner]
   );
   const notify = React.useCallback(
-    async (farm: Farm) => {
+    async (farm: Farm, amount: string) => {
       const signer = await getConnectedSigner();
-      const data = getNotifyData(farm.amount);
+      const data = getNotifyData(amount);
       if (data) {
         await multisigLookup[farm.owner]
           .connect(signer as any)
@@ -280,6 +261,7 @@ export const D4P: React.FC = () => {
   );
   const lookupCall = React.useCallback(async () => {
     const lookup: FarmLookup = {};
+    const latestBlock = await web3.eth.getBlockNumber();
     await Promise.all(
       farms.map(async (farm) => {
         const farmContract = new web3.eth.Contract(
@@ -297,6 +279,7 @@ export const D4P: React.FC = () => {
           stakingToken,
           owner,
           rewardsDistribution,
+          lastReward,
         ] = await Promise.all([
           farmContract.methods.periodFinish().call(),
           farmContract.methods.rewardRate().call(),
@@ -304,6 +287,12 @@ export const D4P: React.FC = () => {
           farmContract.methods.stakingToken().call(),
           farmContract.methods.owner().call(),
           farmContract.methods.rewardsDistribution().call(),
+          farmContract
+            .getPastEvents("RewardAdded", {
+              fromBlock: latestBlock - BLOCKS_PER_WEEK,
+              toBlock: latestBlock,
+            })
+            .then((events) => events[0]?.returnValues.reward ?? "0"),
         ]);
         lookup[farm.farmAddress] = {
           periodEnd: Number(periodEnd),
@@ -312,6 +301,7 @@ export const D4P: React.FC = () => {
           stakingToken,
           owner,
           rewardsDistribution,
+          lastReward,
         };
       })
     );
@@ -335,6 +325,7 @@ export const D4P: React.FC = () => {
           stakingToken,
           owner,
           rewardsDistribution,
+          lastReward,
         } = lookup[farm.farmAddress]!;
 
         const refresh = () => {
@@ -387,17 +378,55 @@ export const D4P: React.FC = () => {
               )}
             </div>
             <Box mt={2}>
-              <Button onClick={() => sendCELO(farm)} mr={1}>
-                Transfer {fromWei(farm.amount)} {tokenName[farm.rewardToken]}
+              <Button
+                onClick={() => {
+                  void sendCELO(farm, lastReward);
+                  refresh();
+                }}
+                mr={1}
+              >
+                Transfer {fromWei(lastReward)} {tokenName[farm.rewardToken]}
               </Button>
               <Button
                 onClick={() => {
-                  notify(farm);
+                  void notify(farm, lastReward);
+                  refresh();
+                }}
+                mr={1}
+              >
+                Notify {fromWei(lastReward)} {tokenName[farm.rewardToken]}
+              </Button>
+              <Button
+                onClick={() => {
+                  const amount = prompt(
+                    `Enter amount of ${tokenName[farm.rewardToken]} to transfer`
+                  );
+                  if (!amount) {
+                    console.warn("Invalid amount");
+                    return;
+                  }
+                  void sendCELO(farm, amount);
+                  refresh();
+                }}
+                mr={1}
+              >
+                Transfer custom {tokenName[farm.rewardToken]}
+              </Button>
+              <Button
+                onClick={() => {
+                  const amount = prompt(
+                    `Enter amount of ${tokenName[farm.rewardToken]} to notify`
+                  );
+                  if (!amount) {
+                    console.warn("Invalid amount");
+                    return;
+                  }
+                  void notify(farm, amount);
                   refresh();
                 }}
                 mr={2}
               >
-                Notify {fromWei(farm.amount)} {tokenName[farm.rewardToken]}
+                Notify custom {tokenName[farm.rewardToken]}
               </Button>
             </Box>
           </Card>
