@@ -128,6 +128,7 @@ export const RefreshPools: React.FC = () => {
         Refresh pool manager
       </Button>
       <Button
+        mb={2}
         onClick={async () => {
           const multisig = MultiSig__factory.connect(
             operator!,
@@ -152,8 +153,6 @@ export const RefreshPools: React.FC = () => {
       <p>
         Operator: <Address value={operator} />
       </p>
-      <Heading>Pools to refresh</Heading>
-      <pre>{JSON.stringify(poolsToRefresh, null, 2)}</pre>
     </Card>
   );
 };
