@@ -137,7 +137,7 @@ export const AllocatePools: React.FC = () => {
                         >
                           change
                         </Button>
-                        {!registeredFarms[info.poolAddress.toLowerCase()] && (
+                        {!registeredFarms?.[info.poolAddress.toLowerCase()] && (
                           <Button
                             onClick={async () => {
                               await registerFarm(

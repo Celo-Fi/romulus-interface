@@ -1,20 +1,25 @@
-import { useGetConnectedSigner } from "@celo-tools/use-contractkit";
+import {
+  useGetConnectedSigner,
+  useProvider,
+} from "@celo-tools/use-contractkit";
 import moment from "moment";
 import React from "react";
 import { Box, Button, Card, Flex, Heading, Link, Text } from "theme-ui";
 import Web3 from "web3";
-import { AbiItem, fromWei, toWei } from "web3-utils";
+import { AbiItem, fromWei } from "web3-utils";
 
 import ERC20Abi from "../../../../abis/ERC20.json";
 import MSRAbi from "../../../../abis/MoolaStakingRewards.json";
 import { Address } from "../../../../components/common/Address";
-import { MultiSig as MultisigContract } from "../../../../generated";
+import {
+  ERC20__factory,
+  MoolaStakingRewards__factory,
+  MultiSig as MultisigContract,
+} from "../../../../generated";
 import { useAsyncState } from "../../../../hooks/useAsyncState";
 import { useMultisigContract } from "../../../../hooks/useMultisigContract";
 
 const web3 = new Web3("https://forno.celo.org"); // TODO: HARDCODE
-
-const BLOCKS_PER_WEEK = (60 * 60 * 24 * 7) / 5;
 
 // == UTILS ==
 const transferInterface = ERC20Abi.find((f) => f.name === "transfer");
@@ -85,6 +90,7 @@ type FarmLookup = Record<
     stakingToken: string;
     owner: string;
     rewardsDistribution: string;
+    lastReward: string;
   }
 >;
 
@@ -225,6 +231,7 @@ export const farms: Farm[] = [
 export const D4P: React.FC = () => {
   const ubeswapMultisig = useMultisigContract(Multisig.UBE);
   const poofMultisig = useMultisigContract(Multisig.POOF);
+  const provider = useProvider();
 
   const multisigLookup: Record<Multisig, MultisigContract> = React.useMemo(
     () => ({
@@ -261,17 +268,13 @@ export const D4P: React.FC = () => {
   );
   const lookupCall = React.useCallback(async () => {
     const lookup: FarmLookup = {};
-    const latestBlock = await web3.eth.getBlockNumber();
     await Promise.all(
       farms.map(async (farm) => {
-        const farmContract = new web3.eth.Contract(
-          MSRAbi as AbiItem[],
-          farm.farmAddress
+        const farmContract = MoolaStakingRewards__factory.connect(
+          farm.farmAddress,
+          provider
         );
-        const rewardToken = new web3.eth.Contract(
-          ERC20Abi as AbiItem[],
-          farm.rewardToken
-        );
+        const rewardToken = ERC20__factory.connect(farm.rewardToken, provider);
         const [
           periodEnd,
           rewardRate,
@@ -281,32 +284,29 @@ export const D4P: React.FC = () => {
           rewardsDistribution,
           lastReward,
         ] = await Promise.all([
-          farmContract.methods.periodFinish().call(),
-          farmContract.methods.rewardRate().call(),
-          rewardToken.methods.balanceOf(farm.farmAddress).call(),
-          farmContract.methods.stakingToken().call(),
-          farmContract.methods.owner().call(),
-          farmContract.methods.rewardsDistribution().call(),
+          farmContract.periodFinish(),
+          farmContract.rewardRate(),
+          rewardToken.balanceOf(farm.farmAddress),
+          farmContract.stakingToken(),
+          farmContract.owner(),
+          farmContract.rewardsDistribution(),
           farmContract
-            .getPastEvents("RewardAdded", {
-              fromBlock: latestBlock - BLOCKS_PER_WEEK,
-              toBlock: latestBlock,
-            })
-            .then((events) => events[0]?.returnValues.reward ?? "0"),
+            .queryFilter(farmContract.filters.RewardAdded(null))
+            .then((events) => events[0]?.args.reward),
         ]);
         lookup[farm.farmAddress] = {
           periodEnd: Number(periodEnd),
-          rewardRate: Number(fromWei(rewardRate)) * SECONDS_PER_WEEK,
-          rewardBalance: Number(fromWei(balance)),
+          rewardRate: Number(fromWei(rewardRate.toString())) * SECONDS_PER_WEEK,
+          rewardBalance: Number(fromWei(balance.toString())),
           stakingToken,
           owner,
           rewardsDistribution,
-          lastReward,
+          lastReward: lastReward?.toString() || "0",
         };
       })
     );
     return lookup;
-  }, [farms]);
+  }, [provider]);
   const [lookup, refetchLookup] = useAsyncState(null, lookupCall);
 
   return (
@@ -315,9 +315,11 @@ export const D4P: React.FC = () => {
         Multi reward pools
       </Heading>
       {farms.map((farm, idx) => {
-        if (!lookup) {
+        const data = lookup?.[farm.farmAddress];
+        if (data == null) {
           return;
         }
+
         const {
           periodEnd,
           rewardRate,
@@ -326,7 +328,7 @@ export const D4P: React.FC = () => {
           owner,
           rewardsDistribution,
           lastReward,
-        } = lookup[farm.farmAddress]!;
+        } = data;
 
         const refresh = () => {
           refetchLookup();
