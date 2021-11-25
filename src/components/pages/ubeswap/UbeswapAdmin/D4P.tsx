@@ -292,7 +292,7 @@ export const D4P: React.FC = () => {
           farmContract.rewardsDistribution(),
           farmContract
             .queryFilter(farmContract.filters.RewardAdded(null))
-            .then((events) => events[0]?.args.reward),
+            .then((events) => events.reverse()[0]?.args.reward),
         ]);
         lookup[farm.farmAddress] = {
           periodEnd: Number(periodEnd),
