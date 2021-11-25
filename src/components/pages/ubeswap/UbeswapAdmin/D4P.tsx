@@ -6,7 +6,7 @@ import moment from "moment";
 import React from "react";
 import { Box, Button, Card, Flex, Heading, Link, Text } from "theme-ui";
 import Web3 from "web3";
-import { AbiItem, fromWei } from "web3-utils";
+import { AbiItem, fromWei, toWei } from "web3-utils";
 
 import ERC20Abi from "../../../../abis/ERC20.json";
 import MSRAbi from "../../../../abis/MoolaStakingRewards.json";
