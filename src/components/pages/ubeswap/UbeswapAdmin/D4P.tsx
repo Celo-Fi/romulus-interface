@@ -407,7 +407,7 @@ export const D4P: React.FC = () => {
                     console.warn("Invalid amount");
                     return;
                   }
-                  void sendCELO(farm, amount);
+                  void sendCELO(farm, toWei(amount));
                   refresh();
                 }}
                 mr={1}
@@ -423,7 +423,7 @@ export const D4P: React.FC = () => {
                     console.warn("Invalid amount");
                     return;
                   }
-                  void notify(farm, amount);
+                  void notify(farm, toWei(amount));
                   refresh();
                 }}
                 mr={2}
