@@ -55,7 +55,6 @@ export const RefreshPools: React.FC = () => {
     },
     [[]]
   );
-  console.log(poolBatches);
 
   return (
     <Card p={4}>
