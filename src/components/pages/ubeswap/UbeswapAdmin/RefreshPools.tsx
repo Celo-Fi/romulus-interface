@@ -43,6 +43,20 @@ export const RefreshPools: React.FC = () => {
     .filter((p) => p.weight !== 0)
     .map((pool) => pool.stakingToken);
 
+  const poolBatches = poolsToRefresh.reduce<string[][]>(
+    (acc, pool) => {
+      // Ensure that last batch always has length < 20
+      if ((acc[acc.length - 1]?.length ?? -1) >= 20) {
+        acc.push([]);
+      }
+      const lastBatch = acc[acc.length - 1];
+      lastBatch?.push(pool);
+      return acc;
+    },
+    [[]]
+  );
+  console.log(poolBatches);
+
   return (
     <Card p={4}>
       <Heading as="h2" pb={2}>
@@ -53,9 +67,11 @@ export const RefreshPools: React.FC = () => {
       <Paragraph>Number of weeks withdrawn: {numberOfWeeksWithdrawn}</Paragraph>
       {numberOfWeeksWithdrawn !== null && (
         <Button
+          mr={1}
           onClick={async () => {
+            if (!operator) return;
             const multisig = MultiSig__factory.connect(
-              operator!,
+              operator,
               await getConnectedSigner()
             );
             const releaseEscrow = ReleaseEscrow__factory.connect(
@@ -73,15 +89,16 @@ export const RefreshPools: React.FC = () => {
             );
             setTx(tx);
           }}
-          mr={2}
         >
           Refresh release escrow (up to epoch {numberOfWeeksWithdrawn + 1})
         </Button>
       )}
       <Button
+        mr={1}
         onClick={async () => {
+          if (!operator) return;
           const multisig = MultiSig__factory.connect(
-            operator!,
+            operator,
             await getConnectedSigner()
           );
           const data = poolManager.interface.encodeFunctionData(
@@ -97,41 +114,41 @@ export const RefreshPools: React.FC = () => {
       >
         Begin initialize period
       </Button>
+      {poolBatches.map((batch, idx) => {
+        return (
+          <Button
+            mr={1}
+            key={idx}
+            onClick={async () => {
+              if (!operator) return;
+              const multisig = MultiSig__factory.connect(
+                operator,
+                await getConnectedSigner()
+              );
+              const data = poolManager.interface.encodeFunctionData(
+                "batchRefreshPools",
+                [batch]
+              );
+              const tx = await multisig.submitTransaction(
+                poolManager.address,
+                0,
+                data
+              );
+              console.log(`Refreshed from ${start} to ${end}`);
+              console.log(`Tx: ${tx.hash}`);
+            }}
+          >
+            Refresh pool batch {idx}
+          </Button>
+        );
+      })}
       <Button
-        onClick={async () => {
-          const multisig = MultiSig__factory.connect(
-            operator!,
-            await getConnectedSigner()
-          );
-          const batchSize = 20;
-          for (
-            let i = 0;
-            i < Math.ceil(poolsToRefresh.length / batchSize);
-            i++
-          ) {
-            const start = i * batchSize;
-            const end = Math.min(poolsToRefresh.length, (i + 1) * batchSize);
-            const data = poolManager.interface.encodeFunctionData(
-              "batchRefreshPools",
-              [poolsToRefresh.slice(start, end)]
-            );
-            const tx = await multisig.submitTransaction(
-              poolManager.address,
-              0,
-              data
-            );
-            console.log(`Refreshed from ${start} to ${end}`);
-            console.log(`Tx: ${tx.hash}`);
-          }
-        }}
-      >
-        Refresh pool manager
-      </Button>
-      <Button
+        mr={1}
         mb={2}
         onClick={async () => {
+          if (!operator) return;
           const multisig = MultiSig__factory.connect(
-            operator!,
+            operator,
             await getConnectedSigner()
           );
           const data = poolManager.interface.encodeFunctionData(
