@@ -133,7 +133,6 @@ export const RefreshPools: React.FC = () => {
                 0,
                 data
               );
-              console.log(`Refreshed from ${start} to ${end}`);
               console.log(`Tx: ${tx.hash}`);
             }}
           >
