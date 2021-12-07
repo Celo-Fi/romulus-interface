@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
-import { FunctionFragment, isAddress } from "ethers/lib/utils";
+import { ConstructorFragment, isAddress } from "ethers/lib/utils";
 import React from "react";
 import { Box, Text } from "theme-ui";
 
@@ -7,7 +7,7 @@ import { Address } from "../Address";
 
 interface Props {
   callee?: string;
-  frag: FunctionFragment;
+  frag: ConstructorFragment;
   args?: readonly unknown[];
   inline?: boolean;
 }
