@@ -55,6 +55,9 @@ export const ContractBuilder: React.FC<Props> = ({
         throw new Error("Undefined deploy fragment");
       }
       const { args } = values;
+      if (!args) {
+        throw new Error("Undefined args");
+      }
       onSubmit({
         ...deployableContract,
         args,
