@@ -3,6 +3,7 @@ import { mapValues } from "lodash";
 
 import ERC20Abi from "../../../abis/ERC20.json";
 import TimelockAbi from "../../../abis/ITimelock.json";
+import MoolaStakingRewardsAbi from "../../../abis/MoolaStakingRewards.json";
 import MultiSig from "../../../abis/MultiSig.json";
 import MinerMetadata from "../../../abis/poof/Miner.json";
 import ReleasePOOFMetadata from "../../../abis/poof/ReleasePOOF.json";
@@ -11,8 +12,7 @@ import TokenAllocatorMetadata from "../../../abis/poof/TokenAllocator.json";
 import TornadoProxyMetadata from "../../../abis/poof/TornadoProxy.json";
 import PoolManager from "../../../abis/PoolManager.json";
 import UbeswapFactory from "../../../abis/UbeswapFactory.json";
-import MoolaStakingRewardsAbi from "../../../abis/MoolaStakingRewards.json";
-import { farms } from "../../pages/ubeswap/UbeswapAdmin/D4P";
+import { extraFarms } from "../../pages/ubeswap/UbeswapAdmin/D4P";
 
 const MULTISIG_ABI =
   "https://gist.githubusercontent.com/macalinao/265ef9f40d13b28a64e5ad19eec94f62/raw/4723e984481558895728542304a9727d85d9c259/multisig.json";
@@ -102,7 +102,7 @@ export const knownABIs: Record<string, Fragment[]> = {
     RewardsCELOMetadata.abi as unknown as Fragment[],
 
   ...mapValues(KNOWN_ADDRESSES, (addr) => addr.abi),
-  ...farms.reduce((acc, farm) => {
+  ...extraFarms.reduce((acc, farm) => {
     acc[farm.farmAddress] = MoolaStakingRewardsAbi as unknown as Fragment[];
     return acc;
   }, {} as Record<string, Fragment[]>),
