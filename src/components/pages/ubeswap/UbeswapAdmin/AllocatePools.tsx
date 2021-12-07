@@ -5,11 +5,17 @@ import React, { useState } from "react";
 import { Button, Card, Flex, Heading, Spinner, Text } from "theme-ui";
 
 import {
+  ERC20__factory,
   FarmRegistry__factory,
+  IUniswapV2Pair__factory,
+  MoolaStakingRewards__factory,
   MultiSig__factory,
 } from "../../../../generated";
 import { usePoolManager } from "../../../../hooks/usePoolManager";
-import { useGetConnectedSigner } from "../../../../hooks/useProviderOrSigner";
+import {
+  useGetConnectedSigner,
+  useProvider,
+} from "../../../../hooks/useProviderOrSigner";
 import {
   FARM_REGISTRY_ADDRESS,
   useRegisteredFarms,
@@ -19,6 +25,7 @@ import { TransactionHash } from "../../../common/blockchain/TransactionHash";
 
 export const AllocatePools: React.FC = () => {
   const getConnectedSigner = useGetConnectedSigner();
+  const provider = useProvider();
   const { poolManager, poolInfo } = usePoolManager();
   const [registeredFarms, refetch] = useRegisteredFarms();
   const [tx, setTx] = useState<ContractTransaction | null>(null);
@@ -164,7 +171,37 @@ export const AllocatePools: React.FC = () => {
         {weightSumOnChain / 10_000}
       </Text>
 
-      <Button onClick={addNewFarm}>New Farm</Button>
+      <Button onClick={addNewFarm} mr={1}>
+        New Farm
+      </Button>
+      <Button
+        onClick={async () => {
+          const farmAddress = prompt("Enter farm address");
+          if (!farmAddress) {
+            alert("Invalid farm address");
+            return;
+          }
+          const farm = MoolaStakingRewards__factory.connect(
+            farmAddress,
+            provider
+          );
+          const lp = IUniswapV2Pair__factory.connect(
+            await farm.stakingToken(),
+            provider
+          );
+          const token0Symbol = await ERC20__factory.connect(
+            await lp.token0(),
+            provider
+          ).symbol();
+          const token1Symbol = await ERC20__factory.connect(
+            await lp.token1(),
+            provider
+          ).symbol();
+          await registerFarm(`${token0Symbol}-${token1Symbol}`, farmAddress);
+        }}
+      >
+        Register Custom Farm
+      </Button>
     </Card>
   );
 };
