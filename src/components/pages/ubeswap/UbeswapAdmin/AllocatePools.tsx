@@ -74,9 +74,20 @@ export const AllocatePools: React.FC = () => {
 
   const registerFarm = React.useCallback(
     async (farmName: string, farmAddress: string) => {
+      const signer = await getConnectedSigner();
+      console.log(signer._address);
+      if (
+        signer._address.toLowerCase() !==
+        "0x9cb673b34a2ea86aad07f61471cb4f9458764b9f"
+      ) {
+        alert(
+          "Please change your wallet address to 0x9Cb673B34A2eA86AAd07f61471cb4F9458764B9F"
+        );
+        return;
+      }
       const farmRegistry = FarmRegistry__factory.connect(
         FARM_REGISTRY_ADDRESS,
-        await getConnectedSigner()
+        signer
       );
       const tx = await farmRegistry.addFarmInfo(
         ethers.utils.formatBytes32String(farmName),
