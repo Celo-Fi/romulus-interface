@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { ContractTransaction, ethers } from "ethers";
-import { isAddress, parseUnits } from "ethers/lib/utils";
+import { isAddress } from "ethers/lib/utils";
 import React, { useState } from "react";
 import { Button, Card, Flex, Heading, Spinner, Text } from "theme-ui";
 
@@ -68,10 +68,7 @@ export const AllocatePools: React.FC = () => {
       pool,
       0,
     ]);
-    const tx = await multisig.submitTransaction(poolManager.address, 0, data, {
-      gasLimit: 2e6,
-      gasPrice: parseUnits("1", "gwei"),
-    });
+    const tx = await multisig.submitTransaction(poolManager.address, 0, data);
     setTx(tx);
   }, [getConnectedSigner, poolManager]);
 
