@@ -181,7 +181,7 @@ export const D4P: React.FC = () => {
   }, [multisigLookup, provider]);
 
   const getConnectedSigner = useGetConnectedSigner();
-  const sendCELO = React.useCallback(
+  const sendRewards = React.useCallback(
     async (farm: Farm, amount: string) => {
       const signer = await getConnectedSigner();
       const data = getTransferData(farm.farmAddress, amount);
@@ -323,7 +323,7 @@ export const D4P: React.FC = () => {
             <Box mt={2}>
               <Button
                 onClick={() => {
-                  void sendCELO(farm, lastReward);
+                  void sendRewards(farm, lastReward);
                   refresh();
                 }}
                 mr={1}
@@ -348,7 +348,7 @@ export const D4P: React.FC = () => {
                     console.warn("Invalid amount");
                     return;
                   }
-                  void sendCELO(farm, toWei(amount));
+                  void sendRewards(farm, toWei(amount));
                   refresh();
                 }}
                 mr={1}
