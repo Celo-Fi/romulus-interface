@@ -61,7 +61,7 @@ enum Pool {
   // Poof controlled
   POOFUBE = "POOF-UBE",
   PCELOPOOF = "pCELO-POOF",
-  pUSDUSD = "pUSD-USDC-cUSD",
+  pUSDUSD = "pUSD-cUSD",
   pEUREUR = "pEUR-cEUR",
   pCELOCELO = "pCELO-CELO",
 }
@@ -111,12 +111,6 @@ export const extraFarms: Farm[] = [
     farmName: "UBE Single Staking",
     rewardToken: Token.UBE,
     manager: Multisig.UBE,
-  },
-  {
-    farmAddress: "0x7B7F08164036abEbafD1bf75c1464c6F0d01653C",
-    farmName: Pool.PCELOPOOF,
-    rewardToken: Token.POOF,
-    manager: Multisig.POOF,
   },
   {
     farmAddress: "0x3A7D1c18618c4f099D2703f8981CEA9c56Ac7779",
