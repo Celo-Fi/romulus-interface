@@ -72,7 +72,7 @@ enum Token {
   UBE = "0x00be915b9dcf56a3cbe739d9b9c202ca692409ec",
 }
 
-enum Multisig {
+export enum D4PMultisig {
   UBE = "0x0Ce41DbCEA62580Ae2C894a7D93E97da0c3daC3a",
   POOF = "0x54c18437bC09Ee60BCd40aFe7E560010860fFC1F",
 }
@@ -110,37 +110,59 @@ export const extraFarms: Farm[] = [
     farmAddress: "0xCe74d14163deb82af57f253108F7E5699e62116d",
     farmName: "UBE Single Staking",
     rewardToken: Token.UBE,
-    manager: Multisig.UBE,
+    manager: D4PMultisig.UBE,
   },
   {
     farmAddress: "0x3A7D1c18618c4f099D2703f8981CEA9c56Ac7779",
     farmName: Pool.pUSDUSD,
     rewardToken: Token.POOF,
-    manager: Multisig.POOF,
+    manager: D4PMultisig.POOF,
   },
   {
     farmAddress: "0xA1e9175ad10fBdA9Fa042269c2AB7DaFB54dc164",
     farmName: Pool.pEUREUR,
     rewardToken: Token.POOF,
-    manager: Multisig.POOF,
+    manager: D4PMultisig.POOF,
   },
   {
     farmAddress: "0xb86e373b209fb2C4cbE17d68d52A59798E4A9640",
     farmName: Pool.pCELOCELO,
     rewardToken: Token.POOF,
-    manager: Multisig.POOF,
+    manager: D4PMultisig.POOF,
+  },
+  {
+    farmAddress: "0x9925664eF3D300BaAe432C9c04752C8196AF7123",
+    farmName: Pool.pUSDUSD,
+    rewardToken: Token.POOF,
+    manager: D4PMultisig.POOF,
+  },
+  {
+    farmAddress: "0xc4e422ED8939697897443caa4e70E933cD001f54",
+    farmName: Pool.pEUREUR,
+    rewardToken: Token.POOF,
+    manager: D4PMultisig.POOF,
+  },
+  {
+    farmAddress: "0xa8E2ec31760Df07108c849f321e6872d15d12017",
+    farmName: Pool.pCELOCELO,
+    rewardToken: Token.POOF,
+    manager: D4PMultisig.POOF,
   },
 ];
 
-export const D4P: React.FC = () => {
-  const ubeswapMultisig = useMultisigContract(Multisig.UBE);
-  const poofMultisig = useMultisigContract(Multisig.POOF);
+interface Props {
+  manager: D4PMultisig;
+}
+
+export const D4P: React.FC<Props> = ({ manager }) => {
+  const ubeswapMultisig = useMultisigContract(D4PMultisig.UBE);
+  const poofMultisig = useMultisigContract(D4PMultisig.POOF);
   const provider = useProvider();
   const [farms, setFarms] = React.useState<Farm[]>([]);
   const multisigLookup: Record<string, MultisigContract> = React.useMemo(
     () => ({
-      [Multisig.UBE]: ubeswapMultisig,
-      [Multisig.POOF]: poofMultisig,
+      [D4PMultisig.UBE]: ubeswapMultisig,
+      [D4PMultisig.POOF]: poofMultisig,
     }),
     [ubeswapMultisig, poofMultisig]
   );
@@ -170,7 +192,9 @@ export const D4P: React.FC = () => {
         )
           .filter((farm) => multisigLookup[farm.manager] != null)
           .sort((a, b) => a.manager.localeCompare(b.manager));
-        setFarms([...farms, ...extraFarms]);
+        setFarms(
+          [...farms, ...extraFarms].filter((f) => f.manager === manager)
+        );
       });
   }, [multisigLookup, provider]);
 

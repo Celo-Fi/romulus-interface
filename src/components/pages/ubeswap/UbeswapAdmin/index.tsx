@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import React from "react";
 
 import { AllocatePools } from "./AllocatePools";
-import { D4P } from "./D4P";
+import { D4P, D4PMultisig } from "./D4P";
 import { RefreshPools } from "./RefreshPools";
 import { ReleaseUbe } from "./ReleaseUbe";
 import { SetOperator } from "./SetOperator";
@@ -19,7 +19,7 @@ export const UbeswapAdmin: React.FC = () => {
     >
       <RefreshPools />
       <AllocatePools />
-      <D4P />
+      <D4P manager={D4PMultisig.UBE} />
       <ReleaseUbe />
       <TransferOwnership />
       <SetOperator />

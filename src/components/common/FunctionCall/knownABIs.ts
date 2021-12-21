@@ -12,7 +12,6 @@ import TokenAllocatorMetadata from "../../../abis/poof/TokenAllocator.json";
 import TornadoProxyMetadata from "../../../abis/poof/TornadoProxy.json";
 import PoolManager from "../../../abis/PoolManager.json";
 import UbeswapFactory from "../../../abis/UbeswapFactory.json";
-import { extraFarms } from "../../pages/ubeswap/UbeswapAdmin/D4P";
 
 const MULTISIG_ABI =
   "https://gist.githubusercontent.com/macalinao/265ef9f40d13b28a64e5ad19eec94f62/raw/4723e984481558895728542304a9727d85d9c259/multisig.json";
@@ -102,8 +101,4 @@ export const knownABIs: Record<string, Fragment[]> = {
     RewardsCELOMetadata.abi as unknown as Fragment[],
 
   ...mapValues(KNOWN_ADDRESSES, (addr) => addr.abi),
-  ...extraFarms.reduce((acc, farm) => {
-    acc[farm.farmAddress] = MoolaStakingRewardsAbi as unknown as Fragment[];
-    return acc;
-  }, {} as Record<string, Fragment[]>),
 };
