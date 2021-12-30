@@ -44,19 +44,25 @@ const Rewards: React.FC = () => {
         await msr.stakingToken(),
         provider
       );
-      const token0Symbol = await ERC20__factory.connect(
-        await stakingToken.token0(),
-        provider
-      ).symbol();
-      const token1Symbol = await ERC20__factory.connect(
-        await stakingToken.token1(),
-        provider
-      ).symbol();
+      let farmName = await stakingToken.symbol();
+      try {
+        const token0Symbol = await ERC20__factory.connect(
+          await stakingToken.token0(),
+          provider
+        ).symbol();
+        const token1Symbol = await ERC20__factory.connect(
+          await stakingToken.token1(),
+          provider
+        ).symbol();
+        farmName = `${token0Symbol}-${token1Symbol}`;
+      } catch (e) {
+        console.error("Not an LP token");
+      }
       setFarm({
         farmAddress: farmAddress.toString(),
-        farmName: `${token0Symbol}-${token1Symbol}`,
         rewardToken: await msr.rewardsToken(),
         manager: await msr.rewardsDistribution(),
+        farmName,
       });
     };
     void fn();
