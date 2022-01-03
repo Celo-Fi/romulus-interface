@@ -1,6 +1,7 @@
 import {
   useGetConnectedSigner,
   useProvider,
+  useLazyConnectedSigner,
 } from "@celo-tools/use-contractkit";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -30,15 +31,11 @@ const Rewards: React.FC = () => {
   const router = useRouter();
   const { address: farmAddress } = router.query;
   const provider = useProvider();
-
   const [farm, setFarm] = useState<Farm>();
-
   useEffect(() => {
     if (!farmAddress) {
       return;
     }
-
-    //SETS THE FARM
     const fn = async () => {
       const msr = MoolaStakingRewards__factory.connect(
         farmAddress.toString(),
@@ -75,54 +72,41 @@ const Rewards: React.FC = () => {
   const getConnectedSigner = useGetConnectedSigner();
 
   const nominateNewOwner = React.useCallback(
-    async (farm: Farm, address: string) => {
-      //   nominatedOwner = address
-      //   sendRewards(farm , amount)
-      // },
-      // [getConnectedSigner]
-
+    async (farm: Farm, nominatedOwner: string) => {
       const signer = await getConnectedSigner();
       const msr = MoolaStakingRewards__factory.connect(
         farm.farmAddress,
         signer
       );
-
-      await msr.nominateNewOwner(address);
+      await msr.nominateNewOwner(nominatedOwner);
     },
     [getConnectedSigner]
   );
 
   const acceptOwnership = React.useCallback(
     async (farm: Farm) => {
-      //checks if given address is the nominated owner
-      // if (address !=  nominatedOwner || address == "") //how to parse blockchain addresses?
-      // {
-      //   return
-      // }
-
       const signer = await getConnectedSigner();
       const msr = MoolaStakingRewards__factory.connect(
         farm.farmAddress,
         signer
       );
-
       await msr.acceptOwnership();
     },
     [getConnectedSigner]
   );
 
   const setRewardsDistribution = React.useCallback(
-    async (farm: Farm, address: string) => {
+    async (farm: Farm, rewardsDistribution: string) => {
       const signer = await getConnectedSigner();
       const msr = MoolaStakingRewards__factory.connect(
         farm.farmAddress,
         signer
       );
-
-      await msr.setRewardsDistribution(address);
+      await msr.setRewardsDistribution(rewardsDistribution);
     },
     [getConnectedSigner]
   );
+
   const sendRewards = React.useCallback(
     async (farm: Farm, amount: string) => {
       const signer = await getConnectedSigner();
@@ -185,10 +169,35 @@ const Rewards: React.FC = () => {
       rewardTokenSymbol,
     };
   }, [farm, provider]);
+
   const [lookup, refetchLookup] = useAsyncState(null, lookupCall);
   const refresh = () => {
     refetchLookup();
   };
+
+  const checkOwner = React.useCallback(async () => {
+    const signer = await getConnectedSigner();
+    if (signer._address == lookup?.owner) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [lookup, getConnectedSigner]);
+
+  const checkNominatedOwner = React.useCallback(async () => {
+    if (!farm) return;
+    const signer = await getConnectedSigner();
+    const msr = MoolaStakingRewards__factory.connect(farm.farmAddress, signer);
+    const nominatedOwner = await msr.nominatedOwner();
+    if (nominatedOwner == signer._address) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [farm, getConnectedSigner]);
+
+  const isNominatedOwner = useAsyncState(false, checkNominatedOwner);
+  const isOwner = useAsyncState(false, checkOwner);
 
   return (
     <div>
@@ -293,60 +302,57 @@ const Rewards: React.FC = () => {
             >
               Notify custom {lookup.rewardTokenSymbol}
             </Button>
+            {(isOwner[0] || isNominatedOwner[0]) && (
+              <Text style={{ whiteSpace: "pre-line" }}> {"\n\n"} </Text>
+            )}
+            {isOwner[0] && (
+              <Button
+                onClick={() => {
+                  const rewardsDistribution = prompt(
+                    `Enter the address of the rewards distribution`
+                  );
+                  if (!rewardsDistribution) {
+                    console.warn("Invalid address");
+                    return;
+                  }
+                  void setRewardsDistribution(farm, rewardsDistribution);
+                  refresh();
+                }}
+                mr={1}
+              >
+                Set rewards distribution {lookup.rewardTokenSymbol}
+              </Button>
+            )}
+            {isOwner[0] && (
+              <Button
+                onClick={() => {
+                  const nominatedOwner = prompt(
+                    `Enter the address of the new owner`
+                  );
 
-            <Button
-              onClick={() => {
-                const reward_dist_address = prompt(
-                  `Enter the address of the rewards distribution`
-                );
-
-                if (!reward_dist_address) {
-                  console.warn("Invalid address");
-                  return;
-                }
-                void setRewardsDistribution(farm, reward_dist_address);
-              }}
-              mr={1}
-            >
-              Set rewards distribution {lookup.rewardTokenSymbol}
-            </Button>
-
-            <Button
-              onClick={() => {
-                const input = prompt(`Enter the address of the new owner`);
-
-                if (!input) {
-                  console.warn("Invalid address");
-                  return;
-                }
-
-                void nominateNewOwner(farm, input);
-                refresh();
-              }}
-              mr={1}
-            >
-              Nominate owner
-            </Button>
-
-            <Button
-              onClick={() => {
-                const input = prompt(
-                  "Are you sure you'd like to accept ownership of this farm? (Y\\N)"
-                );
-
-                if (!input) {
-                  console.warn("Invalid input");
-                  return;
-                }
-
-                if (input == "Y") {
+                  if (!nominatedOwner) {
+                    console.warn("Invalid address");
+                    return;
+                  }
+                  void nominateNewOwner(farm, nominatedOwner);
+                  refresh();
+                }}
+                mr={1}
+              >
+                Nominate owner
+              </Button>
+            )}
+            {isNominatedOwner[0] && (
+              <Button
+                onClick={() => {
                   void acceptOwnership(farm);
-                }
-              }}
-              mr={1}
-            >
-              Accept Ownership
-            </Button>
+                  refresh();
+                }}
+                mr={1}
+              >
+                Accept Ownership
+              </Button>
+            )}
           </Box>
         </Card>
       )}
