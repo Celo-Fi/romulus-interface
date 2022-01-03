@@ -176,11 +176,7 @@ const Rewards: React.FC = () => {
 
   const checkOwner = React.useCallback(async () => {
     const signer = await getConnectedSigner();
-    if (signer._address == lookup?.owner) {
-      return true;
-    } else {
-      return false;
-    }
+    return signer._address === lookup?.owner;
   }, [lookup, getConnectedSigner]);
 
   const checkNominatedOwner = React.useCallback(async () => {
@@ -188,15 +184,11 @@ const Rewards: React.FC = () => {
     const signer = await getConnectedSigner();
     const msr = MoolaStakingRewards__factory.connect(farm.farmAddress, signer);
     const nominatedOwner = await msr.nominatedOwner();
-    if (nominatedOwner == signer._address) {
-      return true;
-    } else {
-      return false;
-    }
+    return nominatedOwner === signer._address;
   }, [farm, getConnectedSigner]);
 
-  const isNominatedOwner = useAsyncState(false, checkNominatedOwner);
-  const isOwner = useAsyncState(false, checkOwner);
+  const [isNominatedOwner] = useAsyncState(false, checkNominatedOwner);
+  const [isOwner] = useAsyncState(false, checkOwner);
 
   return (
     <div>
@@ -301,10 +293,10 @@ const Rewards: React.FC = () => {
             >
               Notify custom {lookup.rewardTokenSymbol}
             </Button>
-            {(isOwner[0] || isNominatedOwner[0]) && (
+            {(isOwner || isNominatedOwner) && (
               <Text style={{ whiteSpace: "pre-line" }}> {"\n\n"} </Text>
             )}
-            {isOwner[0] && (
+            {isOwner && (
               <Button
                 onClick={() => {
                   const rewardsDistribution = prompt(
@@ -322,7 +314,7 @@ const Rewards: React.FC = () => {
                 Set rewards distribution
               </Button>
             )}
-            {isOwner[0] && (
+            {isOwner && (
               <Button
                 onClick={() => {
                   const nominatedOwner = prompt(
@@ -341,7 +333,7 @@ const Rewards: React.FC = () => {
                 Nominate owner
               </Button>
             )}
-            {isNominatedOwner[0] && (
+            {isNominatedOwner && (
               <Button
                 onClick={() => {
                   void acceptOwnership(farm);
