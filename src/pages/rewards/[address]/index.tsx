@@ -1,7 +1,6 @@
 import {
   useGetConnectedSigner,
   useProvider,
-  useLazyConnectedSigner,
 } from "@celo-tools/use-contractkit";
 import moment from "moment";
 import { useRouter } from "next/router";
