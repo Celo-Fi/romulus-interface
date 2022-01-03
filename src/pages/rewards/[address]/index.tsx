@@ -319,7 +319,7 @@ const Rewards: React.FC = () => {
                 }}
                 mr={1}
               >
-                Set rewards distribution {lookup.rewardTokenSymbol}
+                Set rewards distribution
               </Button>
             )}
             {isOwner[0] && (
