@@ -23,6 +23,7 @@ import { truncateAddress } from "../../../util/address";
 import { BIG_ZERO } from "../../../util/constants";
 import { humanFriendlyWei } from "../../../util/number";
 import { governanceLookup } from "..";
+import styled from "styled-components";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -115,59 +116,66 @@ const RomulusIndexPage: React.FC = () => {
           <Heading as="h1">{governanceName}</Heading>
         </Box>
         <Box mb={4}>
-          <Box style={{ textAlign: "center" }} mb="lg">
-            <Heading as="h1">
-              {humanFriendlyWei(totalVotingPower.toString())}
-            </Heading>
-            <Text>Voting Power</Text>
-          </Box>
-          <Box my="md">
-            <Heading as="h2" mb={3}>
-              User details
-            </Heading>
-          </Box>
-          <Box sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}>
-            <Box mb={2}>
-              <Text>Token balance: </Text>
-              <Text sx={{ fontWeight: "display" }}>
-                {humanFriendlyWei(balance.toString())} {tokenSymbol}
-              </Text>{" "}
-            </Box>
-            <Flex sx={{ alignItems: "center" }}>
-              <Text sx={{ maxWidth: "66%" }} mr={2}>
-                Token delegate:{" "}
-                <Text sx={{ fontWeight: "display" }}>
-                  {truncateAddress(tokenDelegate)}
-                </Text>
-              </Text>
-              <Button
-                onClick={openTokenDelegateModal}
-                variant="outline"
-                p={[2, 2]}
+          <RowFlat>
+            <Box my="md">
+              <Heading as="h2" mb={3}>
+                User details
+              </Heading>
+              <Box
+                sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}
               >
-                change
-              </Button>
-            </Flex>
-          </Box>
-          <Box my="md">
-            <Heading as="h2" mb={3}>
-              Governance details
-            </Heading>
-          </Box>
-          <Box sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}>
-            <Box mb={2}>
-              <Text>Quorum: </Text>
-              <Text sx={{ fontWeight: "display" }}>
-                {humanFriendlyWei(quorumVotes.toString())} {tokenSymbol}
-              </Text>{" "}
+                <Box mb={2}>
+                  <Text>Token balance: </Text>
+                  <Text sx={{ fontWeight: "display" }}>
+                    {humanFriendlyWei(balance.toString())} {tokenSymbol}
+                  </Text>{" "}
+                </Box>
+                <Box mb={2}>
+                  <Text>Voting Power: </Text>
+                  <Text sx={{ fontWeight: "display" }}>
+                    {humanFriendlyWei(totalVotingPower.toString())}
+                  </Text>{" "}
+                </Box>
+                <Flex sx={{ alignItems: "center" }}>
+                  <Text sx={{ maxWidth: "66%" }} mr={2}>
+                    Token delegate:{" "}
+                    <Text sx={{ fontWeight: "display" }}>
+                      {truncateAddress(tokenDelegate)}
+                    </Text>
+                  </Text>
+                  <Button
+                    onClick={openTokenDelegateModal}
+                    variant="outline"
+                    p={[2, 2]}
+                  >
+                    change
+                  </Button>
+                </Flex>
+              </Box>
             </Box>
-            <Box mb={2}>
-              <Text>Proposal threshold: </Text>
-              <Text sx={{ fontWeight: "display" }}>
-                {humanFriendlyWei(proposalThreshold.toString())} {tokenSymbol}
-              </Text>{" "}
+            <Box my="md">
+              <Heading as="h2" mb={3}>
+                Governance details
+              </Heading>
+              <Box
+                sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}
+              >
+                <Box mb={2}>
+                  <Text>Quorum: </Text>
+                  <Text sx={{ fontWeight: "display" }}>
+                    {humanFriendlyWei(quorumVotes.toString())} {tokenSymbol}
+                  </Text>{" "}
+                </Box>
+                <Box mb={2}>
+                  <Text>Proposal threshold: </Text>
+                  <Text sx={{ fontWeight: "display" }}>
+                    {humanFriendlyWei(proposalThreshold.toString())}{" "}
+                    {tokenSymbol}
+                  </Text>{" "}
+                </Box>
+              </Box>
             </Box>
-          </Box>
+          </RowFlat>
           {hasReleaseToken && releaseBalance.gt(BIG_ZERO) && (
             <Box
               sx={{ border: "1px solid white", borderRadius: 8, p: 2, mb: 3 }}
@@ -243,5 +251,10 @@ const RomulusIndexPage: React.FC = () => {
     </>
   );
 };
+
+export const RowFlat = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
 
 export default RomulusIndexPage;
