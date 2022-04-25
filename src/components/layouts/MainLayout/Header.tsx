@@ -1,24 +1,20 @@
-import {
-  Alfajores,
-  Baklava,
-  Mainnet,
-  useContractKit,
-} from "@celo-tools/use-contractkit";
+import { useContractKit } from "@celo-tools/use-contractkit";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import copyToClipboard from "copy-to-clipboard";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Box, Button, Container, Flex, Select, Text } from "theme-ui";
+import { Button as RebassButton, ButtonProps } from "rebass/styled-components";
+import { Web3StatusConnect } from "../../Web3Status";
 
 export const truncateAddress = (addr: string): string =>
   addr.slice(0, 6) + "..." + addr.slice(addr.length - 4);
 
-const NETWORKS = [Mainnet, Alfajores, Baklava];
-
 export const Header: React.FC = () => {
   const { address, network, updateNetwork, connect, destroy } =
     useContractKit();
+
+  const [showDisconnect, setShowDisconnect] = useState(false);
 
   return (
     <Flex
@@ -39,78 +35,37 @@ export const Header: React.FC = () => {
         </Text>
       </Link>
       <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
-        <Container
-          sx={{
-            mr: 3,
-            bg: "gray",
-            borderRadius: 8,
-            height: "fit-content",
-          }}
-        >
-          <Select
-            value={network.name}
-            sx={{
-              minWidth: "fit-content",
-              pr: 4,
-              bg: "gray",
-            }}
-            onChange={(e) => {
-              const nextNetwork = NETWORKS.find(
-                (n) => n.name === e.target.value
-              );
-              if (nextNetwork) {
-                updateNetwork(nextNetwork);
-              }
-            }}
-          >
-            {NETWORKS.map((n) => (
-              <option
-                key={n.name}
-                value={n.name}
-                selected={n.name === network.name}
-              >
-                {n.name}
-              </option>
-            ))}
-          </Select>
-        </Container>
         <Box
           sx={{ textAlign: "center", width: "100%", minWidth: "fit-content" }}
         >
           {address ? (
             <>
-              <ClickableText
-                onClick={() => {
-                  copyToClipboard(address);
-                }}
-              >
-                {truncateAddress(address)}{" "}
-              </ClickableText>
-              <br />
-              <ClickableText
-                color="secondary"
+              <Web3StatusConnect
+                id="web3-status-connected"
+                onMouseEnter={(e) => setShowDisconnect(true)}
+                onMouseLeave={(e) => setShowDisconnect(false)}
                 onClick={() => {
                   void destroy();
                 }}
               >
-                (disconnect)
-              </ClickableText>
+                <>
+                  <Text>
+                    {showDisconnect ? "Disconnect" : truncateAddress(address)}
+                  </Text>
+                </>
+              </Web3StatusConnect>
             </>
           ) : (
-            <Button
-              onClick={() => {
-                void connect();
-              }}
+            <Web3StatusConnect
+              id="connect-wallet"
+              onClick={() => void connect().catch(console.warn)}
+              faded={!address}
             >
-              Connect Wallet
-            </Button>
+              <Text>Connect to a wallet</Text>
+            </Web3StatusConnect>
           )}
         </Box>
       </Flex>
     </Flex>
   );
 };
-
-const ClickableText = styled(Text)`
-  cursor: pointer;
-`;

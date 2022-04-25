@@ -8,6 +8,8 @@ export default {
     purple: "hsl(290, 100%, 80%)",
     muted: "hsla(230, 20%, 0%, 20%)",
     gray: "hsl(210, 50%, 60%)",
+    primary4: "#6D619A",
+    primary5: "#6D619A70",
   },
   breakpoints: ["1080px", "1080px"],
   fonts: {
