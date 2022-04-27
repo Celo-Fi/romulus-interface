@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 export const BodyWrapper = styled.div`
-  max-width: 750px;
+  max-width: 850px;
   width: 100%;
   margin: auto;
   background: ${({ theme }) => theme.bg1};

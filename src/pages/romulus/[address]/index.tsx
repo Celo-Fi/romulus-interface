@@ -25,6 +25,9 @@ import { humanFriendlyWei } from "../../../util/number";
 import { governanceLookup } from "..";
 import styled from "styled-components";
 import AppBody from "../../AppBody";
+import { TopSection, AutoColumn } from "../../../components/Column";
+import { RowFlat, RowBetween } from "../../../components/Row";
+import noise from "../../../assets/images/noise.webp";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -113,6 +116,22 @@ const RomulusIndexPage: React.FC = () => {
   return (
     <>
       <Box>
+        <TopSection gap="md">
+          <DataCard>
+            <CardNoise />
+            <CardSection>
+              <AutoColumn gap="md">
+                <RowBetween>
+                  <Text sx={{ fontWeight: 600 }}>Ubeswap Governance</Text>
+                </RowBetween>
+                <RowBetween>
+                  <Text sx={{ fontSize: 14 }}>description</Text>
+                </RowBetween>{" "}
+              </AutoColumn>
+            </CardSection>
+            <CardNoise />
+          </DataCard>
+        </TopSection>
         <AppBody>
           <Box mb={4}>
             <Heading as="h1">{governanceName}</Heading>
@@ -125,10 +144,11 @@ const RomulusIndexPage: React.FC = () => {
                 </Heading>
                 <Box
                   sx={{
-                    border: "1px solid white",
+                    border: "1px solid #6D619A",
                     borderRadius: 8,
                     p: 2,
                     mb: 3,
+                    height: "150px",
                   }}
                 >
                   <Box mb={2}>
@@ -166,10 +186,11 @@ const RomulusIndexPage: React.FC = () => {
                 </Heading>
                 <Box
                   sx={{
-                    border: "1px solid white",
+                    border: "1px solid #6D619A",
                     borderRadius: 8,
                     p: 2,
                     mb: 3,
+                    height: "150px",
                   }}
                 >
                   <Box mb={2}>
@@ -266,9 +287,35 @@ const RomulusIndexPage: React.FC = () => {
   );
 };
 
-export const RowFlat = styled.div`
-  display: flex;
-  align-items: flex-end;
+export const DataCard = styled(AutoColumn)<{ disabled?: boolean }>`
+  background: radial-gradient(
+    96.02% 99.41% at 1.84% 0%,
+    ${(props) => props.theme.primary1} 30%,
+    ${(props) => props.theme.bg5} 100%
+  );
+  border-radius: 12px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+`;
+export const CardNoise = styled.span`
+  background: url(${noise});
+  background-size: cover;
+  mix-blend-mode: overlay;
+  border-radius: 12px;
+  width: 100%;
+  height: 100%;
+  opacity: 0.15;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+`;
+
+export const CardSection = styled(AutoColumn)<{ disabled?: boolean }>`
+  padding: 1rem;
+  z-index: 1;
+  opacity: ${({ disabled }) => disabled && "0.4"};
 `;
 
 export default RomulusIndexPage;
