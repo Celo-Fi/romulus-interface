@@ -249,7 +249,7 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
           </Box>
         </>
       )}
-      <Box mb={1}>
+      {/* <Box mb={1}>
         <Text mr={2}>Description:</Text>
         <Text>
           {proposalEvent.args.description === ""
@@ -263,7 +263,7 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
                 </Text>
               ))}
         </Text>
-      </Box>
+      </Box> */}
       <Flex sx={{ justifyContent: "center" }} mt={4}>
         {voteContent}
       </Flex>
