@@ -27,16 +27,15 @@ import styled from "styled-components";
 import AppBody from "../../AppBody";
 import { TopSection, AutoColumn } from "../../../components/Column";
 import { RowFlat, RowBetween } from "../../../components/Row";
-import noise from "../../../assets/images/noise.webp";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
   const { address: romulusAddress } = router.query;
   const getConnectedSigner = useGetConnectedSigner();
   const provider = useProvider();
-  const governanceName = romulusAddress
+  const governanceDescription = romulusAddress
     ? governanceLookup[romulusAddress.toString()]
-    : "Unknown";
+    : undefined;
   const { address } = useContractKit();
   const [proposals] = useProposals((romulusAddress as string) || "");
   const [
@@ -118,27 +117,28 @@ const RomulusIndexPage: React.FC = () => {
       <Box>
         <TopSection gap="md">
           <DataCard>
-            <CardNoise />
             <CardSection>
               <AutoColumn gap="md">
                 <RowBetween>
-                  <Text sx={{ fontWeight: 600 }}>Ubeswap Governance</Text>
+                  <Text sx={{ fontWeight: 600 }}>
+                    {governanceDescription ? governanceDescription.name : ""}{" "}
+                    Governance Overview
+                  </Text>
                 </RowBetween>
                 <RowBetween>
-                  <Text sx={{ fontSize: 14 }}>description</Text>
+                  <Text sx={{ fontSize: 14 }}>
+                    View proposals, delegate votes, and participate in Ubeswap
+                    governance!{" "}
+                  </Text>
                 </RowBetween>{" "}
               </AutoColumn>
             </CardSection>
-            <CardNoise />
           </DataCard>
         </TopSection>
         <AppBody>
           <Box mb={4}>
-            <Heading as="h1">{governanceName}</Heading>
-          </Box>
-          <Box mb={4}>
             <RowFlat>
-              <Box my="md" sx={{ margin: "10px" }}>
+              <Box my="md" sx={{ margin: "25px auto 10px auto" }}>
                 <Heading as="h2" mb={3}>
                   User details
                 </Heading>
@@ -149,6 +149,7 @@ const RomulusIndexPage: React.FC = () => {
                     p: 2,
                     mb: 3,
                     height: "150px",
+                    width: "350px",
                   }}
                 >
                   <Box mb={2}>
@@ -180,7 +181,7 @@ const RomulusIndexPage: React.FC = () => {
                   </Flex>
                 </Box>
               </Box>
-              <Box my="md" sx={{ margin: "10px" }}>
+              <Box my="md" sx={{ margin: "25px auto 10px auto" }}>
                 <Heading as="h2" mb={3}>
                   Governance details
                 </Heading>
@@ -191,6 +192,7 @@ const RomulusIndexPage: React.FC = () => {
                     p: 2,
                     mb: 3,
                     height: "150px",
+                    width: "350px",
                   }}
                 >
                   <Box mb={2}>
@@ -239,7 +241,7 @@ const RomulusIndexPage: React.FC = () => {
               </Box>
             )}
           </Box>
-          <Box>
+          <Box style={{ margin: "50px" }}>
             <Heading as="h2" mb={3}>
               Top delegates
             </Heading>
@@ -298,19 +300,19 @@ export const DataCard = styled(AutoColumn)<{ disabled?: boolean }>`
   position: relative;
   overflow: hidden;
 `;
-export const CardNoise = styled.span`
-  background: url(${noise});
-  background-size: cover;
-  mix-blend-mode: overlay;
-  border-radius: 12px;
-  width: 100%;
-  height: 100%;
-  opacity: 0.15;
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-`;
+// export const CardNoise = styled.span`
+//   background: url(${noise});
+//   background-size: cover;
+//   mix-blend-mode: overlay;
+//   border-radius: 12px;
+//   width: 100%;
+//   height: 100%;
+//   opacity: 0.15;
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   pointer-events: none;
+// `;
 
 export const CardSection = styled(AutoColumn)<{ disabled?: boolean }>`
   padding: 1rem;

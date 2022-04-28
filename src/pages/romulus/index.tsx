@@ -33,10 +33,10 @@ const governances: Governance[] = [
 
 export const governanceLookup = governances.reduce((acc, curr) => {
   Object.values(curr.addresses).forEach((address) => {
-    acc[address] = curr.name;
+    acc[address] = curr;
   });
   return acc;
-}, {} as Record<Address, string>);
+}, {} as Record<Address, Governance>);
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
