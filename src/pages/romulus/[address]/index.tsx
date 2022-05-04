@@ -248,40 +248,47 @@ const RomulusIndexPage: React.FC = () => {
             <TopDelegates romulusAddress={romulusAddress as string} />
           </Box>
         </AppBody>
-        <Box
-          mb={4}
-          style={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <Heading>Proposals</Heading>
-          <Button
-            onClick={() => {
-              if (romulusAddress) {
-                router
-                  .push(`/romulus/${romulusAddress.toString()}/create`)
-                  .catch(console.error);
-              }
+
+        <AppBody>
+          <Box
+            mb={4}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "45px",
             }}
-            disabled={totalVotingPower.lt(BigNumber.from(proposalThreshold))}
           >
-            Create Proposal
-          </Button>
-        </Box>
-        <Box pb={6}>
-          {proposals.length > 1 ? (
-            proposals
-              .slice(1)
-              .reverse()
-              .map((proposalEvent, idx) => (
-                <Box key={idx} mt={3}>
-                  <ProposalCard proposalEvent={proposalEvent} />
-                </Box>
-              ))
-          ) : (
-            <Box style={{ textAlign: "center" }}>
-              <Text>There are currently no proposals.</Text>
-            </Box>
-          )}
-        </Box>
+            <Heading>Proposals</Heading>
+            <Button
+              onClick={() => {
+                if (romulusAddress) {
+                  router
+                    .push(`/romulus/${romulusAddress.toString()}/create`)
+                    .catch(console.error);
+                }
+              }}
+              disabled={totalVotingPower.lt(BigNumber.from(proposalThreshold))}
+            >
+              Create Proposal
+            </Button>
+          </Box>
+          <Box pb={6}>
+            {proposals.length > 1 ? (
+              proposals
+                .slice(1)
+                .reverse()
+                .map((proposalEvent, idx) => (
+                  <Box key={idx} mt={3} style={{ margin: "32px" }}>
+                    <ProposalCard proposalEvent={proposalEvent} />
+                  </Box>
+                ))
+            ) : (
+              <Box style={{ textAlign: "center" }}>
+                <Text>There are currently no proposals.</Text>
+              </Box>
+            )}
+          </Box>
+        </AppBody>
       </Box>
       {tokenDelegateModal}
       {releaseTokenDelegateModal}
@@ -300,19 +307,6 @@ export const DataCard = styled(AutoColumn)<{ disabled?: boolean }>`
   position: relative;
   overflow: hidden;
 `;
-// export const CardNoise = styled.span`
-//   background: url(${noise});
-//   background-size: cover;
-//   mix-blend-mode: overlay;
-//   border-radius: 12px;
-//   width: 100%;
-//   height: 100%;
-//   opacity: 0.15;
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   pointer-events: none;
-// `;
 
 export const CardSection = styled(AutoColumn)<{ disabled?: boolean }>`
   padding: 1rem;
