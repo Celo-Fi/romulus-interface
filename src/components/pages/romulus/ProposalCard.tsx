@@ -217,9 +217,11 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
         <Heading>
           Proposal #{proposalEvent.args.id.toString()} ({stateStr})
         </Heading>
-        <Text sx={{ cursor: "pointer" }} onClick={onCancelClick}>
-          <u>X Cancel</u>
-        </Text>
+        {proposalState === ProposalState.ACTIVE && (
+          <Text sx={{ cursor: "pointer" }} onClick={onCancelClick}>
+            <u>X Cancel</u>
+          </Text>
+        )}
       </Flex>
       <Box mb={1}>
         <Text mr={2}>Proposed by:</Text>

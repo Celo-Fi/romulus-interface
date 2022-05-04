@@ -259,18 +259,22 @@ const RomulusIndexPage: React.FC = () => {
             }}
           >
             <Heading>Proposals</Heading>
-            <Button
-              onClick={() => {
-                if (romulusAddress) {
-                  router
-                    .push(`/romulus/${romulusAddress.toString()}/create`)
-                    .catch(console.error);
-                }
-              }}
-              disabled={totalVotingPower.lt(BigNumber.from(proposalThreshold))}
-            >
-              Create Proposal
-            </Button>
+            {!totalVotingPower.lt(BigNumber.from(proposalThreshold)) && (
+              <Button
+                onClick={() => {
+                  if (romulusAddress) {
+                    router
+                      .push(`/romulus/${romulusAddress.toString()}/create`)
+                      .catch(console.error);
+                  }
+                }}
+                disabled={totalVotingPower.lt(
+                  BigNumber.from(proposalThreshold)
+                )}
+              >
+                Create Proposal
+              </Button>
+            )}
           </Box>
           <Box pb={6}>
             {proposals.length > 1 ? (

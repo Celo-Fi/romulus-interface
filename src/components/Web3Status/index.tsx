@@ -25,6 +25,7 @@ export const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
   border-radius: 12px;
   color: ${({ theme }) => "#E3DFF3"};
   font-weight: 500;
+  min-width: 165px;
 
   :hover,
   :focus {

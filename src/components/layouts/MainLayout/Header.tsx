@@ -47,6 +47,7 @@ export const Header: React.FC = () => {
                 onClick={() => {
                   void destroy();
                 }}
+                faded={true}
               >
                 <>
                   <Text>
