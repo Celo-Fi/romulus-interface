@@ -151,12 +151,12 @@ const RomulusIndexPage: React.FC = () => {
           <Box mb={4}>
             <RowFlat>
               <Box my="md" sx={{ margin: "25px auto 10px auto" }}>
-                <Heading as="h2" mb={3}>
+                <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
                   User details
                 </Heading>
                 <Box
                   sx={{
-                    border: "1px solid #6D619A",
+                    border: "2px solid #6D619A",
                     borderRadius: 8,
                     p: 2,
                     mb: 3,
@@ -194,12 +194,12 @@ const RomulusIndexPage: React.FC = () => {
                 </Box>
               </Box>
               <Box my="md" sx={{ margin: "25px auto 10px auto" }}>
-                <Heading as="h2" mb={3}>
+                <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
                   Governance details
                 </Heading>
                 <Box
                   sx={{
-                    border: "1px solid #6D619A",
+                    border: "2px solid #6D619A",
                     borderRadius: 8,
                     p: 2,
                     mb: 3,
@@ -270,7 +270,9 @@ const RomulusIndexPage: React.FC = () => {
               padding: "45px",
             }}
           >
-            <Heading as="h2">Proposals</Heading>
+            <Heading as="h2" style={{ fontSize: "1.75rem" }}>
+              Governance Proposals
+            </Heading>
             {!totalVotingPower.lt(BigNumber.from(proposalThreshold)) && (
               <Button
                 onClick={() => {

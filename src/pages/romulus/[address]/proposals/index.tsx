@@ -46,10 +46,12 @@ const RomulusIndexPage: React.FC = () => {
             style={{
               display: "flex",
               justifyContent: "space-between",
-              padding: "45px",
+              padding: "45px 45px 25px 45px",
             }}
           >
-            <Heading as="h2">Proposals</Heading>
+            <Heading as="h2" style={{ fontSize: "1.75rem" }}>
+              Governance Proposals
+            </Heading>
           </Box>
           <Box pb={6} style={{ paddingBottom: "15px" }}>
             {proposals.length > 1 &&
