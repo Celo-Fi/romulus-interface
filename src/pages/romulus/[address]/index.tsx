@@ -276,7 +276,7 @@ const RomulusIndexPage: React.FC = () => {
               </Button>
             )}
           </Box>
-          <Box pb={6}>
+          <Box pb={6} style={{ paddingBottom: "15px" }}>
             {proposals.length > 1 ? (
               proposals
                 .slice(1)
@@ -291,6 +291,20 @@ const RomulusIndexPage: React.FC = () => {
                 <Text>There are currently no proposals.</Text>
               </Box>
             )}
+            <Box mt={3} style={{ margin: "32px" }}>
+              <Button
+                onClick={() => {
+                  if (romulusAddress) {
+                    router
+                      .push(`/romulus/${romulusAddress.toString()}/proposals`)
+                      .catch(console.error);
+                  }
+                }}
+                style={{ width: "100%" }}
+              >
+                View more proposals
+              </Button>
+            </Box>
           </Box>
         </AppBody>
       </Box>
