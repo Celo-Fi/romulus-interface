@@ -1,94 +1,89 @@
-import { Address } from "@celo/contractkit";
-import { ChainId, useContractKit } from "@celo-tools/use-contractkit";
-import { useRouter } from "next/router";
+import { useRouter } from "next/dist/client/router";
 import React from "react";
-import { Box, Flex, Heading, Image, Text } from "theme-ui";
-
-type Governance = {
-  name: string;
-  addresses: Record<ChainId, Address>;
-  icon: string;
-};
-
-const governances: Governance[] = [
-  {
-    name: "Poof.cash",
-    addresses: {
-      [ChainId.Mainnet]: "0x1fDf21dac8424cfd8FDB5706824a62CE980fd8a2",
-      [ChainId.Alfajores]: "0x125A2e7C1DBAC09740cA2D38d6972fBd6DA5ba69",
-      [ChainId.Baklava]: "",
-    },
-    icon: "/assets/asset_POOF.png",
-  },
-  {
-    name: "Ubeswap",
-    addresses: {
-      [ChainId.Mainnet]: "0xa7581d8E26007f4D2374507736327f5b46Dd6bA8",
-      [ChainId.Alfajores]: "0xa7581d8E26007f4D2374507736327f5b46Dd6bA8",
-      [ChainId.Baklava]: "0xa7581d8E26007f4D2374507736327f5b46Dd6bA8",
-    },
-    icon: "/assets/asset_UBE.png",
-  },
-];
-
-export const governanceLookup = governances.reduce((acc, curr) => {
-  Object.values(curr.addresses).forEach((address) => {
-    acc[address] = curr;
-  });
-  return acc;
-}, {} as Record<Address, Governance>);
+import { Box, Heading, Text } from "theme-ui";
+import { ProposalCard } from "../../../../components/pages/romulus/ProposalCard";
+import { useProposals } from "../../../../hooks/romulus/useProposals";
+import { governanceLookup } from "../..";
+import styled from "styled-components";
+import AppBody from "../../../AppBody";
+import { TopSection, AutoColumn } from "../../../../components/Column";
+import { RowBetween } from "../../../../components/Row";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
-  const { network } = useContractKit();
+  const { address: romulusAddress } = router.query;
+  const governanceDescription = romulusAddress
+    ? governanceLookup[romulusAddress.toString()]
+    : undefined;
+  const [proposals] = useProposals((romulusAddress as string) || "");
 
   return (
-    <Box>
-      <Heading as="h1" mb={2}>
-        Governance
-      </Heading>
-      <Box mb={4}>
-        <Text>Select a governance system</Text>
+    <>
+      <Box>
+        <TopSection gap="md">
+          <DataCard>
+            <CardSection>
+              <AutoColumn gap="md">
+                <RowBetween>
+                  <Text sx={{ fontWeight: 600 }}>
+                    {governanceDescription ? governanceDescription.name : ""}{" "}
+                    Governance Overview
+                  </Text>
+                </RowBetween>
+                <RowBetween>
+                  <Text sx={{ fontSize: 14 }}>
+                    View proposals, delegate votes, and participate in Ubeswap
+                    governance!{" "}
+                  </Text>
+                </RowBetween>{" "}
+              </AutoColumn>
+            </CardSection>
+          </DataCard>
+        </TopSection>
+        <AppBody>
+          <Box
+            mb={4}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "45px",
+            }}
+          >
+            <Heading as="h2">Proposals</Heading>
+          </Box>
+          <Box pb={6} style={{ paddingBottom: "15px" }}>
+            {proposals.length > 1 &&
+              proposals
+                .slice(1)
+                .reverse()
+                .map((proposalEvent, idx) => (
+                  <Box key={idx} mt={3} style={{ margin: "32px" }}>
+                    <ProposalCard proposalEvent={proposalEvent} />
+                  </Box>
+                ))}
+          </Box>
+        </AppBody>
       </Box>
-      <Flex sx={{ flexWrap: "wrap", mt: 2 }}>
-        {governances.map((governance, idx) => {
-          return (
-            <Flex
-              key={idx}
-              sx={{
-                textAlign: "center",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                bg: "highlight",
-                width: "fit-content",
-                p: 4,
-                mr: 4,
-                mb: 2,
-                borderRadius: 4,
-              }}
-              onClick={() =>
-                void router.push(
-                  `/romulus/${governance.addresses[network.chainId] ?? ""}`
-                )
-              }
-            >
-              <Image
-                sx={{
-                  height: "48px",
-                  width: "48px",
-                  mr: 2,
-                  clipPath: "circle(24px at center)",
-                }}
-                src={governance.icon}
-              />
-              <Heading as="h2">{governance.name}</Heading>
-            </Flex>
-          );
-        })}
-      </Flex>
-    </Box>
+    </>
   );
 };
+
+export const DataCard = styled(AutoColumn)<{ disabled?: boolean }>`
+  background: radial-gradient(
+    96.02% 99.41% at 1.84% 0%,
+    ${(props) => props.theme.primary1} 30%,
+    ${(props) => props.theme.bg5} 100%
+  );
+  border-radius: 12px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+`;
+
+export const CardSection = styled(AutoColumn)<{ disabled?: boolean }>`
+  padding: 1rem;
+  z-index: 1;
+  opacity: ${({ disabled }) => disabled && "0.4"};
+`;
 
 export default RomulusIndexPage;

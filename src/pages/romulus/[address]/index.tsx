@@ -2,7 +2,7 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { BigNumber } from "ethers";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
-import { Box, Button, Flex, Heading, Text } from "theme-ui";
+import { Box, Button, Flex, Heading, Text, Image } from "theme-ui";
 
 import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
 import { ProposalCard } from "../../../components/pages/romulus/ProposalCard";
@@ -26,7 +26,7 @@ import { governanceLookup } from "..";
 import styled from "styled-components";
 import AppBody from "../../AppBody";
 import { TopSection, AutoColumn } from "../../../components/Column";
-import { RowFlat, RowBetween } from "../../../components/Row";
+import { RowFlat, RowBetween, Row } from "../../../components/Row";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -119,12 +119,24 @@ const RomulusIndexPage: React.FC = () => {
           <DataCard>
             <CardSection>
               <AutoColumn gap="md">
-                <RowBetween>
+                <Row>
+                  {governanceDescription && (
+                    <Image
+                      sx={{
+                        height: "48px",
+                        width: "48px",
+                        mr: 2,
+                        clipPath: "circle(24px at center)",
+                      }}
+                      src={governanceDescription.icon}
+                    />
+                  )}
+
                   <Text sx={{ fontWeight: 600 }}>
                     {governanceDescription ? governanceDescription.name : ""}{" "}
                     Governance Overview
                   </Text>
-                </RowBetween>
+                </Row>
                 <RowBetween>
                   <Text sx={{ fontSize: 14 }}>
                     View proposals, delegate votes, and participate in Ubeswap
@@ -258,7 +270,7 @@ const RomulusIndexPage: React.FC = () => {
               padding: "45px",
             }}
           >
-            <Heading>Proposals</Heading>
+            <Heading as="h2">Proposals</Heading>
             {!totalVotingPower.lt(BigNumber.from(proposalThreshold)) && (
               <Button
                 onClick={() => {
@@ -279,7 +291,7 @@ const RomulusIndexPage: React.FC = () => {
           <Box pb={6} style={{ paddingBottom: "15px" }}>
             {proposals.length > 1 ? (
               proposals
-                .slice(1)
+                .slice(-3)
                 .reverse()
                 .map((proposalEvent, idx) => (
                   <Box key={idx} mt={3} style={{ margin: "32px" }}>
