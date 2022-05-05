@@ -59,7 +59,12 @@ const RomulusIndexPage: React.FC = () => {
                 .slice(1)
                 .reverse()
                 .map((proposalEvent, idx) => (
-                  <Box key={idx} mt={3} style={{ margin: "32px" }}>
+                  <Box
+                    key={idx}
+                    mt={3}
+                    style={{ margin: "32px" }}
+                    onClick={() => {}}
+                  >
                     <ProposalCard proposalEvent={proposalEvent} />
                   </Box>
                 ))}

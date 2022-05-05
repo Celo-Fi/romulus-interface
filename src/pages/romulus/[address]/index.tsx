@@ -150,7 +150,7 @@ const RomulusIndexPage: React.FC = () => {
         <AppBody>
           <Box mb={4}>
             <RowFlat>
-              <Box my="md" sx={{ margin: "25px auto 10px auto" }}>
+              <Box my="md" sx={{ margin: "25px auto 25px auto" }}>
                 <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
                   User details
                 </Heading>
@@ -193,7 +193,7 @@ const RomulusIndexPage: React.FC = () => {
                   </Flex>
                 </Box>
               </Box>
-              <Box my="md" sx={{ margin: "25px auto 10px auto" }}>
+              <Box my="md" sx={{ margin: "25px auto 25px auto" }}>
                 <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
                   Governance details
                 </Heading>
@@ -253,8 +253,11 @@ const RomulusIndexPage: React.FC = () => {
               </Box>
             )}
           </Box>
-          <Box style={{ margin: "50px" }}>
-            <Heading as="h2" mb={3}>
+        </AppBody>
+
+        <AppBody>
+          <Box mb={4} sx={{ margin: "25px 15px 32px 15px", padding: "25px" }}>
+            <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
               Top delegates
             </Heading>
             <TopDelegates romulusAddress={romulusAddress as string} />
@@ -267,7 +270,7 @@ const RomulusIndexPage: React.FC = () => {
             style={{
               display: "flex",
               justifyContent: "space-between",
-              padding: "45px",
+              padding: "45px 45px 25px 45px",
             }}
           >
             <Heading as="h2" style={{ fontSize: "1.75rem" }}>
