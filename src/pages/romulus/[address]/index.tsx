@@ -27,6 +27,7 @@ import styled from "styled-components";
 import AppBody from "../../AppBody";
 import { TopSection, AutoColumn } from "../../../components/Column";
 import { RowFlat, RowBetween, Row } from "../../../components/Row";
+import Loader from "../../../components/Loader";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -131,8 +132,8 @@ const RomulusIndexPage: React.FC = () => {
                 </Row>
                 <RowBetween>
                   <Text sx={{ fontSize: 14 }}>
-                    View proposals, delegate votes, and participate in Ubeswap
-                    governance!{" "}
+                    Create and view proposals, delegate votes, and participate
+                    in protocol governance!{" "}
                   </Text>
                 </RowBetween>{" "}
               </AutoColumn>
@@ -144,20 +145,20 @@ const RomulusIndexPage: React.FC = () => {
             <RowFlat>
               <Box my="md" sx={{ margin: "25px auto 25px auto" }}>
                 <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
-                  User details
+                  User Details
                 </Heading>
                 <Box
                   sx={{
                     border: "2px solid #6D619A",
                     borderRadius: 8,
-                    p: 2,
+                    padding: "15px",
                     mb: 3,
                     height: "150px",
                     width: "350px",
                   }}
                 >
                   <Box mb={2}>
-                    <Text>Token balance: </Text>
+                    <Text>Token Balance: </Text>
                     <Text sx={{ fontWeight: "display" }}>
                       {humanFriendlyWei(balance.toString())} {tokenSymbol}
                     </Text>{" "}
@@ -170,7 +171,7 @@ const RomulusIndexPage: React.FC = () => {
                   </Box>
                   <Flex sx={{ alignItems: "center" }}>
                     <Text sx={{ maxWidth: "66%" }} mr={2}>
-                      Token delegate:{" "}
+                      Token Delegate:{" "}
                       <Text sx={{ fontWeight: "display" }}>
                         {truncateAddress(tokenDelegate)}
                       </Text>
@@ -187,13 +188,13 @@ const RomulusIndexPage: React.FC = () => {
               </Box>
               <Box my="md" sx={{ margin: "25px auto 25px auto" }}>
                 <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
-                  Governance details
+                  Governance Details
                 </Heading>
                 <Box
                   sx={{
                     border: "2px solid #6D619A",
                     borderRadius: 8,
-                    p: 2,
+                    padding: "15px",
                     mb: 3,
                     height: "150px",
                     width: "350px",
@@ -206,7 +207,7 @@ const RomulusIndexPage: React.FC = () => {
                     </Text>{" "}
                   </Box>
                   <Box mb={2}>
-                    <Text>Proposal threshold: </Text>
+                    <Text>Proposal Threshold: </Text>
                     <Text sx={{ fontWeight: "display" }}>
                       {humanFriendlyWei(proposalThreshold.toString())}{" "}
                       {tokenSymbol}
@@ -248,15 +249,6 @@ const RomulusIndexPage: React.FC = () => {
         </AppBody>
 
         <AppBody>
-          <Box mb={4} sx={{ margin: "25px 15px 32px 15px", padding: "25px" }}>
-            <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
-              Top delegates
-            </Heading>
-            <TopDelegates romulusAddress={romulusAddress as string} />
-          </Box>
-        </AppBody>
-
-        <AppBody>
           <CreateProposalContainer>
             <Heading as="h2" style={{ fontSize: "1.75rem" }}>
               Governance Proposals
@@ -289,9 +281,7 @@ const RomulusIndexPage: React.FC = () => {
                   </Box>
                 ))
             ) : (
-              <Box style={{ textAlign: "center" }}>
-                <Text>There are currently no proposals.</Text>
-              </Box>
+              <Loader size="48px"></Loader>
             )}
             <Box style={{ margin: "32px" }}>
               <Button
@@ -307,6 +297,15 @@ const RomulusIndexPage: React.FC = () => {
                 View more proposals
               </Button>
             </Box>
+          </Box>
+        </AppBody>
+
+        <AppBody>
+          <Box mb={4} sx={{ margin: "25px 15px 32px 15px", padding: "25px" }}>
+            <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
+              Top delegates
+            </Heading>
+            <TopDelegates romulusAddress={romulusAddress as string} />
           </Box>
         </AppBody>
       </Box>

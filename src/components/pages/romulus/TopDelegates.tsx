@@ -5,6 +5,7 @@ import { fromWei } from "web3-utils";
 import { Address } from "../../../components/common/Address";
 import { FixedSizeList } from "react-window";
 import { BigNumber } from "ethers";
+import Loader from "../../Loader";
 
 interface RowProps {
   index: number;
@@ -40,15 +41,25 @@ export const TopDelegates: React.FC<Props> = ({ romulusAddress }) => {
   const [topDelegates] = useTopDelegates(romulusAddress || "", 50);
 
   return (
-    <FixedSizeList
-      height={240}
-      width="100%"
-      itemData={topDelegates}
-      itemCount={topDelegates.length}
-      itemSize={64}
-      style={{ marginBottom: "16px", maxWidth: "700px" }}
-    >
-      {Row}
-    </FixedSizeList>
+    <>
+      {topDelegates.length > 1 ? (
+        <FixedSizeList
+          height={240}
+          width="100%"
+          itemData={topDelegates}
+          itemCount={topDelegates.length}
+          itemSize={64}
+          style={{ marginBottom: "16px", maxWidth: "700px" }}
+        >
+          {Row}
+        </FixedSizeList>
+      ) : (
+        <>
+          <Box style={{ padding: "128px" }}>
+            <Loader size="48px"></Loader>
+          </Box>
+        </>
+      )}
+    </>
   );
 };

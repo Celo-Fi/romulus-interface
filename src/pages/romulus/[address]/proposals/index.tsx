@@ -5,6 +5,7 @@ import { ProposalCard } from "../../../../components/pages/romulus/ProposalCard"
 import { useProposals } from "../../../../hooks/romulus/useProposals";
 import AppBody from "../../../AppBody";
 import styled from "styled-components";
+import Loader from "../../../../components/Loader";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -21,7 +22,7 @@ const RomulusIndexPage: React.FC = () => {
             </Heading>
           </ProposalHeader>
           <Box pb={6} style={{ paddingBottom: "15px" }}>
-            {proposals.length > 1 &&
+            {proposals.length > 1 ? (
               proposals
                 .slice(1)
                 .reverse()
@@ -38,7 +39,18 @@ const RomulusIndexPage: React.FC = () => {
                   >
                     <ProposalCard proposalEvent={proposalEvent} />
                   </Box>
-                ))}
+                ))
+            ) : (
+              <>
+                <Box
+                  style={{
+                    padding: "128px",
+                  }}
+                >
+                  <Loader size="48px"></Loader>
+                </Box>
+              </>
+            )}
           </Box>
         </AppBody>
       </Box>

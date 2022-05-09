@@ -23,7 +23,7 @@ export const AutoColumn = styled.div<{
 
 export const TopSection = styled(AutoColumn)`
   width: 850px;
-  margin: 30px auto 50px auto;
+  margin: 45px auto 45px auto;
   background-color: #6d619a;
   border-radius: 12px;
 `;
