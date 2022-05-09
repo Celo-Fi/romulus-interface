@@ -63,7 +63,11 @@ const RomulusIndexPage: React.FC = () => {
                     key={idx}
                     mt={3}
                     style={{ margin: "32px" }}
-                    onClick={() => {}}
+                    onClick={() => {
+                      router.push(
+                        `${router.asPath}/${proposalEvent.args.id.toString()}`
+                      );
+                    }}
                   >
                     <ProposalCard proposalEvent={proposalEvent} />
                   </Box>
