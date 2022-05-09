@@ -4,6 +4,7 @@ import { Box, Heading } from "theme-ui";
 import { ProposalCard } from "../../../../components/pages/romulus/ProposalCard";
 import { useProposals } from "../../../../hooks/romulus/useProposals";
 import AppBody from "../../../AppBody";
+import styled from "styled-components";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -14,18 +15,11 @@ const RomulusIndexPage: React.FC = () => {
     <>
       <Box>
         <AppBody>
-          <Box
-            mb={4}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "45px 45px 25px 45px",
-            }}
-          >
+          <ProposalHeader>
             <Heading as="h2" style={{ fontSize: "1.75rem" }}>
               Governance Proposals
             </Heading>
-          </Box>
+          </ProposalHeader>
           <Box pb={6} style={{ paddingBottom: "15px" }}>
             {proposals.length > 1 &&
               proposals
@@ -51,5 +45,12 @@ const RomulusIndexPage: React.FC = () => {
     </>
   );
 };
+
+const ProposalHeader = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+  padding: 45px 45px 25px 45px;
+  margin-bottom: 32px;
+`;
 
 export default RomulusIndexPage;

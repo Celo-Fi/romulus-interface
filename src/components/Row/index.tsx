@@ -25,6 +25,10 @@ export const RowFlat = styled.div`
   justify-content: center;
 `;
 
+export const RomulusRow = styled(RowFlat)`
+  padding: 0px 45px 45px 45px;
+`;
+
 export const RowBetween = styled(Row)`
   justify-content: space-between;
 `;
