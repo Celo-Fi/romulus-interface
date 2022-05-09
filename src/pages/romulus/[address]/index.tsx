@@ -121,15 +121,7 @@ const RomulusIndexPage: React.FC = () => {
               <AutoColumn gap="md">
                 <Row>
                   {governanceDescription && (
-                    <Image
-                      sx={{
-                        height: "48px",
-                        width: "48px",
-                        mr: 2,
-                        clipPath: "circle(24px at center)",
-                      }}
-                      src={governanceDescription.icon}
-                    />
+                    <ProtocolImage src={governanceDescription.icon} />
                   )}
 
                   <Text sx={{ fontWeight: 600 }}>
@@ -265,14 +257,7 @@ const RomulusIndexPage: React.FC = () => {
         </AppBody>
 
         <AppBody>
-          <Box
-            mb={4}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "45px 45px 25px 45px",
-            }}
-          >
+          <CreateProposalContainer>
             <Heading as="h2" style={{ fontSize: "1.75rem" }}>
               Governance Proposals
             </Heading>
@@ -292,8 +277,8 @@ const RomulusIndexPage: React.FC = () => {
                 Create Proposal
               </Button>
             )}
-          </Box>
-          <Box pb={6} style={{ paddingBottom: "15px" }}>
+          </CreateProposalContainer>
+          <Box style={{ paddingBottom: "15px" }}>
             {proposals.length > 1 ? (
               proposals
                 .slice(-3)
@@ -308,7 +293,7 @@ const RomulusIndexPage: React.FC = () => {
                 <Text>There are currently no proposals.</Text>
               </Box>
             )}
-            <Box mt={3} style={{ margin: "32px" }}>
+            <Box style={{ margin: "32px" }}>
               <Button
                 onClick={() => {
                   if (romulusAddress) {
@@ -347,6 +332,19 @@ export const CardSection = styled(AutoColumn)<{ disabled?: boolean }>`
   padding: 1rem;
   z-index: 1;
   opacity: ${({ disabled }) => disabled && "0.4"};
+`;
+
+export const ProtocolImage = styled(Image)`
+  height: 48px;
+  width: 48px;
+  margin-right: 8px;
+  clip-path: circle(24px at center);
+`;
+
+export const CreateProposalContainer = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+  padding: 45px 45px 25px 45px;
 `;
 
 export default RomulusIndexPage;
