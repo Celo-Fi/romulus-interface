@@ -3,6 +3,7 @@ import { BigNumber } from "ethers";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
+import styled from "styled-components";
 import { Box, Button, Card, Flex, Heading, Text } from "theme-ui";
 
 import { Address } from "../../../components/common/Address";
@@ -41,11 +42,15 @@ interface IProps {
       description: string;
     }
   >;
+  clickable: boolean;
 }
 
 const SECONDS_PER_BLOCK = 5;
 
-export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
+export const ProposalCard: React.FC<IProps> = ({
+  proposalEvent,
+  clickable,
+}) => {
   const router = useRouter();
   const getConnectedSigner = useGetConnectedSigner();
   const { address: romulusAddress } = router.query;
@@ -212,7 +217,7 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
   }
 
   return (
-    <Card>
+    <ClickableCard clickable={clickable}>
       <Flex sx={{ justifyContent: "space-between" }}>
         <Heading>
           Proposal #{proposalEvent.args.id.toString()} ({stateStr})
@@ -251,24 +256,13 @@ export const ProposalCard: React.FC<IProps> = ({ proposalEvent }) => {
           </Box>
         </>
       )}
-      {/* <Box mb={1}>
-        <Text mr={2}>Description:</Text>
-        <Text>
-          {proposalEvent.args.description === ""
-            ? "No description."
-            : proposalEvent.args.description.split("\n").map((line, idx) => (
-                <Text
-                  sx={{ display: "block", overflowWrap: "anywhere" }}
-                  key={idx}
-                >
-                  {line}
-                </Text>
-              ))}
-        </Text>
-      </Box> */}
-      <Flex sx={{ justifyContent: "center" }} mt={4}>
-        {voteContent}
-      </Flex>
-    </Card>
+      <Flex mt={4}>{voteContent}</Flex>
+    </ClickableCard>
   );
 };
+
+const ClickableCard = styled(Card)<{
+  clickable: boolean;
+}>`
+  cursor: ${({ clickable }) => (clickable ? "pointer" : "default")};
+`;

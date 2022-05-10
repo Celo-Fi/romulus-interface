@@ -14,7 +14,11 @@ const RomulusIndexPage: React.FC = () => {
 
   return (
     <>
-      <Box>
+      <Box
+        style={{
+          marginTop: "45px",
+        }}
+      >
         <AppBody>
           <ProposalHeader>
             <Heading as="h2" style={{ fontSize: "1.75rem" }}>
@@ -37,7 +41,10 @@ const RomulusIndexPage: React.FC = () => {
                       );
                     }}
                   >
-                    <ProposalCard proposalEvent={proposalEvent} />
+                    <ProposalCard
+                      proposalEvent={proposalEvent}
+                      clickable={true}
+                    />
                   </Box>
                 ))
             ) : (
