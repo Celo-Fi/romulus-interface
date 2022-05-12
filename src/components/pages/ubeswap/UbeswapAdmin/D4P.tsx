@@ -1,13 +1,8 @@
-import {
-  useGetConnectedSigner,
-  useProvider,
-} from "@celo-tools/use-contractkit";
-import { ethers } from "ethers";
+import { ethers, Signer } from "ethers";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { Box, Button, Card, Flex, Heading, Link, Text } from "theme-ui";
-import Web3 from "web3";
-import { AbiItem, fromWei, toWei } from "web3-utils";
+import { fromWei, toWei } from "web3-utils";
 
 import ERC20Abi from "../../../../abis/ERC20.json";
 import MSRAbi from "../../../../abis/MoolaStakingRewards.json";
@@ -21,22 +16,28 @@ import {
 import { useAsyncState } from "../../../../hooks/useAsyncState";
 import { useMultisigContract } from "../../../../hooks/useMultisigContract";
 import { FARM_REGISTRY_ADDRESS } from "../../../../hooks/useRegisteredFarms";
-
-const web3 = new Web3("https://forno.celo.org"); // TODO: HARDCODE
+import { useWeb3Context } from "web3-react";
 
 // == UTILS ==
-const transferInterface = ERC20Abi.find((f) => f.name === "transfer");
+const transferInterface = JSON.stringify(
+  ERC20Abi.find((f) => f.name === "transfer")
+);
 const getTransferData = (recipient: string, amount: string) =>
   transferInterface
-    ? web3.eth.abi.encodeFunctionCall(transferInterface as AbiItem, [
-        recipient,
-        amount,
-      ])
+    ? new ethers.utils.Interface(transferInterface).encodeFunctionData(
+        "transfer",
+        [recipient, amount]
+      )
     : null;
-const notifyInterface = MSRAbi.find((f) => f.name === "notifyRewardAmount");
+const notifyInterface = JSON.stringify(
+  MSRAbi.find((f) => f.name === "notifyRewardAmount")
+);
 const getNotifyData = (amount: string) =>
   notifyInterface
-    ? web3.eth.abi.encodeFunctionCall(notifyInterface as AbiItem, [amount])
+    ? new ethers.utils.Interface(notifyInterface).encodeFunctionData(
+        "notifyRewardAmount",
+        [amount]
+      )
     : null;
 
 // == TYPES ==
@@ -67,9 +68,8 @@ enum Pool {
 }
 
 enum Token {
-  CELO = "0x471ece3750da237f93b8e339c536989b8978a438",
-  POOF = "0x00400fcbf0816bebb94654259de7273f4a05c762",
-  UBE = "0x00be915b9dcf56a3cbe739d9b9c202ca692409ec",
+  MATIC = "0x0000000000000000000000000000000000001010",
+  AUTO = "0x00400fcbf0816bebb94654259de7273f4a05c762",
 }
 
 export enum D4PMultisig {
@@ -100,55 +100,11 @@ type FarmLookup = Record<
 // == CONSTANTS ==
 const SECONDS_PER_WEEK = 60 * 60 * 24 * 7;
 const tokenName: Record<string, string> = {
-  [Token.CELO]: "CELO",
-  [Token.POOF]: "POOF",
-  [Token.UBE]: "UBE",
+  [Token.MATIC]: "MATIC",
+  [Token.AUTO]: "AUTO",
 };
 
-export const extraFarms: Farm[] = [
-  {
-    farmAddress: "0xCe74d14163deb82af57f253108F7E5699e62116d",
-    farmName: "UBE Single Staking",
-    rewardToken: Token.UBE,
-    manager: D4PMultisig.UBE,
-  },
-  {
-    farmAddress: "0x3A7D1c18618c4f099D2703f8981CEA9c56Ac7779",
-    farmName: Pool.pUSDUSD,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0xA1e9175ad10fBdA9Fa042269c2AB7DaFB54dc164",
-    farmName: Pool.pEUREUR,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0xb86e373b209fb2C4cbE17d68d52A59798E4A9640",
-    farmName: Pool.pCELOCELO,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0x9925664eF3D300BaAe432C9c04752C8196AF7123",
-    farmName: Pool.pUSDUSD,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0xc4e422ED8939697897443caa4e70E933cD001f54",
-    farmName: Pool.pEUREUR,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0xa8E2ec31760Df07108c849f321e6872d15d12017",
-    farmName: Pool.pCELOCELO,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-];
+export const extraFarms: Farm[] = [];
 
 interface Props {
   manager: D4PMultisig;
@@ -157,7 +113,8 @@ interface Props {
 export const D4P: React.FC<Props> = ({ manager }) => {
   const ubeswapMultisig = useMultisigContract(D4PMultisig.UBE);
   const poofMultisig = useMultisigContract(D4PMultisig.POOF);
-  const provider = useProvider();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { library: ethers } = useWeb3Context();
   const [farms, setFarms] = React.useState<Farm[]>([]);
   const multisigLookup: Record<string, MultisigContract> = React.useMemo(
     () => ({
@@ -169,7 +126,7 @@ export const D4P: React.FC<Props> = ({ manager }) => {
   useEffect(() => {
     const farmRegistry = FarmRegistry__factory.connect(
       FARM_REGISTRY_ADDRESS,
-      provider
+      ethers
     );
     void farmRegistry
       .queryFilter(farmRegistry.filters.FarmInfo(null, null, null))
@@ -179,10 +136,11 @@ export const D4P: React.FC<Props> = ({ manager }) => {
             events.map(async (event) => {
               const msr = MoolaStakingRewards__factory.connect(
                 event.args[0],
-                provider
+                ethers
               );
               return {
                 farmAddress: event.args[0],
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
                 farmName: ethers.utils.parseBytes32String(event.args[1]),
                 rewardToken: await msr.rewardsToken(),
                 manager: await msr.rewardsDistribution(),
@@ -196,12 +154,12 @@ export const D4P: React.FC<Props> = ({ manager }) => {
           [...farms, ...extraFarms].filter((f) => f.manager === manager)
         );
       });
-  }, [multisigLookup, provider]);
+  }, [multisigLookup, ethers]);
 
-  const getConnectedSigner = useGetConnectedSigner();
   const sendRewards = React.useCallback(
     async (farm: Farm, amount: string) => {
-      const signer = await getConnectedSigner();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+      const signer: Signer = await ethers.providers.JsonRpcProvider.getSigner();
       const data = getTransferData(farm.farmAddress, amount);
       if (data) {
         await multisigLookup[farm.manager]
@@ -209,11 +167,12 @@ export const D4P: React.FC<Props> = ({ manager }) => {
           .submitTransaction(farm.rewardToken, 0, data);
       }
     },
-    [multisigLookup, getConnectedSigner]
+    [multisigLookup, ethers]
   );
   const notify = React.useCallback(
     async (farm: Farm, amount: string) => {
-      const signer = await getConnectedSigner();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+      const signer: Signer = await ethers.providers.JsonRpcProvider.getSigner();
       const data = getNotifyData(amount);
       if (data) {
         await multisigLookup[farm.manager]
@@ -221,7 +180,7 @@ export const D4P: React.FC<Props> = ({ manager }) => {
           .submitTransaction(farm.farmAddress, 0, data);
       }
     },
-    [multisigLookup, getConnectedSigner]
+    [multisigLookup, ethers]
   );
   const lookupCall = React.useCallback(async () => {
     const lookup: FarmLookup = {};
@@ -229,9 +188,9 @@ export const D4P: React.FC<Props> = ({ manager }) => {
       farms.map(async (farm) => {
         const farmContract = MoolaStakingRewards__factory.connect(
           farm.farmAddress,
-          provider
+          ethers
         );
-        const rewardToken = ERC20__factory.connect(farm.rewardToken, provider);
+        const rewardToken = ERC20__factory.connect(farm.rewardToken, ethers);
         const [
           periodEnd,
           rewardRate,
@@ -263,7 +222,7 @@ export const D4P: React.FC<Props> = ({ manager }) => {
       })
     );
     return lookup;
-  }, [farms, provider]);
+  }, [farms, ethers]);
   const [lookup, refetchLookup] = useAsyncState(null, lookupCall);
 
   return (

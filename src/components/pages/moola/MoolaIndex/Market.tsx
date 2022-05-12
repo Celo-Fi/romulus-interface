@@ -1,4 +1,3 @@
-import { useContractKit } from "@celo-tools/use-contractkit";
 import { css } from "@emotion/react";
 import { ChainId } from "@ubeswap/sdk";
 import { BigNumber } from "ethers";
@@ -22,6 +21,7 @@ import {
 } from "../../../../hooks/useProviderOrSigner";
 import { runTx } from "../../../../util/runTx";
 import { CELO_MOOLA, IMoolaAccountData, moolaLendingPools } from ".";
+import { useWeb3Context } from "web3-react";
 
 interface IProps {
   accountData: IMoolaAccountData | null;
@@ -81,7 +81,7 @@ interface IUserReserveData {
 }
 
 export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
-  const { address } = useContractKit();
+  const { account } = useWeb3Context();
   const provider = useProvider();
   const getConnectedSigner = useGetConnectedSigner();
   const [data, setData] = useState<IReserveData | null>(null);
@@ -109,7 +109,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
           name: "Celo",
           symbol: "CELO",
           userBalance:
-            address !== null ? await provider.getBalance(address) : null,
+            account !== null ? await provider.getBalance(account!) : null,
         });
       } else {
         const tokenRaw = ERC20__factory.connect(reserve, provider);
@@ -117,19 +117,19 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
           name: await tokenRaw.name(),
           symbol: await tokenRaw.symbol(),
           userBalance:
-            address !== null ? await tokenRaw.balanceOf(address) : null,
+            account !== null ? await tokenRaw.balanceOf(account!) : null,
         });
       }
       setPrice(await priceOracle.getAssetPrice(reserve));
       setConfig(await lendingPool.getReserveConfigurationData(reserve));
       setData(await lendingPool.getReserveData(reserve));
-      if (address !== null) {
-        setUserData(await lendingPool.getUserReserveData(reserve, address));
+      if (account !== null) {
+        setUserData(await lendingPool.getUserReserveData(reserve, account!));
       }
     } catch (e) {
       console.error(e);
     }
-  }, [provider, reserve, address]);
+  }, [provider, reserve, account]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -151,6 +151,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
         td {
           padding: var(--spacing-sm);
         }
+
         ul {
           padding-inline-start: 0px;
         }
@@ -200,7 +201,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
       </td>
       <td>
         <Box>
-          {address === "" && (
+          {account === "" && (
             <Link color="blackSecondary" href="#" onClick={getConnectedSigner}>
               Connect your wallet
             </Link>
@@ -380,7 +381,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
                 signer
               );
               const amount = prompt("How much do you want to repay?");
-              if (amount && address) {
+              if (amount && account) {
                 const rawAmount = parseEther(amount);
                 alert(`Approving ${formatEther(rawAmount)}`);
                 await runTx(
@@ -395,7 +396,7 @@ export const Market: React.FC<IProps> = ({ reserve, accountData }: IProps) => {
                 await runTx(lendingPool, "repay", [
                   reserve,
                   rawAmount,
-                  address,
+                  account,
                 ]);
                 await refreshData();
               }

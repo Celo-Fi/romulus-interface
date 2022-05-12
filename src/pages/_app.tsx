@@ -2,8 +2,7 @@ import "../styles/globals.css";
 import "normalize.css/normalize.css";
 import "@celo-tools/use-contractkit/lib/styles.css";
 import "react-toastify/dist/ReactToastify.css";
-
-import { ContractKitProvider } from "@celo-tools/use-contractkit";
+import Web3Provider from "web3-react";
 import { Global, ThemeProvider } from "@emotion/react";
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
@@ -15,6 +14,18 @@ import { ToastContainer } from "react-toastify";
 import { globalStyles } from "../components/layouts/globalStyles";
 import { MainLayout } from "../components/layouts/MainLayout";
 import theme from "../theme";
+import {
+  InjectedConnector,
+  NetworkOnlyConnector,
+} from "web3-react/dist/connectors";
+
+const MetaMask = new InjectedConnector({ supportedNetworks: [1, 4] });
+
+const Infura = new NetworkOnlyConnector({
+  providerURL: "https://mainnet.infura.io/v3/...",
+});
+
+const connectors = { MetaMask, Infura };
 
 Sentry.init({
   dsn: "https://94b8b8dc0ab64d3d8c8f42c749c46a00@o676708.ingest.sentry.io/6024423",
@@ -29,14 +40,7 @@ Sentry.init({
 const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
   Modal.setAppElement("body");
   return (
-    <ContractKitProvider
-      dapp={{
-        name: "Romulus",
-        description: "A governance management system",
-        url: "https://romulus.page",
-        icon: "https://romulus.page/favicon.png",
-      }}
-    >
+    <Web3Provider connectors={connectors} libraryName={"web3.js"}>
       <ThemeProvider theme={theme}>
         <Global styles={globalStyles} />
         <MainLayout>
@@ -44,7 +48,7 @@ const RomulusApp: React.FC<AppProps> = ({ Component }: AppProps) => {
         </MainLayout>
         <ToastContainer />
       </ThemeProvider>
-    </ContractKitProvider>
+    </Web3Provider>
   );
 };
 

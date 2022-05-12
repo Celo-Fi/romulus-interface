@@ -1,24 +1,17 @@
-import {
-  Alfajores,
-  Baklava,
-  Mainnet,
-  useContractKit,
-} from "@celo-tools/use-contractkit";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import copyToClipboard from "copy-to-clipboard";
 import Link from "next/link";
 import React from "react";
 import { Box, Button, Container, Flex, Select, Text } from "theme-ui";
+import { useWeb3Context } from "web3-react";
 
 export const truncateAddress = (addr: string): string =>
   addr.slice(0, 6) + "..." + addr.slice(addr.length - 4);
 
-const NETWORKS = [Mainnet, Alfajores, Baklava];
-
 export const Header: React.FC = () => {
   const { address, network, updateNetwork, connect, destroy } =
-    useContractKit();
+    useWeb3Context();
 
   return (
     <Flex

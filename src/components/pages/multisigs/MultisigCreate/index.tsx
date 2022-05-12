@@ -1,10 +1,10 @@
-import MultiSigJSON from "@celo/contracts/build/MultiSig.json";
 import { deployContract } from "@ubeswap/solidity-create2-deployer";
 import { ContractTransaction, Signer } from "ethers";
 import { Interface } from "ethers/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import MultiSigJSON from "@celo/contracts/build/MultiSig.json";
 
 import MultiSigABI from "../../../../abis/MultiSig.json";
 import { MultiSig__factory } from "../../../../generated/factories/MultiSig__factory";
