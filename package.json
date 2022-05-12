@@ -70,7 +70,8 @@
     "@types/rebass": "^4.0.8",
     "polished": "^4.1.2",
     "@types/styled-components": "^5.1.9",
-    "styled-components": "^5.3.0"
+    "styled-components": "^5.3.0",
+    "react-feather": "^2.0.9"
   },
   "lint-staged": {
     "*.{js,css,md,ts,tsx,json}": "prettier --write"
