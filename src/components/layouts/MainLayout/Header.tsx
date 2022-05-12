@@ -18,7 +18,13 @@ export const Header: React.FC = () => {
 
   return (
     <Flex
-      sx={{ justifyContent: "space-between", alignItems: "center" }}
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "16px",
+        borderBottom: "1px solid",
+        borderColor: "rgba(0, 0, 0, 0.1)",
+      }}
       pt={[4, 3]}
       mb={4}
     >
