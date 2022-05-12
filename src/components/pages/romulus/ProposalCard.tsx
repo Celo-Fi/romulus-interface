@@ -17,6 +17,8 @@ import { useGetConnectedSigner } from "../../../hooks/useProviderOrSigner";
 import { ProposalState, Support } from "../../../types/romulus";
 import { BIG_ZERO } from "../../../util/constants";
 import { humanFriendlyWei } from "../../../util/number";
+import { RowBetween } from "../../Row";
+import { Moon, Sun, CheckCircle, XCircle } from "react-feather";
 
 interface IProps {
   proposalEvent: TypedEvent<
@@ -107,6 +109,7 @@ export const ProposalCard: React.FC<IProps> = ({
   }, []);
 
   let stateStr = "";
+  let stateColor = "#303030";
   let timeText: string | undefined;
   switch (proposalState) {
     case ProposalState.PENDING:
@@ -132,6 +135,7 @@ export const ProposalCard: React.FC<IProps> = ({
     case ProposalState.CANCELED:
       stateStr = "Canceled";
       timeText = "Voting has ended";
+      stateColor = "#303030";
       break;
     case ProposalState.DEFEATED:
       stateStr = "Defeated";
@@ -140,6 +144,7 @@ export const ProposalCard: React.FC<IProps> = ({
     case ProposalState.SUCCEEDED:
       stateStr = "Succeeded";
       timeText = "Voting has ended";
+      stateColor = "#00D395";
       break;
     case ProposalState.QUEUED:
       stateStr = "Queued";
@@ -148,10 +153,12 @@ export const ProposalCard: React.FC<IProps> = ({
     case ProposalState.EXPIRED:
       stateStr = "Expired";
       timeText = "Voting has ended";
+      stateColor = "#303030";
       break;
     case ProposalState.EXECUTED:
       stateStr = "Executed";
       timeText = "Voting has ended";
+      stateColor = "#00D395";
       break;
   }
 
@@ -218,45 +225,85 @@ export const ProposalCard: React.FC<IProps> = ({
 
   return (
     <ClickableCard clickable={clickable}>
-      <Flex sx={{ justifyContent: "space-between" }}>
-        <Heading>
-          Proposal #{proposalEvent.args.id.toString()} ({stateStr})
-        </Heading>
-        {proposalState === ProposalState.ACTIVE && (
-          <Text sx={{ cursor: "pointer" }} onClick={onCancelClick}>
-            <u>X Cancel</u>
-          </Text>
-        )}
-      </Flex>
-      <Box mb={1}>
-        <Text mr={2}>Proposed by:</Text>
-        <Text sx={{ fontWeight: "display" }}>
-          <Address value={proposalEvent.args.proposer} truncate />
-        </Text>
-      </Box>
-      {timeText && (
-        <Box mb={1}>
-          <Text mr={2}>Status:</Text>
-          <Text sx={{ fontWeight: "display" }}>{timeText}</Text>
+      <RowBetween>
+        <Box>
+          <Flex sx={{ justifyContent: "space-between" }}>
+            <Heading>Proposal #{proposalEvent.args.id.toString()}</Heading>
+            {proposalState === ProposalState.ACTIVE && (
+              <Text sx={{ cursor: "pointer" }} onClick={onCancelClick}>
+                <u>X Cancel</u>
+              </Text>
+            )}
+          </Flex>
+          <Box mb={1}>
+            <Text mr={2}>Proposed by:</Text>
+            <Text sx={{ fontWeight: "display" }}>
+              <Address value={proposalEvent.args.proposer} truncate />
+            </Text>
+          </Box>
+          {timeText && (
+            <Box mb={1}>
+              <Text mr={2}>Status:</Text>
+              <Text sx={{ fontWeight: "display" }}>{timeText}</Text>
+            </Box>
+          )}
+          <Flex mt={4}>{voteContent}</Flex>
         </Box>
-      )}
-      {proposal && (
-        <>
-          <Box mb={1}>
-            <Text mr={2}>For votes:</Text>
-            <Text sx={{ fontWeight: "display" }}>
-              {humanFriendlyWei(proposal?.forVotes.toString())}
+        <Box style={{ width: "200px" }}>
+          <Box
+            style={{
+              padding: "12px",
+              border: "2px solid",
+              borderRadius: "12px",
+              borderColor: stateColor,
+              width: "fit-content",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {stateColor === "#303030" ? (
+              <XCircle size={20} color={stateColor} />
+            ) : (
+              <CheckCircle size={20} color={stateColor} />
+            )}
+            <Text
+              sx={{ fontWeight: 600, color: stateColor, marginLeft: "10px" }}
+            >
+              {stateStr}
             </Text>
           </Box>
-          <Box mb={1}>
-            <Text mr={2}>Against votes: </Text>
-            <Text sx={{ fontWeight: "display" }}>
-              {humanFriendlyWei(proposal?.againstVotes.toString())}
-            </Text>
-          </Box>
-        </>
-      )}
-      <Flex mt={4}>{voteContent}</Flex>
+          {proposal && (
+            <Box style={{ margin: "10px 0px 10px 0px" }}>
+              <Box mb={1} style={{ display: "flex" }}>
+                <Box style={{ width: "120px" }}>
+                  <Text mr={2}>For votes:</Text>
+                </Box>
+
+                <Text sx={{ fontWeight: 600 }}>
+                  {
+                    humanFriendlyWei(proposal?.forVotes.toString()).split(
+                      "."
+                    )[0]
+                  }
+                </Text>
+              </Box>
+              <Box mb={1} style={{ display: "flex" }}>
+                <Box style={{ width: "120px" }}>
+                  <Text mr={2}>Against votes: </Text>
+                </Box>
+
+                <Text sx={{ fontWeight: 600 }}>
+                  {
+                    humanFriendlyWei(proposal?.againstVotes.toString()).split(
+                      "."
+                    )[0]
+                  }
+                </Text>
+              </Box>
+            </Box>
+          )}
+        </Box>
+      </RowBetween>
     </ClickableCard>
   );
 };
