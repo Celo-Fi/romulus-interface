@@ -109,7 +109,8 @@ export const ProposalCard: React.FC<IProps> = ({
   }, []);
 
   let stateStr = "";
-  let stateColor = "#303030";
+  let stateColor = "#909090";
+  let votingTimeColor = "#909090";
   let timeText: string | undefined;
   switch (proposalState) {
     case ProposalState.PENDING:
@@ -121,6 +122,7 @@ export const ProposalCard: React.FC<IProps> = ({
       timeText = `${moment
         .duration(secondsTilStart, "seconds")
         .humanize()} until voting begins`;
+      votingTimeColor = "yellow";
       break;
     case ProposalState.ACTIVE:
       stateStr = "Active";
@@ -131,34 +133,41 @@ export const ProposalCard: React.FC<IProps> = ({
       timeText = `${moment
         .duration(secondsTilEnd, "seconds")
         .humanize()} until voting ends`;
+      votingTimeColor = "#35D07F";
       break;
     case ProposalState.CANCELED:
       stateStr = "Canceled";
-      timeText = "Voting has ended";
-      stateColor = "#303030";
+      timeText = "Voting Ended";
+      stateColor = "#909090";
+      votingTimeColor = "#909090";
       break;
     case ProposalState.DEFEATED:
       stateStr = "Defeated";
-      timeText = "Voting has ended";
+      timeText = "Voting Ended";
+      votingTimeColor = "#909090";
       break;
     case ProposalState.SUCCEEDED:
       stateStr = "Succeeded";
-      timeText = "Voting has ended";
-      stateColor = "#00D395";
+      timeText = "Voting Ended";
+      stateColor = "#35D07F";
+      votingTimeColor = "#909090";
       break;
     case ProposalState.QUEUED:
       stateStr = "Queued";
-      timeText = "Voting has ended";
+      timeText = "Voting Ended";
+      votingTimeColor = "#909090";
       break;
     case ProposalState.EXPIRED:
       stateStr = "Expired";
-      timeText = "Voting has ended";
-      stateColor = "#303030";
+      timeText = "Voting Ended";
+      stateColor = "#909090";
+      votingTimeColor = "#909090";
       break;
     case ProposalState.EXECUTED:
       stateStr = "Executed";
-      timeText = "Voting has ended";
-      stateColor = "#00D395";
+      timeText = "Voting Ended";
+      stateColor = "#35D07F";
+      votingTimeColor = "#909090";
       break;
   }
 
@@ -227,7 +236,7 @@ export const ProposalCard: React.FC<IProps> = ({
     <ClickableCard clickable={clickable}>
       <RowBetween>
         <Box>
-          <Flex sx={{ justifyContent: "space-between" }}>
+          <Flex sx={{ justifyContent: "space-between", paddingLeft: "2px" }}>
             <Heading>Proposal #{proposalEvent.args.id.toString()}</Heading>
             {proposalState === ProposalState.ACTIVE && (
               <Text sx={{ cursor: "pointer" }} onClick={onCancelClick}>
@@ -235,16 +244,25 @@ export const ProposalCard: React.FC<IProps> = ({
               </Text>
             )}
           </Flex>
-          <Box mb={1}>
+          <Box mb={1} style={{ paddingLeft: "2px", marginBottom: "10px" }}>
             <Text mr={2}>Proposed by:</Text>
             <Text sx={{ fontWeight: "display" }}>
               <Address value={proposalEvent.args.proposer} truncate />
             </Text>
           </Box>
           {timeText && (
-            <Box mb={1}>
-              <Text mr={2}>Status:</Text>
-              <Text sx={{ fontWeight: "display" }}>{timeText}</Text>
+            <Box>
+              <Text
+                sx={{
+                  fontWeight: 500,
+                  borderRadius: "8px",
+                  backgroundColor: votingTimeColor,
+                  fontSize: "14px",
+                  padding: "8px",
+                }}
+              >
+                {timeText}
+              </Text>
             </Box>
           )}
           <Flex mt={4}>{voteContent}</Flex>
@@ -252,25 +270,22 @@ export const ProposalCard: React.FC<IProps> = ({
         <Box style={{ width: "200px" }}>
           <Box
             style={{
-              padding: "12px",
-              border: "2px solid",
-              borderRadius: "12px",
+              padding: "8px",
+              border: "3px solid",
+              borderRadius: "8px",
               borderColor: stateColor,
-              width: "fit-content",
+              width: "140px",
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            {stateColor === "#303030" ? (
-              <XCircle size={20} color={stateColor} />
+            {stateColor === "#909090" ? (
+              <XCircle size={20} color={"white"} />
             ) : (
-              <CheckCircle size={20} color={stateColor} />
+              <CheckCircle size={20} color={"white"} />
             )}
-            <Text
-              sx={{ fontWeight: 600, color: stateColor, marginLeft: "10px" }}
-            >
-              {stateStr}
-            </Text>
+            <Text sx={{ fontWeight: 600, marginLeft: "10px" }}>{stateStr}</Text>
           </Box>
           {proposal && (
             <Box style={{ margin: "10px 0px 10px 0px" }}>

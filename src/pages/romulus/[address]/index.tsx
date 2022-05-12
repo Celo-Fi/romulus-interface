@@ -149,7 +149,7 @@ const RomulusIndexPage: React.FC = () => {
                 </Heading>
                 <Box
                   sx={{
-                    border: "2px solid #6D619A",
+                    border: "3px solid #6D619A",
                     borderRadius: 8,
                     padding: "15px",
                     mb: 3,
@@ -192,7 +192,7 @@ const RomulusIndexPage: React.FC = () => {
                 </Heading>
                 <Box
                   sx={{
-                    border: "2px solid #6D619A",
+                    border: "3px solid #6D619A",
                     borderRadius: 8,
                     padding: "15px",
                     mb: 3,
@@ -250,7 +250,7 @@ const RomulusIndexPage: React.FC = () => {
 
         <AppBody>
           <CreateProposalContainer>
-            <Heading as="h2" style={{ fontSize: "1.75rem" }}>
+            <Heading as="h2" style={{ fontSize: "1.5rem" }}>
               Governance Proposals
             </Heading>
             {!totalVotingPower.lt(BigNumber.from(proposalThreshold)) && (
@@ -331,8 +331,7 @@ export const DataCard = styled(AutoColumn)<{ disabled?: boolean }>`
 `;
 
 export const CardSection = styled(AutoColumn)<{ disabled?: boolean }>`
-  padding: 1rem;
-  z-index: 1;
+  padding: 1.5rem;
   opacity: ${({ disabled }) => disabled && "0.4"};
 `;
 
@@ -346,7 +345,7 @@ export const ProtocolImage = styled(Image)`
 export const CreateProposalContainer = styled(Box)`
   display: flex;
   justify-content: space-between;
-  padding: 45px 45px 25px 45px;
+  padding: 45px 45px 5px 45px;
 `;
 
 export default RomulusIndexPage;
