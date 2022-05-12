@@ -1,15 +1,19 @@
 import { useRouter } from "next/dist/client/router";
 import React from "react";
-import { Box, Heading } from "theme-ui";
+import { Box, Heading, Image } from "theme-ui";
 import { ProposalCard } from "../../../../components/pages/romulus/ProposalCard";
 import { useProposals } from "../../../../hooks/romulus/useProposals";
 import AppBody from "../../../AppBody";
 import styled from "styled-components";
 import Loader from "../../../../components/Loader";
+import { governanceLookup } from "../..";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
   const { address: romulusAddress } = router.query;
+  const governanceDescription = romulusAddress
+    ? governanceLookup[romulusAddress.toString()]
+    : undefined;
   const [proposals] = useProposals((romulusAddress as string) || "");
 
   return (
@@ -21,7 +25,11 @@ const RomulusIndexPage: React.FC = () => {
       >
         <AppBody>
           <ProposalHeader>
-            <Heading as="h2" style={{ fontSize: "1.75rem" }}>
+            {governanceDescription && (
+              <ProtocolImage src={governanceDescription.icon} />
+            )}
+            <Heading as="h2" style={{ fontSize: "1.75rem", marginTop: "4px" }}>
+              {governanceDescription ? governanceDescription.name : ""}{" "}
               Governance Proposals
             </Heading>
           </ProposalHeader>
@@ -67,9 +75,15 @@ const RomulusIndexPage: React.FC = () => {
 
 const ProposalHeader = styled(Box)`
   display: flex;
-  justify-content: space-between;
   padding: 45px 45px 25px 45px;
   margin-bottom: 32px;
+`;
+
+export const ProtocolImage = styled(Image)`
+  height: 48px;
+  width: 48px;
+  margin-right: 16px;
+  clip-path: circle(24px at center);
 `;
 
 export default RomulusIndexPage;
