@@ -8,7 +8,7 @@ import styled from "styled-components";
 import Loader from "../../../../components/Loader";
 import { governanceLookup } from "../..";
 
-const RomulusIndexPage: React.FC = () => {
+const RomulusProposalsIndexPage: React.FC = () => {
   const router = useRouter();
   const { address: romulusAddress } = router.query;
   const governanceDescription = romulusAddress
@@ -52,6 +52,8 @@ const RomulusIndexPage: React.FC = () => {
                     <ProposalCard
                       proposalEvent={proposalEvent}
                       clickable={true}
+                      showId={true}
+                      showAuthor={false}
                     />
                   </Box>
                 ))
@@ -86,4 +88,4 @@ export const ProtocolImage = styled(Image)`
   clip-path: circle(24px at center);
 `;
 
-export default RomulusIndexPage;
+export default RomulusProposalsIndexPage;

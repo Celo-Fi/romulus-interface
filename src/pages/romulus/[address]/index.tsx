@@ -280,6 +280,8 @@ const RomulusIndexPage: React.FC = () => {
                     <ProposalCard
                       proposalEvent={proposalEvent}
                       clickable={false}
+                      showId={true}
+                      showAuthor={false}
                     />
                   </Box>
                 ))

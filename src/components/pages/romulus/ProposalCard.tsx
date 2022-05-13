@@ -19,6 +19,7 @@ import { BIG_ZERO } from "../../../util/constants";
 import { humanFriendlyWei } from "../../../util/number";
 import { RowBetween } from "../../Row";
 import { Moon, Sun, CheckCircle, XCircle } from "react-feather";
+import { borderColor } from "polished";
 
 interface IProps {
   proposalEvent: TypedEvent<
@@ -45,6 +46,8 @@ interface IProps {
     }
   >;
   clickable: boolean;
+  showId: boolean;
+  showAuthor: boolean;
 }
 
 const SECONDS_PER_BLOCK = 5;
@@ -52,6 +55,8 @@ const SECONDS_PER_BLOCK = 5;
 export const ProposalCard: React.FC<IProps> = ({
   proposalEvent,
   clickable,
+  showId,
+  showAuthor,
 }) => {
   const router = useRouter();
   const getConnectedSigner = useGetConnectedSigner();
@@ -237,7 +242,9 @@ export const ProposalCard: React.FC<IProps> = ({
       <RowBetween>
         <Box>
           <Flex sx={{ justifyContent: "space-between", paddingLeft: "2px" }}>
-            <Heading>Proposal #{proposalEvent.args.id.toString()}</Heading>
+            {showId && (
+              <Heading>Proposal #{proposalEvent.args.id.toString()}</Heading>
+            )}
             {proposalState === ProposalState.ACTIVE && (
               <Text sx={{ cursor: "pointer" }} onClick={onCancelClick}>
                 <u>X Cancel</u>
@@ -245,10 +252,33 @@ export const ProposalCard: React.FC<IProps> = ({
             )}
           </Flex>
           <Box mb={1} style={{ paddingLeft: "2px", marginBottom: "10px" }}>
-            <Text mr={2}>Proposed by:</Text>
-            <Text sx={{ fontWeight: "display" }}>
-              <Address value={proposalEvent.args.proposer} truncate />
-            </Text>
+            {showAuthor ? (
+              <Box
+                style={{
+                  padding: "8px",
+                  marginBottom: "24px",
+                  border: "2px solid",
+                  borderColor: "rgb(149, 128, 255)",
+                  borderRadius: "12px",
+                }}
+              >
+                <Box>
+                  <Text>Proposal Author</Text>
+                </Box>
+                <Box>
+                  <Text sx={{ fontWeight: "display", fontSize: "14px" }}>
+                    <Address value={proposalEvent.args.proposer} />
+                  </Text>
+                </Box>
+              </Box>
+            ) : (
+              <>
+                <Text mr={2}>Proposed by:</Text>
+                <Text sx={{ fontWeight: "display" }}>
+                  <Address value={proposalEvent.args.proposer} truncate />
+                </Text>
+              </>
+            )}
           </Box>
           {timeText && (
             <Box>
@@ -288,7 +318,7 @@ export const ProposalCard: React.FC<IProps> = ({
             <Text sx={{ fontWeight: 600, marginLeft: "10px" }}>{stateStr}</Text>
           </Box>
           {proposal && (
-            <Box style={{ margin: "10px 0px 10px 0px" }}>
+            <Box style={{ marginTop: "30px" }}>
               <Box mb={1} style={{ display: "flex" }}>
                 <Box style={{ width: "120px" }}>
                   <Text mr={2}>For votes:</Text>

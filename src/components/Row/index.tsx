@@ -31,4 +31,5 @@ export const RomulusRow = styled(RowFlat)`
 
 export const RowBetween = styled(Row)`
   justify-content: space-between;
+  align-items: normal;
 `;
