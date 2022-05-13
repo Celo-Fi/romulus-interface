@@ -18,8 +18,7 @@ import { ProposalState, Support } from "../../../types/romulus";
 import { BIG_ZERO } from "../../../util/constants";
 import { humanFriendlyWei } from "../../../util/number";
 import { RowBetween } from "../../Row";
-import { Moon, Sun, CheckCircle, XCircle } from "react-feather";
-import { borderColor } from "polished";
+import { CheckCircle, XCircle } from "react-feather";
 
 interface IProps {
   proposalEvent: TypedEvent<
@@ -243,7 +242,11 @@ export const ProposalCard: React.FC<IProps> = ({
         <Box>
           <Flex sx={{ justifyContent: "space-between", paddingLeft: "2px" }}>
             {showId && (
-              <Heading>Proposal #{proposalEvent.args.id.toString()}</Heading>
+              <Heading>
+                {proposalEvent.args.id.toString().length === 1
+                  ? `Proposal 00${proposalEvent.args.id.toString()}`
+                  : `Proposal 0${proposalEvent.args.id.toString()}`}
+              </Heading>
             )}
             {proposalState === ProposalState.ACTIVE && (
               <Text sx={{ cursor: "pointer" }} onClick={onCancelClick}>
@@ -321,9 +324,8 @@ export const ProposalCard: React.FC<IProps> = ({
             <Box style={{ marginTop: "30px" }}>
               <Box mb={1} style={{ display: "flex" }}>
                 <Box style={{ width: "120px" }}>
-                  <Text mr={2}>For votes:</Text>
+                  <Text mr={2}>For Votes</Text>
                 </Box>
-
                 <Text sx={{ fontWeight: 600 }}>
                   {
                     humanFriendlyWei(proposal?.forVotes.toString()).split(
@@ -334,9 +336,8 @@ export const ProposalCard: React.FC<IProps> = ({
               </Box>
               <Box mb={1} style={{ display: "flex" }}>
                 <Box style={{ width: "120px" }}>
-                  <Text mr={2}>Against votes: </Text>
+                  <Text mr={2}>Against Votes </Text>
                 </Box>
-
                 <Text sx={{ fontWeight: 600 }}>
                   {
                     humanFriendlyWei(proposal?.againstVotes.toString()).split(

@@ -7,13 +7,13 @@ import styled from "styled-components";
 import AppBody from "../../../../AppBody";
 import { ProposalDetail } from "../../../../../components/pages/romulus/ProposalDetail";
 import Loader from "../../../../../components/Loader";
-import { Card } from "theme-ui";
-import { useProposal } from "../../../../../hooks/romulus/useProposal";
 import { ProposalCard } from "../../../../../components/pages/romulus/ProposalCard";
+import { ArrowLeft } from "react-feather";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
   const [proposal, setProposal] = useState<any>(undefined);
+  const [proposalIdDisplay, setProposalIdDisplay] = useState("");
   const { address: romulusAddress } = router.query;
   const governanceDescription = romulusAddress
     ? governanceLookup[romulusAddress.toString()]
@@ -29,9 +29,44 @@ const RomulusIndexPage: React.FC = () => {
     }
   }, [proposals, router]);
 
+  useEffect(() => {
+    if (proposal) {
+      console.log(proposal.args.id.toString().length);
+      if (proposal.args.id.toString().length === 1) {
+        setProposalIdDisplay(`Proposal 00${proposal.args.id.toString()}`);
+      } else {
+        setProposalIdDisplay(`Proposal 0${proposal.args.id.toString()}`);
+      }
+    }
+  }, [proposal]);
+
   return (
     <>
       <Box style={{ marginTop: "45px" }}>
+        <Box
+          style={{
+            marginLeft: "100px",
+            marginBottom: "50px",
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            if (romulusAddress) {
+              router
+                .push(`/romulus/${romulusAddress.toString()}/proposals`)
+                .catch(console.error);
+            }
+          }}
+        >
+          <ArrowLeft size={48} color={"white"}></ArrowLeft>
+          <Heading
+            as="h2"
+            style={{ fontSize: "2rem", marginTop: "4px", marginLeft: "12px" }}
+          >
+            Proposals
+          </Heading>
+        </Box>
         <AppBody>
           {proposal ? (
             <>
@@ -50,7 +85,7 @@ const RomulusIndexPage: React.FC = () => {
                   style={{ fontSize: "1.75rem", marginTop: "4px" }}
                 >
                   {governanceDescription ? governanceDescription.name : ""}{" "}
-                  Proposal 00{proposal.args.id.toString()}
+                  {proposalIdDisplay}
                 </Heading>
               </Box>
               <Box pb={6} style={{ paddingBottom: "15px" }}>
