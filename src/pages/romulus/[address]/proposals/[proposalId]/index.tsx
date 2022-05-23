@@ -43,14 +43,7 @@ const RomulusIndexPage: React.FC = () => {
   return (
     <>
       <Box style={{ marginTop: "45px" }}>
-        <Box
-          style={{
-            marginLeft: "100px",
-            marginBottom: "50px",
-            display: "flex",
-            alignItems: "center",
-            cursor: "pointer",
-          }}
+        <ReturnRoute
           onClick={() => {
             if (romulusAddress) {
               router
@@ -66,17 +59,11 @@ const RomulusIndexPage: React.FC = () => {
           >
             Proposals
           </Heading>
-        </Box>
+        </ReturnRoute>
         <AppBody>
           {proposal ? (
             <>
-              <Box
-                mb={4}
-                style={{
-                  display: "flex",
-                  padding: "45px 45px 25px 45px",
-                }}
-              >
+              <HeaderContainer>
                 {governanceDescription && (
                   <ProtocolImage src={governanceDescription.icon} />
                 )}
@@ -87,7 +74,7 @@ const RomulusIndexPage: React.FC = () => {
                   {governanceDescription ? governanceDescription.name : ""}{" "}
                   {proposalIdDisplay}
                 </Heading>
-              </Box>
+              </HeaderContainer>
               <Box pb={6} style={{ paddingBottom: "15px" }}>
                 <Box mt={3} style={{ margin: "32px" }}>
                   <ProposalCard
@@ -98,19 +85,11 @@ const RomulusIndexPage: React.FC = () => {
                   />
                 </Box>
               </Box>
-              <Box
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "25px 45px 0px 45px",
-                  borderTop: "1px solid",
-                  borderColor: "rgba(0, 0, 0, 0.3)",
-                }}
-              >
+              <DetailsHeaderContainer>
                 <Heading as="h2" style={{ fontSize: "1.75rem" }}>
                   Details
                 </Heading>
-              </Box>
+              </DetailsHeaderContainer>
 
               <Box style={{ margin: "32px", paddingBottom: "45px" }}>
                 <ProposalDetail proposalEvent={proposal} />
@@ -128,6 +107,28 @@ const RomulusIndexPage: React.FC = () => {
     </>
   );
 };
+
+const ReturnRoute = styled(Box)`
+  margin-left: 100px;
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const HeaderContainer = styled(Box)`
+  display: flex;
+  padding: 45px 45px 25px 45px;
+  margin-bottom: 32px;
+`;
+
+const DetailsHeaderContainer = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+  padding: 25px 45px 0px 45px;
+  border-top: 1px solid;
+  border-color: rgba(0, 0, 0, 0.3);
+`;
 
 export const ProtocolImage = styled(Image)`
   height: 48px;
