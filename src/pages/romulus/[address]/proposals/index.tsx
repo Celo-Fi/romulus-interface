@@ -7,6 +7,7 @@ import AppBody from "../../../AppBody";
 import styled from "styled-components";
 import Loader from "../../../../components/Loader";
 import { governanceLookup } from "../..";
+import { ArrowLeft } from "react-feather";
 
 const RomulusProposalsIndexPage: React.FC = () => {
   const router = useRouter();
@@ -23,6 +24,23 @@ const RomulusProposalsIndexPage: React.FC = () => {
           marginTop: "45px",
         }}
       >
+        <ReturnRoute
+          onClick={() => {
+            if (romulusAddress) {
+              router
+                .push(`/romulus/${romulusAddress.toString()}`)
+                .catch(console.error);
+            }
+          }}
+        >
+          <ArrowLeft size={48} color={"white"}></ArrowLeft>
+          <Heading
+            as="h2"
+            style={{ fontSize: "2rem", marginTop: "4px", marginLeft: "12px" }}
+          >
+            Overview
+          </Heading>
+        </ReturnRoute>
         <AppBody>
           <ProposalHeader>
             {governanceDescription && (
@@ -33,7 +51,7 @@ const RomulusProposalsIndexPage: React.FC = () => {
               Governance Proposals
             </Heading>
           </ProposalHeader>
-          <Box pb={6} style={{ paddingBottom: "15px" }}>
+          <Box style={{ paddingBottom: "15px" }}>
             {proposals.length > 1 ? (
               proposals
                 .slice(1)
@@ -41,7 +59,6 @@ const RomulusProposalsIndexPage: React.FC = () => {
                 .map((proposalEvent, idx) => (
                   <Box
                     key={idx}
-                    mt={3}
                     style={{ margin: "32px" }}
                     onClick={() => {
                       router.push(
@@ -86,6 +103,14 @@ export const ProtocolImage = styled(Image)`
   width: 48px;
   margin-right: 16px;
   clip-path: circle(24px at center);
+`;
+
+const ReturnRoute = styled(Box)`
+  margin-left: 100px;
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 `;
 
 export default RomulusProposalsIndexPage;
