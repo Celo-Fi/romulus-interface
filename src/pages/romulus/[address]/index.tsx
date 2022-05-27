@@ -28,6 +28,7 @@ import AppBody from "../../AppBody";
 import { TopSection, AutoColumn } from "../../../components/Column";
 import { RowFlat, RowBetween, Row } from "../../../components/Row";
 import Loader from "../../../components/Loader";
+import { ProtocolImage } from "../../../components/Image";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -147,16 +148,7 @@ const RomulusIndexPage: React.FC = () => {
                 <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
                   User Details
                 </Heading>
-                <Box
-                  sx={{
-                    border: "3px solid #6D619A",
-                    borderRadius: 8,
-                    padding: "15px",
-                    mb: 3,
-                    height: "150px",
-                    width: "350px",
-                  }}
-                >
+                <DetailContainer>
                   <Box mb={2}>
                     <Text>Token Balance: </Text>
                     <Text sx={{ fontWeight: "display" }}>
@@ -184,22 +176,13 @@ const RomulusIndexPage: React.FC = () => {
                       change
                     </Button>
                   </Flex>
-                </Box>
+                </DetailContainer>
               </Box>
               <Box my="md" sx={{ margin: "25px auto 25px auto" }}>
                 <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
                   Governance Details
                 </Heading>
-                <Box
-                  sx={{
-                    border: "3px solid #6D619A",
-                    borderRadius: 8,
-                    padding: "15px",
-                    mb: 3,
-                    height: "150px",
-                    width: "350px",
-                  }}
-                >
+                <DetailContainer>
                   <Box mb={2}>
                     <Text>Quorum: </Text>
                     <Text sx={{ fontWeight: "display" }}>
@@ -213,7 +196,7 @@ const RomulusIndexPage: React.FC = () => {
                       {tokenSymbol}
                     </Text>{" "}
                   </Box>
-                </Box>
+                </DetailContainer>
               </Box>
             </RowFlat>
 
@@ -337,17 +320,19 @@ export const CardSection = styled(AutoColumn)<{ disabled?: boolean }>`
   opacity: ${({ disabled }) => disabled && "0.4"};
 `;
 
-export const ProtocolImage = styled(Image)`
-  height: 48px;
-  width: 48px;
-  margin-right: 8px;
-  clip-path: circle(24px at center);
-`;
-
 export const CreateProposalContainer = styled(Box)`
   display: flex;
   justify-content: space-between;
   padding: 45px 45px 5px 45px;
+`;
+
+const DetailContainer = styled(Box)`
+  border: 3px solid #6d619a;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 16px;
+  height: 150px;
+  width: 350px;
 `;
 
 export default RomulusIndexPage;

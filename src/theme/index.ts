@@ -2,7 +2,7 @@ export default {
   colors: {
     text: "hsl(210, 50%, 96%)",
     background: "hsl(230, 25%, 18%)",
-    primary: "rgb(149, 128, 255)",
+    primary: "rgb(95, 82, 122)",
     secondary: "hsl(290, 100%, 80%)",
     highlight: "hsl(260, 20%, 40%)",
     purple: "hsl(290, 100%, 80%)",

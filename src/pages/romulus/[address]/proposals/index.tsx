@@ -1,6 +1,6 @@
 import { useRouter } from "next/dist/client/router";
 import React from "react";
-import { Box, Heading, Image } from "theme-ui";
+import { Box, Heading } from "theme-ui";
 import { ProposalCard } from "../../../../components/pages/romulus/ProposalCard";
 import { useProposals } from "../../../../hooks/romulus/useProposals";
 import AppBody from "../../../AppBody";
@@ -8,6 +8,7 @@ import styled from "styled-components";
 import Loader from "../../../../components/Loader";
 import { governanceLookup } from "../..";
 import { ArrowLeft } from "react-feather";
+import { ProtocolImage } from "../../../../components/Image";
 
 const RomulusProposalsIndexPage: React.FC = () => {
   const router = useRouter();
@@ -96,13 +97,6 @@ const ProposalHeader = styled(Box)`
   display: flex;
   padding: 45px 45px 25px 45px;
   margin-bottom: 32px;
-`;
-
-export const ProtocolImage = styled(Image)`
-  height: 48px;
-  width: 48px;
-  margin-right: 16px;
-  clip-path: circle(24px at center);
 `;
 
 const ReturnRoute = styled(Box)`

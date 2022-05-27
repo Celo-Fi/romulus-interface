@@ -37,7 +37,7 @@ export const Address: React.FC<Props> = ({
       href={`https://explorer.celo.org/address/${fmt.toLowerCase()}/transactions`}
       target="_blank"
       rel="noopener noreferrer"
-      style={{ textDecoration: "none" }}
+      style={{ textDecoration: "none", color: "rgb(149, 128, 255)" }}
     >
       {text}
     </Link>
