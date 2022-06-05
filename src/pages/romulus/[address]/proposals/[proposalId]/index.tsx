@@ -10,6 +10,7 @@ import Loader from "../../../../../components/Loader";
 import { ProposalCard } from "../../../../../components/pages/romulus/ProposalCard";
 import { ArrowLeft } from "react-feather";
 import { ProtocolImage } from "../../../../../components/Image";
+import { ReturnRoute } from "../../../../../components/Button";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -108,14 +109,6 @@ const RomulusIndexPage: React.FC = () => {
     </>
   );
 };
-
-const ReturnRoute = styled(Box)`
-  margin-left: 100px;
-  margin-bottom: 50px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-`;
 
 const HeaderContainer = styled(Box)`
   display: flex;

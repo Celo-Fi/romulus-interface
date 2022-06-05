@@ -9,6 +9,7 @@ import Loader from "../../../../components/Loader";
 import { governanceLookup } from "../..";
 import { ArrowLeft } from "react-feather";
 import { ProtocolImage } from "../../../../components/Image";
+import { ReturnRoute } from "../../../../components/Button";
 
 const RomulusProposalsIndexPage: React.FC = () => {
   const router = useRouter();
@@ -97,14 +98,6 @@ const ProposalHeader = styled(Box)`
   display: flex;
   padding: 45px 45px 25px 45px;
   margin-bottom: 32px;
-`;
-
-const ReturnRoute = styled(Box)`
-  margin-left: 100px;
-  margin-bottom: 50px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
 `;
 
 export default RomulusProposalsIndexPage;

@@ -1,6 +1,7 @@
 import React from "react";
 import { Button as RebassButton, ButtonProps } from "rebass/styled-components";
 import styled from "styled-components";
+import { Box } from "theme-ui";
 
 const Base = styled(RebassButton)<{
   padding?: string;
@@ -59,4 +60,12 @@ export const ButtonSecondary = styled(Base)`
   a:hover {
     text-decoration: none;
   }
+`;
+
+export const ReturnRoute = styled(Box)`
+  margin-left: 100px;
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 `;
