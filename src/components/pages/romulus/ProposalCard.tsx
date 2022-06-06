@@ -126,7 +126,8 @@ export const ProposalCard: React.FC<IProps> = ({
       timeText = `${moment
         .duration(secondsTilStart, "seconds")
         .humanize()} until voting begins`;
-      votingTimeColor = "yellow";
+      votingTimeColor = "#F3841E";
+      stateColor = "#F3841E";
       break;
     case ProposalState.ACTIVE:
       stateStr = "Active";
@@ -137,6 +138,7 @@ export const ProposalCard: React.FC<IProps> = ({
       timeText = `${moment
         .duration(secondsTilEnd, "seconds")
         .humanize()} until voting ends`;
+      stateColor = "#35D07F";
       votingTimeColor = "#35D07F";
       break;
     case ProposalState.CANCELED:
@@ -148,6 +150,7 @@ export const ProposalCard: React.FC<IProps> = ({
     case ProposalState.DEFEATED:
       stateStr = "Defeated";
       timeText = "Voting Ended";
+      stateColor = "#909090";
       votingTimeColor = "#909090";
       break;
     case ProposalState.SUCCEEDED:
@@ -254,17 +257,9 @@ export const ProposalCard: React.FC<IProps> = ({
               </Text>
             )}
           </Flex>
-          <Box mb={1} style={{ paddingLeft: "2px", marginBottom: "10px" }}>
+          <Box style={{ paddingLeft: "2px", marginBottom: "10px" }}>
             {showAuthor ? (
-              <Box
-                style={{
-                  padding: "8px",
-                  marginBottom: "24px",
-                  border: "2px solid",
-                  borderColor: "rgb(149, 128, 255)",
-                  borderRadius: "12px",
-                }}
-              >
+              <AuthorContainer>
                 <Box>
                   <Text>Proposal Author</Text>
                 </Box>
@@ -273,7 +268,7 @@ export const ProposalCard: React.FC<IProps> = ({
                     <Address value={proposalEvent.args.proposer} />
                   </Text>
                 </Box>
-              </Box>
+              </AuthorContainer>
             ) : (
               <>
                 <Text mr={2}>Proposed by:</Text>
@@ -284,42 +279,21 @@ export const ProposalCard: React.FC<IProps> = ({
             )}
           </Box>
           {timeText && (
-            <Box>
-              <Text
-                sx={{
-                  fontWeight: 500,
-                  borderRadius: "8px",
-                  backgroundColor: votingTimeColor,
-                  fontSize: "14px",
-                  padding: "8px",
-                }}
-              >
-                {timeText}
-              </Text>
-            </Box>
+            <VotingTimeText votingTimeColor={votingTimeColor}>
+              {timeText}
+            </VotingTimeText>
           )}
           <Flex mt={4}>{voteContent}</Flex>
         </Box>
         <Box style={{ width: "200px" }}>
-          <Box
-            style={{
-              padding: "8px",
-              border: "3px solid",
-              borderRadius: "8px",
-              borderColor: stateColor,
-              width: "140px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <ProposalStatusContainer stateColor={stateColor}>
             {stateColor === "#909090" ? (
               <XCircle size={20} color={"white"} />
             ) : (
               <CheckCircle size={20} color={"white"} />
             )}
             <Text sx={{ fontWeight: 600, marginLeft: "10px" }}>{stateStr}</Text>
-          </Box>
+          </ProposalStatusContainer>
           {proposal && (
             <Box style={{ marginTop: "30px" }}>
               <Box mb={1} style={{ display: "flex" }}>
@@ -353,6 +327,37 @@ export const ProposalCard: React.FC<IProps> = ({
     </ClickableCard>
   );
 };
+
+const AuthorContainer = styled(Box)`
+  padding: 8px;
+  margin-bottom: 24px;
+  border: 2px solid;
+  border-color: rgb(149, 128, 255);
+  border-radius: 12px;
+`;
+
+const ProposalStatusContainer = styled(Box)<{
+  stateColor: string;
+}>`
+  padding: 8px;
+  border: 3px solid;
+  border-radius: 8px;
+  border-color: ${({ stateColor }) => stateColor};
+  width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const VotingTimeText = styled(Text)<{
+  votingTimeColor: string;
+}>`
+  font-weight: 500;
+  border-radius: 8px;
+  background-color: ${({ votingTimeColor }) => votingTimeColor};
+  font-size: 14px;
+  padding: 8px;
+`;
 
 const ClickableCard = styled(Card)<{
   clickable: boolean;
