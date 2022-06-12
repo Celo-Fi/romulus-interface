@@ -7,7 +7,7 @@ import AppBody from "../AppBody";
 import styled from "styled-components";
 import { RomulusRow } from "../../components/Row";
 
-type Governance = {
+export type Governance = {
   name: string;
   addresses: Record<ChainId, Address>;
   icon: string;

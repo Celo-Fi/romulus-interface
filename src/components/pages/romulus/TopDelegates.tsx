@@ -1,11 +1,12 @@
 import React from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Heading, Text } from "theme-ui";
 import { useTopDelegates } from "../../../hooks/romulus/useTopDelegates";
 import { fromWei } from "web3-utils";
 import { Address } from "../../../components/common/Address";
 import { FixedSizeList } from "react-window";
 import { BigNumber } from "ethers";
 import Loader from "../../Loader";
+import AppBody from "../../../pages/AppBody";
 
 interface RowProps {
   index: number;
@@ -42,24 +43,31 @@ export const TopDelegates: React.FC<Props> = ({ romulusAddress }) => {
 
   return (
     <>
-      {topDelegates.length > 1 ? (
-        <FixedSizeList
-          height={240}
-          width="100%"
-          itemData={topDelegates}
-          itemCount={topDelegates.length}
-          itemSize={64}
-          style={{ marginBottom: "16px", maxWidth: "700px" }}
-        >
-          {Row}
-        </FixedSizeList>
-      ) : (
-        <>
-          <Box style={{ padding: "128px" }}>
-            <Loader size="48px"></Loader>
-          </Box>
-        </>
-      )}
+      <AppBody>
+        <Box sx={{ margin: "25px 15px 32px 15px", padding: "25px" }}>
+          <Heading as="h2" mb={3} style={{ fontSize: "1.25rem" }}>
+            Top delegates
+          </Heading>
+          {topDelegates.length > 1 ? (
+            <FixedSizeList
+              height={240}
+              width="100%"
+              itemData={topDelegates}
+              itemCount={topDelegates.length}
+              itemSize={64}
+              style={{ marginBottom: "16px", maxWidth: "700px" }}
+            >
+              {Row}
+            </FixedSizeList>
+          ) : (
+            <>
+              <Box style={{ padding: "128px" }}>
+                <Loader size="48px"></Loader>
+              </Box>
+            </>
+          )}
+        </Box>
+      </AppBody>
     </>
   );
 };

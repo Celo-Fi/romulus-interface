@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Box, Heading } from "theme-ui";
 import { useProposals } from "../../../../../hooks/romulus/useProposals";
 import { governanceLookup } from "../../..";
-import styled from "styled-components";
 import AppBody from "../../../../AppBody";
 import { ProposalDetail } from "../../../../../components/pages/romulus/ProposalDetail";
 import Loader from "../../../../../components/Loader";
@@ -11,6 +10,10 @@ import { ProposalCard } from "../../../../../components/pages/romulus/ProposalCa
 import { ArrowLeft } from "react-feather";
 import { ProtocolImage } from "../../../../../components/Image";
 import { ReturnRoute } from "../../../../../components/Button";
+import {
+  DetailsHeaderContainer,
+  ProposalHeaderContainer,
+} from "../../../../../components/pages/romulus/Header";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -65,7 +68,7 @@ const RomulusIndexPage: React.FC = () => {
         <AppBody>
           {proposal ? (
             <>
-              <HeaderContainer>
+              <ProposalHeaderContainer>
                 {governanceDescription && (
                   <ProtocolImage src={governanceDescription.icon} />
                 )}
@@ -76,9 +79,9 @@ const RomulusIndexPage: React.FC = () => {
                   {governanceDescription ? governanceDescription.name : ""}{" "}
                   {proposalIdDisplay}
                 </Heading>
-              </HeaderContainer>
-              <Box pb={6} style={{ paddingBottom: "15px" }}>
-                <Box mt={3} style={{ margin: "32px" }}>
+              </ProposalHeaderContainer>
+              <Box style={{ paddingBottom: "15px" }}>
+                <Box style={{ margin: "32px" }}>
                   <ProposalCard
                     proposalEvent={proposal}
                     clickable={false}
@@ -109,19 +112,5 @@ const RomulusIndexPage: React.FC = () => {
     </>
   );
 };
-
-const HeaderContainer = styled(Box)`
-  display: flex;
-  padding: 45px 45px 25px 45px;
-  margin-bottom: 32px;
-`;
-
-const DetailsHeaderContainer = styled(Box)`
-  display: flex;
-  justify-content: space-between;
-  padding: 25px 45px 0px 45px;
-  border-top: 1px solid;
-  border-color: rgba(0, 0, 0, 0.3);
-`;
 
 export default RomulusIndexPage;
