@@ -1,7 +1,3 @@
-import {
-  useGetConnectedSigner,
-  useProvider,
-} from "@celo-tools/use-contractkit";
 import { ethers } from "ethers";
 import moment from "moment";
 import React, { useEffect } from "react";
@@ -19,7 +15,9 @@ import {
   MultiSig as MultisigContract,
 } from "../../../../generated";
 import { useAsyncState } from "../../../../hooks/useAsyncState";
+import { useGetConnectedSigner } from "../../../../hooks/useGetConnectedSigner";
 import { useMultisigContract } from "../../../../hooks/useMultisigContract";
+import { useProvider } from "../../../../hooks/useProvider";
 import { FARM_REGISTRY_ADDRESS } from "../../../../hooks/useRegisteredFarms";
 
 const web3 = new Web3("https://forno.celo.org"); // TODO: HARDCODE
@@ -196,7 +194,7 @@ export const D4P: React.FC<Props> = ({ manager }) => {
           [...farms, ...extraFarms].filter((f) => f.manager === manager)
         );
       });
-  }, [multisigLookup, provider]);
+  }, [manager, multisigLookup, provider]);
 
   const getConnectedSigner = useGetConnectedSigner();
   const sendRewards = React.useCallback(
@@ -273,8 +271,8 @@ export const D4P: React.FC<Props> = ({ manager }) => {
       </Heading>
       {farms.map((farm, idx) => {
         const data = lookup?.[farm.farmAddress];
-        if (data == null) {
-          return;
+        if (data == null || !farm.rewardToken) {
+          return null;
         }
 
         const {
@@ -360,7 +358,9 @@ export const D4P: React.FC<Props> = ({ manager }) => {
               <Button
                 onClick={() => {
                   const amount = prompt(
-                    `Enter amount of ${tokenName[farm.rewardToken]} to transfer`
+                    `Enter amount of ${
+                      tokenName[farm.rewardToken] ?? "???"
+                    } to transfer`
                   );
                   if (!amount) {
                     console.warn("Invalid amount");
@@ -376,7 +376,9 @@ export const D4P: React.FC<Props> = ({ manager }) => {
               <Button
                 onClick={() => {
                   const amount = prompt(
-                    `Enter amount of ${tokenName[farm.rewardToken]} to notify`
+                    `Enter amount of ${
+                      tokenName[farm.rewardToken] ?? "???"
+                    } to notify`
                   );
                   if (!amount) {
                     console.warn("Invalid amount");
