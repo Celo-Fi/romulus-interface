@@ -219,7 +219,7 @@ export const ProposalCard: React.FC<IProps> = ({
   let voteContent;
 
   if (proposalState === ProposalState.CANCELED) {
-    voteContent = <Text>Proposal has been canceled.</Text>;
+    voteContent = "";
   } else if (proposalEvent.args.startBlock.gt(latestBlockNumber)) {
     voteContent = <Text>Voting has not started yet.</Text>;
   } else if (votingPower.add(releaseVotingPower).lte(BIG_ZERO)) {
