@@ -2,7 +2,7 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { BigNumber } from "ethers";
 import moment from "moment";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Box, Button, Card, Flex, Heading, Text } from "theme-ui";
 
@@ -18,7 +18,7 @@ import { ProposalState, Support } from "../../../types/romulus";
 import { BIG_ZERO } from "../../../util/constants";
 import { humanFriendlyWei } from "../../../util/number";
 import { RowBetween } from "../../Row";
-import { CheckCircle, XCircle } from "react-feather";
+import { CheckCircle, XCircle, Loader, PlayCircle } from "react-feather";
 
 interface IProps {
   proposalEvent: TypedEvent<
@@ -49,6 +49,13 @@ interface IProps {
   showAuthor: boolean;
 }
 
+interface ProposalContent {
+  stateStr: string;
+  stateColor: string;
+  votingTimeColor: string;
+  timeText: string | undefined;
+}
+
 const SECONDS_PER_BLOCK = 5;
 
 export const ProposalCard: React.FC<IProps> = ({
@@ -58,6 +65,12 @@ export const ProposalCard: React.FC<IProps> = ({
   showAuthor,
 }) => {
   const router = useRouter();
+  const [proposalContent, setProposalContent] = useState<ProposalContent>({
+    stateStr: "",
+    stateColor: "#909090",
+    votingTimeColor: "#909090",
+    timeText: undefined,
+  });
   const getConnectedSigner = useGetConnectedSigner();
   const { address: romulusAddress } = router.query;
   const { kit, address } = useContractKit();
@@ -112,71 +125,92 @@ export const ProposalCard: React.FC<IProps> = ({
     refetchProposal();
   }, []);
 
-  let stateStr = "";
-  let stateColor = "#909090";
-  let votingTimeColor = "#909090";
-  let timeText: string | undefined;
-  switch (proposalState) {
-    case ProposalState.PENDING:
-      stateStr = "Pending";
-      const secondsTilStart =
-        (Number(latestBlockNumber) -
-          Number(proposalEvent.args.startBlock.toString())) *
-        SECONDS_PER_BLOCK;
-      timeText = `${moment
-        .duration(secondsTilStart, "seconds")
-        .humanize()} until voting begins`;
-      votingTimeColor = "#F3841E";
-      stateColor = "#F3841E";
-      break;
-    case ProposalState.ACTIVE:
-      stateStr = "Active";
-      const secondsTilEnd =
-        (Number(proposalEvent.args.endBlock.toString()) -
-          Number(latestBlockNumber)) *
-        SECONDS_PER_BLOCK;
-      timeText = `${moment
-        .duration(secondsTilEnd, "seconds")
-        .humanize()} until voting ends`;
-      stateColor = "#35D07F";
-      votingTimeColor = "#35D07F";
-      break;
-    case ProposalState.CANCELED:
-      stateStr = "Canceled";
-      timeText = "Voting Ended";
-      stateColor = "#909090";
-      votingTimeColor = "#909090";
-      break;
-    case ProposalState.DEFEATED:
-      stateStr = "Defeated";
-      timeText = "Voting Ended";
-      stateColor = "#909090";
-      votingTimeColor = "#909090";
-      break;
-    case ProposalState.SUCCEEDED:
-      stateStr = "Succeeded";
-      timeText = "Voting Ended";
-      stateColor = "#35D07F";
-      votingTimeColor = "#909090";
-      break;
-    case ProposalState.QUEUED:
-      stateStr = "Queued";
-      timeText = "Voting Ended";
-      votingTimeColor = "#909090";
-      break;
-    case ProposalState.EXPIRED:
-      stateStr = "Expired";
-      timeText = "Voting Ended";
-      stateColor = "#909090";
-      votingTimeColor = "#909090";
-      break;
-    case ProposalState.EXECUTED:
-      stateStr = "Executed";
-      timeText = "Voting Ended";
-      stateColor = "#35D07F";
-      votingTimeColor = "#909090";
-      break;
-  }
+  let statusSymbol = <XCircle size={20} color={"white"} />;
+  useEffect(() => {
+    switch (proposalState) {
+      case ProposalState.PENDING:
+        const secondsTilStart =
+          (Number(latestBlockNumber) -
+            Number(proposalEvent.args.startBlock.toString())) *
+          SECONDS_PER_BLOCK;
+        setProposalContent({
+          stateStr: "Pending",
+          timeText: `${moment
+            .duration(secondsTilStart, "seconds")
+            .humanize()} until voting begins`,
+          stateColor: "#F3841E",
+          votingTimeColor: "#F3841E",
+        });
+        statusSymbol = <Loader size={20} color={"white"} />;
+        break;
+      case ProposalState.ACTIVE:
+        const secondsTilEnd =
+          (Number(proposalEvent.args.endBlock.toString()) -
+            Number(latestBlockNumber)) *
+          SECONDS_PER_BLOCK;
+        setProposalContent({
+          stateStr: "Active",
+          timeText: `${moment
+            .duration(secondsTilEnd, "seconds")
+            .humanize()} until voting ends`,
+          stateColor: "#35D07F",
+          votingTimeColor: "#35D07F",
+        });
+        statusSymbol = <PlayCircle size={20} color={"white"} />;
+        break;
+      case ProposalState.CANCELED:
+        setProposalContent({
+          stateStr: "Canceled",
+          timeText: "Voting Ended",
+          stateColor: "#909090",
+          votingTimeColor: "#909090",
+        });
+        break;
+      case ProposalState.DEFEATED:
+        setProposalContent({
+          stateStr: "Defeated",
+          timeText: "Voting Ended",
+          stateColor: "#909090",
+          votingTimeColor: "#909090",
+        });
+        break;
+      case ProposalState.SUCCEEDED:
+        setProposalContent({
+          stateStr: "Succeeded",
+          timeText: "Voting Ended",
+          stateColor: "#35D07F",
+          votingTimeColor: "#909090",
+        });
+        statusSymbol = <CheckCircle size={20} color={"white"} />;
+        break;
+      case ProposalState.QUEUED:
+        setProposalContent({
+          stateStr: "Queued",
+          timeText: "Voting Ended",
+          votingTimeColor: "#909090",
+          stateColor: "#909090",
+        });
+        statusSymbol = <CheckCircle size={20} color={"white"} />;
+        break;
+      case ProposalState.EXPIRED:
+        setProposalContent({
+          stateStr: "Expired",
+          timeText: "Voting Ended",
+          stateColor: "#909090",
+          votingTimeColor: "#909090",
+        });
+        break;
+      case ProposalState.EXECUTED:
+        setProposalContent({
+          stateStr: "Executed",
+          timeText: "Voting Ended",
+          stateColor: "#35D07F",
+          votingTimeColor: "#909090",
+        });
+        statusSymbol = <CheckCircle size={20} color={"white"} />;
+        break;
+    }
+  }, [proposalState]);
 
   if (!romulusAddress) {
     return <div>Invalid romulus address</div>;
@@ -278,21 +312,19 @@ export const ProposalCard: React.FC<IProps> = ({
               </>
             )}
           </Box>
-          {timeText && (
-            <VotingTimeText votingTimeColor={votingTimeColor}>
-              {timeText}
+          {proposalContent.timeText && (
+            <VotingTimeText votingTimeColor={proposalContent.votingTimeColor}>
+              {proposalContent.timeText}
             </VotingTimeText>
           )}
           <Flex mt={4}>{voteContent}</Flex>
         </Box>
         <Box style={{ width: "200px" }}>
-          <ProposalStatusContainer stateColor={stateColor}>
-            {stateColor === "#909090" ? (
-              <XCircle size={20} color={"white"} />
-            ) : (
-              <CheckCircle size={20} color={"white"} />
-            )}
-            <Text sx={{ fontWeight: 600, marginLeft: "10px" }}>{stateStr}</Text>
+          <ProposalStatusContainer stateColor={proposalContent.stateColor}>
+            {statusSymbol}
+            <Text sx={{ fontWeight: 600, marginLeft: "10px" }}>
+              {proposalContent.stateStr}
+            </Text>
           </ProposalStatusContainer>
           {proposal && (
             <Box style={{ marginTop: "30px" }}>
