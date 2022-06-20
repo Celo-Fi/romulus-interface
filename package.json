@@ -11,7 +11,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@celo-tools/use-contractkit": "npm:@poofcash/use-contractkit@^1.0.1",
+    "@celo-tools/use-contractkit": "^3.1.0",
     "@celo/contractkit": "^1.2.4",
     "@celo/contracts": "^0.0.8",
     "@emotion/react": "^11.1.5",
@@ -37,8 +37,7 @@
     "react-toastify": "^8.0.3",
     "react-window": "^1.8.6",
     "regl": "1",
-    "theme-ui": "^0.10.0",
-    "tailwindcss": "^2.2.17",
+    "tailwindcss": "^3.0.15",
     "theme-ui": "^0.10.0",
     "twin.macro": "^2.8.0",
     "rebass": "^4.0.7"
@@ -53,6 +52,7 @@
     "@types/react-window": "^1.8.5",
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
+    "autoprefixer": "^10.4.7",
     "babel-plugin-macros": "^3.1.0",
     "babel-plugin-twin": "^1.0.2",
     "eslint": "^7.24.0",
@@ -76,8 +76,5 @@
   "lint-staged": {
     "*.{js,css,md,ts,tsx,json}": "prettier --write"
   },
-  "prettier": {},
-  "resolutions": {
-    "@celo/contractkit": "^1.2.4"
-  }
+  "prettier": {}
 }

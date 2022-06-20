@@ -1,7 +1,3 @@
-import {
-  useGetConnectedSigner,
-  useProvider,
-} from "@celo-tools/use-contractkit";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -15,6 +11,8 @@ import {
   MoolaStakingRewards__factory,
 } from "../../../generated";
 import { useAsyncState } from "../../../hooks/useAsyncState";
+import { useGetConnectedSigner } from "../../../hooks/useGetConnectedSigner";
+import { useProvider } from "../../../hooks/useProvider";
 
 type Farm = {
   farmAddress: string;
@@ -176,7 +174,7 @@ const Rewards: React.FC = () => {
 
   const checkOwner = React.useCallback(async () => {
     const signer = await getConnectedSigner();
-    return signer._address === lookup?.owner;
+    return (await signer.getAddress()) === lookup?.owner;
   }, [lookup, getConnectedSigner]);
 
   const checkNominatedOwner = React.useCallback(async () => {
@@ -184,7 +182,7 @@ const Rewards: React.FC = () => {
     const signer = await getConnectedSigner();
     const msr = MoolaStakingRewards__factory.connect(farm.farmAddress, signer);
     const nominatedOwner = await msr.nominatedOwner();
-    return nominatedOwner === signer._address;
+    return nominatedOwner === (await signer.getAddress());
   }, [farm, getConnectedSigner]);
 
   const [isNominatedOwner] = useAsyncState(false, checkNominatedOwner);
