@@ -22,6 +22,7 @@ export const useTopDelegates = (
   numDelegates: number
 ) => {
   const provider = useProvider();
+  const BATCH_SIZE = 100_000;
   const eventsCall = React.useCallback(async () => {
     if (!romulusAddress) {
       return [];
@@ -30,12 +31,19 @@ export const useTopDelegates = (
     const romulus = RomulusDelegate__factory.connect(romulusAddress, provider);
     const token = PoofToken__factory.connect(await romulus.token(), provider);
     const filter = token.filters.DelegateVotesChanged(null, null, null);
-    const tokenEvents = await getPastEvents<DelegateChangeEvent>(
-      token,
-      filter,
-      0,
-      latestBlockNumber
-    );
+    const promiseEvents = [];
+    for (let i = 0; i < Math.ceil(latestBlockNumber / BATCH_SIZE); i++) {
+      promiseEvents.push(
+        getPastEvents<DelegateChangeEvent>(
+          token,
+          filter,
+          Math.max(i * BATCH_SIZE, 0),
+          Math.min((i + 1) * BATCH_SIZE, latestBlockNumber)
+        )
+      );
+    }
+    const allPromiseEvents = await Promise.all(promiseEvents);
+    const tokenEvents = allPromiseEvents.flat();
 
     const releaseTokenAddress = await romulus.releaseToken();
     let releaseTokenEvents: DelegateChangeEvent[] = [];
@@ -44,12 +52,19 @@ export const useTopDelegates = (
         await romulus.releaseToken(),
         provider
       );
-      releaseTokenEvents = await getPastEvents<DelegateChangeEvent>(
-        releaseToken,
-        filter,
-        0,
-        latestBlockNumber
-      );
+      const promiseEvents = [];
+      for (let i = 0; i < Math.ceil(latestBlockNumber / BATCH_SIZE); i++) {
+        promiseEvents.push(
+          getPastEvents<DelegateChangeEvent>(
+            releaseToken,
+            filter,
+            Math.max(i * BATCH_SIZE, 0),
+            Math.min((i + 1) * BATCH_SIZE, latestBlockNumber)
+          )
+        );
+      }
+      const allPromiseEvents = await Promise.all(promiseEvents);
+      releaseTokenEvents = allPromiseEvents.flat();
     }
     const delegateToPower: Record<string, BigNumber> = tokenEvents.reduce(
       (acc, event) => ({
@@ -75,6 +90,7 @@ export const useTopDelegates = (
           delegateToPower[delegate]!.add(releasePower);
       }
     );
+
     return Object.entries(delegateToPower)
       .filter((v) => !v[1].eq(BIG_ZERO))
       .sort((a: any, b: any) => b[1].sub(a[1]))

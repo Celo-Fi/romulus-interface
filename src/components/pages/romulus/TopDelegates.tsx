@@ -18,16 +18,28 @@ const Row: React.FC<RowProps> = ({ index, data, style }) => {
   const delegate = data[index]!;
 
   return (
-    <Box style={style}>
+    <Box
+      style={{
+        ...style,
+        padding: "8px",
+        height: "fit-content",
+        border: "3px solid rgb(109, 97, 154)",
+        borderRadius: "8px",
+      }}
+    >
       <Flex sx={{ justifyContent: "space-between", flexWrap: "wrap" }}>
         <Text mr={2}>
           {index + 1}. <Address value={delegate[0]} />
         </Text>
         <Box pr={2}>
           <Text sx={{ fontWeight: "bold", mr: 2 }}>
-            {Number(fromWei(delegate[1].toString())).toLocaleString()}
+            {
+              Number(fromWei(delegate[1].toString()))
+                .toLocaleString()
+                .split(".")[0]
+            }
           </Text>
-          <Text>Voting power</Text>
+          <Text>Voting Power</Text>
         </Box>
       </Flex>
     </Box>
@@ -39,7 +51,7 @@ interface Props {
 }
 
 export const TopDelegates: React.FC<Props> = ({ romulusAddress }) => {
-  const [topDelegates] = useTopDelegates(romulusAddress || "", 50);
+  const [topDelegates] = useTopDelegates(romulusAddress || "", 25);
 
   return (
     <>
