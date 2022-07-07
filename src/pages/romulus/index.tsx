@@ -3,8 +3,11 @@ import { ChainId, useContractKit } from "@celo-tools/use-contractkit";
 import { useRouter } from "next/router";
 import React from "react";
 import { Box, Flex, Heading, Image, Text } from "theme-ui";
+import AppBody from "../AppBody";
+import styled from "styled-components";
+import { RomulusRow } from "../../components/Row";
 
-type Governance = {
+export type Governance = {
   name: string;
   addresses: Record<ChainId, Address>;
   icon: string;
@@ -33,10 +36,10 @@ const governances: Governance[] = [
 
 export const governanceLookup = governances.reduce((acc, curr) => {
   Object.values(curr.addresses).forEach((address) => {
-    acc[address] = curr.name;
+    acc[address] = curr;
   });
   return acc;
-}, {} as Record<Address, string>);
+}, {} as Record<Address, Governance>);
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -44,51 +47,60 @@ const RomulusIndexPage: React.FC = () => {
 
   return (
     <Box>
-      <Heading as="h1" mb={2}>
-        Governance
-      </Heading>
-      <Box mb={4}>
-        <Text>Select a governance system</Text>
-      </Box>
-      <Flex sx={{ flexWrap: "wrap", mt: 2 }}>
-        {governances.map((governance, idx) => {
-          return (
-            <Flex
-              key={idx}
-              sx={{
-                textAlign: "center",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                bg: "highlight",
-                width: "fit-content",
-                p: 4,
-                mr: 4,
-                mb: 2,
-                borderRadius: 4,
-              }}
-              onClick={() =>
-                void router.push(
-                  `/romulus/${governance.addresses[network.chainId] ?? ""}`
-                )
-              }
-            >
-              <Image
+      <AppBody>
+        <GovernanceHeader>
+          <Heading as="h1" mb={2} style={{ fontSize: "1.5rem" }}>
+            Governance
+          </Heading>
+          <Box mb={4}>
+            <Text>Select a protocol to view</Text>
+          </Box>
+        </GovernanceHeader>
+        <RomulusRow>
+          {governances.map((governance, idx) => {
+            return (
+              <Flex
+                key={idx}
                 sx={{
-                  height: "48px",
-                  width: "48px",
-                  mr: 2,
-                  clipPath: "circle(24px at center)",
+                  textAlign: "center",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  bg: "highlight",
+                  width: "fit-content",
+                  p: 4,
+                  mr: 4,
+                  mb: 2,
+                  borderRadius: 12,
                 }}
-                src={governance.icon}
-              />
-              <Heading as="h2">{governance.name}</Heading>
-            </Flex>
-          );
-        })}
-      </Flex>
+                onClick={() =>
+                  void router.push(
+                    `/romulus/${governance.addresses[network.chainId] ?? ""}`
+                  )
+                }
+              >
+                <Image
+                  sx={{
+                    height: "48px",
+                    width: "48px",
+                    mr: 2,
+                    clipPath: "circle(24px at center)",
+                  }}
+                  src={governance.icon}
+                />
+                <Heading as="h2">{governance.name}</Heading>
+              </Flex>
+            );
+          })}
+        </RomulusRow>
+      </AppBody>
     </Box>
   );
 };
+
+const GovernanceHeader = styled(Box)`
+  justify-content: space-between;
+  padding: 45px 45px 25px 45px;
+`;
 
 export default RomulusIndexPage;

@@ -13,6 +13,9 @@ export const Footer: React.FC = () => {
         px: [3, 3],
         py: [3, 3],
         flexDirection: "row",
+        marginTop: "45px",
+        borderTop: "1px solid",
+        borderColor: "rgba(0, 0, 0, 0.1)",
       }}
     >
       {socialLinks.map((element: socialLink, index) => {

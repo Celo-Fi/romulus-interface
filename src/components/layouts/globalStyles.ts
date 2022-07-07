@@ -7,7 +7,7 @@ export const globalStyles = css`
 
   html {
     color: var(--purple);
-    background: #1d1e26;
+    background: #212429;
   }
   body {
     font-family: Inter;

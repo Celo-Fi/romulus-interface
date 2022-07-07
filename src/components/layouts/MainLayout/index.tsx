@@ -18,8 +18,6 @@ export const MainLayout: React.FC<Props> = ({
     <Flex
       sx={{
         width: "100%",
-        px: [4, 4],
-        py: [3, 3],
         flexDirection: "column",
         minHeight: "100vh",
       }}
