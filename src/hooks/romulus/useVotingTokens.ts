@@ -1,9 +1,10 @@
 import { Address } from "@celo/contractkit";
 import { BigNumberish } from "ethers";
 import React from "react";
-import { PoofToken__factory, RomulusDelegate__factory } from "../../generated";
+import { PoofToken__factory } from "../../generated";
 import { useProvider } from "../../hooks/useProviderOrSigner";
 import { BIG_ZERO, ZERO_ADDRESS } from "../../util/constants";
+import { getRomulusInfo } from "../../util/getRomulusInfo";
 import { useAsyncState } from "../useAsyncState";
 
 const initialVotingTokens = {
@@ -23,12 +24,15 @@ export const useVotingTokens = (
     if (!address) {
       return initialVotingTokens;
     }
-    const romulus = RomulusDelegate__factory.connect(romulusAddress, provider);
-    const token = PoofToken__factory.connect(await romulus.token(), provider);
+    const { tokenAddress, releaseTokenAddress } = await getRomulusInfo(
+      romulusAddress,
+      provider
+    );
+
+    const token = PoofToken__factory.connect(tokenAddress, provider);
     const balance = await token.balanceOf(address);
     const votingPower = await token.getPriorVotes(address, blockNumber);
 
-    const releaseTokenAddress = await romulus.releaseToken();
     let releaseBalance = BIG_ZERO;
     let releaseVotingPower = BIG_ZERO;
     if (releaseTokenAddress !== ZERO_ADDRESS) {

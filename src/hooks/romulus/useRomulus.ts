@@ -2,8 +2,9 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { Address } from "@celo/contractkit";
 import { BigNumberish } from "ethers";
 import React from "react";
-import { PoofToken__factory, RomulusDelegate__factory } from "../../generated";
+import { PoofToken__factory } from "../../generated";
 import { BIG_ZERO, ZERO_ADDRESS } from "../../util/constants";
+import { getRomulusInfo } from "../../util/getRomulusInfo";
 import { useAsyncState } from "../useAsyncState";
 import { useProvider } from "../useProviderOrSigner";
 
@@ -30,12 +31,14 @@ const initialRomulus: Romulus = [
 export const useRomulus = (romulusAddress: Address) => {
   const { address } = useContractKit();
   const provider = useProvider();
+
   const romulusCalls = React.useCallback(async (): Promise<Romulus> => {
-    const romulus = RomulusDelegate__factory.connect(
+    const { romulus, tokenAddress, releaseTokenAddress } = await getRomulusInfo(
       romulusAddress as string,
       provider
     );
-    const token = PoofToken__factory.connect(await romulus.token(), provider);
+
+    const token = PoofToken__factory.connect(tokenAddress, provider);
     const tokenSymbol = await token.symbol();
     const tokenDelegate = address
       ? await token.delegates(address)
@@ -43,7 +46,6 @@ export const useRomulus = (romulusAddress: Address) => {
 
     let releaseTokenSymbol = "";
     let releaseTokenDelegate = "";
-    const releaseTokenAddress = await romulus.releaseToken();
     const hasReleaseToken = releaseTokenAddress !== ZERO_ADDRESS;
     if (hasReleaseToken) {
       const releaseToken = PoofToken__factory.connect(
