@@ -3,7 +3,6 @@ import { mapValues } from "lodash";
 
 import ERC20Abi from "../../../abis/ERC20.json";
 import TimelockAbi from "../../../abis/ITimelock.json";
-import MoolaStakingRewardsAbi from "../../../abis/MoolaStakingRewards.json";
 import MultiSig from "../../../abis/MultiSig.json";
 import MinerMetadata from "../../../abis/poof/Miner.json";
 import ReleasePOOFMetadata from "../../../abis/poof/ReleasePOOF.json";
@@ -11,6 +10,7 @@ import RewardsCELOMetadata from "../../../abis/poof/RewardsCELO.json";
 import TokenAllocatorMetadata from "../../../abis/poof/TokenAllocator.json";
 import TornadoProxyMetadata from "../../../abis/poof/TornadoProxy.json";
 import PoolManager from "../../../abis/PoolManager.json";
+import UbeswapTokenAllocatorAbi from "../../../abis/ubeswap/TokenAllocator.json";
 import UbeswapFactory from "../../../abis/UbeswapFactory.json";
 
 const MULTISIG_ABI =
@@ -83,6 +83,8 @@ export const KNOWN_ADDRESSES: Record<
 };
 
 export const knownABIs: Record<string, Fragment[]> = {
+  "0x9a4f417f7C23EDA400536C9fE3B14b1494c1C6a1":
+    UbeswapTokenAllocatorAbi as unknown as Fragment[],
   "0x695218A22c805Bab9C6941546CF5395F169Ad871":
     ReleasePOOFMetadata.abi as unknown as Fragment[],
   "0x0Dd3E8caFF2B914becDb8700Db32d0C9dC34E318":
