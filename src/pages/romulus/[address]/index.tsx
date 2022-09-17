@@ -4,10 +4,7 @@ import React from "react";
 import { Box, Button, Flex, Heading, Text } from "theme-ui";
 import { useDelegateModal } from "../../../components/pages/romulus/delegateModal";
 import { TopDelegates } from "../../../components/pages/romulus/TopDelegates";
-import {
-  PoofToken__factory,
-  RomulusDelegate__factory,
-} from "../../../generated";
+import { PoofToken__factory } from "../../../generated";
 import { useRomulus } from "../../../hooks/romulus/useRomulus";
 import { useVotingTokens } from "../../../hooks/romulus/useVotingTokens";
 import { useLatestBlockNumber } from "../../../hooks/useLatestBlockNumber";
@@ -24,6 +21,7 @@ import { RowFlat } from "../../../components/Row";
 import { OverviewCard } from "../../../components/pages/romulus/OverviewCard";
 import { ProposalList } from "../../../components/pages/romulus/ProposalList";
 import { DetailContainer } from "../../../components/pages/romulus/Header";
+import { getRomulusInfo } from "../../../util/getRomulusInfo";
 
 const RomulusIndexPage: React.FC = () => {
   const router = useRouter();
@@ -67,11 +65,11 @@ const RomulusIndexPage: React.FC = () => {
         return;
       }
       const signer = await getConnectedSigner();
-      const romulus = RomulusDelegate__factory.connect(
+      const { tokenAddress } = await getRomulusInfo(
         romulusAddress as string,
         provider
       );
-      const token = PoofToken__factory.connect(await romulus.token(), signer);
+      const token = PoofToken__factory.connect(tokenAddress, signer);
       await token.delegate(delegate);
     } catch (e) {
       alert(e);
@@ -91,14 +89,12 @@ const RomulusIndexPage: React.FC = () => {
         return;
       }
       const signer = await getConnectedSigner();
-      const romulus = RomulusDelegate__factory.connect(
+
+      const { releaseTokenAddress } = await getRomulusInfo(
         romulusAddress as string,
         provider
       );
-      const token = PoofToken__factory.connect(
-        await romulus.releaseToken(),
-        signer
-      );
+      const token = PoofToken__factory.connect(releaseTokenAddress, signer);
       await token.delegate(delegate);
     } catch (e) {
       alert(e);

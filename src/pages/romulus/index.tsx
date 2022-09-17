@@ -32,6 +32,15 @@ const governances: Governance[] = [
     },
     icon: "/assets/asset_UBE.png",
   },
+  {
+    name: "Moola",
+    addresses: {
+      [ChainId.Mainnet]: "0xde457ed1A713C290C4f8dE1dE0D0308Fc7722937",
+      [ChainId.Alfajores]: "0x4Bb7b74d7E6B03862Dba0785E54E687C01ECffC8",
+      [ChainId.Baklava]: "",
+    },
+    icon: "/assets/asset_MOO.png",
+  },
 ];
 
 export const governanceLookup = governances.reduce((acc, curr) => {
