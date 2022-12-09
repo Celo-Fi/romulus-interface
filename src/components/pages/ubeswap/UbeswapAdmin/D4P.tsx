@@ -110,42 +110,42 @@ export const extraFarms: Farm[] = [
     rewardToken: Token.UBE,
     manager: D4PMultisig.UBE,
   },
-  {
-    farmAddress: "0x3A7D1c18618c4f099D2703f8981CEA9c56Ac7779",
-    farmName: Pool.pUSDUSD,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0xA1e9175ad10fBdA9Fa042269c2AB7DaFB54dc164",
-    farmName: Pool.pEUREUR,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0xb86e373b209fb2C4cbE17d68d52A59798E4A9640",
-    farmName: Pool.pCELOCELO,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0x9925664eF3D300BaAe432C9c04752C8196AF7123",
-    farmName: Pool.pUSDUSD,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0xc4e422ED8939697897443caa4e70E933cD001f54",
-    farmName: Pool.pEUREUR,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
-  {
-    farmAddress: "0xa8E2ec31760Df07108c849f321e6872d15d12017",
-    farmName: Pool.pCELOCELO,
-    rewardToken: Token.POOF,
-    manager: D4PMultisig.POOF,
-  },
+  // {
+  //   farmAddress: "0x3A7D1c18618c4f099D2703f8981CEA9c56Ac7779",
+  //   farmName: Pool.pUSDUSD,
+  //   rewardToken: Token.POOF,
+  //   manager: D4PMultisig.POOF,
+  // },
+  // {
+  //   farmAddress: "0xA1e9175ad10fBdA9Fa042269c2AB7DaFB54dc164",
+  //   farmName: Pool.pEUREUR,
+  //   rewardToken: Token.POOF,
+  //   manager: D4PMultisig.POOF,
+  // },
+  // {
+  //   farmAddress: "0xb86e373b209fb2C4cbE17d68d52A59798E4A9640",
+  //   farmName: Pool.pCELOCELO,
+  //   rewardToken: Token.POOF,
+  //   manager: D4PMultisig.POOF,
+  // },
+  // {
+  //   farmAddress: "0x9925664eF3D300BaAe432C9c04752C8196AF7123",
+  //   farmName: Pool.pUSDUSD,
+  //   rewardToken: Token.POOF,
+  //   manager: D4PMultisig.POOF,
+  // },
+  // {
+  //   farmAddress: "0xc4e422ED8939697897443caa4e70E933cD001f54",
+  //   farmName: Pool.pEUREUR,
+  //   rewardToken: Token.POOF,
+  //   manager: D4PMultisig.POOF,
+  // },
+  // {
+  //   farmAddress: "0xa8E2ec31760Df07108c849f321e6872d15d12017",
+  //   farmName: Pool.pCELOCELO,
+  //   rewardToken: Token.POOF,
+  //   manager: D4PMultisig.POOF,
+  // },
 ];
 
 interface Props {
