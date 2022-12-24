@@ -85,11 +85,11 @@ export const KNOWN_ADDRESSES: Record<
     name: "Abstain Voter",
     abi: VoterAbi as unknown as Fragment[],
   },
-  "0x682049ca0221d3f79a7f670f7b94612e12ba581f": {
+  "0x682049Ca0221D3f79a7f670f7b94612e12BA581F": {
     name: "For Voter",
     abi: VoterAbi as unknown as Fragment[],
   },
-  "0x5cfb8153a3c5861e5714a5902155bca7e041e613": {
+  "0x5cFb8153a3c5861e5714a5902155bcA7E041e613": {
     name: "Against Voter",
     abi: VoterAbi as unknown as Fragment[],
   },
