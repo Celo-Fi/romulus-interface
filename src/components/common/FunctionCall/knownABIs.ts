@@ -3,6 +3,7 @@ import { mapValues } from "lodash";
 
 import ERC20Abi from "../../../abis/ERC20.json";
 import TimelockAbi from "../../../abis/ITimelock.json";
+import VoterAbi from "../../../abis/Voter.json";
 import MultiSig from "../../../abis/MultiSig.json";
 import MinerMetadata from "../../../abis/poof/Miner.json";
 import ReleasePOOFMetadata from "../../../abis/poof/ReleasePOOF.json";
@@ -79,6 +80,18 @@ export const KNOWN_ADDRESSES: Record<
   "0xB58DA472Fd4ba76696DbF8Ba3cC23580C26093dA": {
     name: "Ubeswap Multisig 1",
     abi: MultiSig as unknown as Fragment[],
+  },
+  "0xb4340a85f4E00778a3B018f51B1dd66Ca296501D": {
+    name: "Abstain Voter",
+    abi: VoterAbi as unknown as Fragment[],
+  },
+  "0x682049ca0221d3f79a7f670f7b94612e12ba581f": {
+    name: "For Voter",
+    abi: VoterAbi as unknown as Fragment[],
+  },
+  "0x5cfb8153a3c5861e5714a5902155bca7e041e613": {
+    name: "Against Voter",
+    abi: VoterAbi as unknown as Fragment[],
   },
 };
 
