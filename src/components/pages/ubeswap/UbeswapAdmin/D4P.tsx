@@ -156,7 +156,7 @@ export const D4P: React.FC<Props> = ({ manager }) => {
   const ubeswapMultisig = useMultisigContract(D4PMultisig.UBE);
   const poofMultisig = useMultisigContract(D4PMultisig.POOF);
   const provider = useProvider();
-  const [farms, setFarms] = React.useState<Farm[]>([]);
+  const [farms, setFarms] = React.useState<Farm[]>(extraFarms);
   const multisigLookup: Record<string, MultisigContract> = React.useMemo(
     () => ({
       [D4PMultisig.UBE]: ubeswapMultisig,
@@ -165,35 +165,35 @@ export const D4P: React.FC<Props> = ({ manager }) => {
     [ubeswapMultisig, poofMultisig]
   );
   useEffect(() => {
-    const farmRegistry = FarmRegistry__factory.connect(
-      FARM_REGISTRY_ADDRESS,
-      provider
-    );
-    void farmRegistry
-      .queryFilter(farmRegistry.filters.FarmInfo(null, null, null))
-      .then(async (events) => {
-        const farms = (
-          await Promise.all(
-            events.map(async (event) => {
-              const msr = MoolaStakingRewards__factory.connect(
-                event.args[0],
-                provider
-              );
-              return {
-                farmAddress: event.args[0],
-                farmName: ethers.utils.parseBytes32String(event.args[1]),
-                rewardToken: await msr.rewardsToken(),
-                manager: await msr.rewardsDistribution(),
-              };
-            })
-          )
-        )
-          .filter((farm) => multisigLookup[farm.manager] != null)
-          .sort((a, b) => a.manager.localeCompare(b.manager));
-        setFarms(
-          [...farms, ...extraFarms].filter((f) => f.manager === manager)
-        );
-      });
+    // const farmRegistry = FarmRegistry__factory.connect(
+    //   FARM_REGISTRY_ADDRESS,
+    //   provider
+    // );
+    // void farmRegistry
+    //   .queryFilter(farmRegistry.filters.FarmInfo(null, null, null))
+    //   .then(async (events) => {
+    //     const farms = (
+    //       await Promise.all(
+    //         events.map(async (event) => {
+    //           const msr = MoolaStakingRewards__factory.connect(
+    //             event.args[0],
+    //             provider
+    //           );
+    //           return {
+    //             farmAddress: event.args[0],
+    //             farmName: ethers.utils.parseBytes32String(event.args[1]),
+    //             rewardToken: await msr.rewardsToken(),
+    //             manager: await msr.rewardsDistribution(),
+    //           };
+    //         })
+    //       )
+    //     )
+    //       .filter((farm) => multisigLookup[farm.manager] != null)
+    //       .sort((a, b) => a.manager.localeCompare(b.manager));
+    //     setFarms(
+    //       [...farms, ...extraFarms].filter((f) => f.manager === manager)
+    //     );
+    //   });
   }, [manager, multisigLookup, provider]);
 
   const getConnectedSigner = useGetConnectedSigner();
