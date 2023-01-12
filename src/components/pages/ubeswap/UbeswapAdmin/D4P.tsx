@@ -40,28 +40,28 @@ const getNotifyData = (amount: string) =>
 // == TYPES ==
 enum Pool {
   // Ubeswap controlled
-  CELOUSD = "CELO-mcUSD",
-  CELOEUR = "CELO-mcEUR",
-  CELOUBE = "UBE-CELO",
-  CELORCELO = "rCELO-CELO",
-  WBTCMCUSD = "WBTC-mcUSD",
-  WETHMCUSD = "WETH-mcUSD",
-  SUSHIMCUSD = "SUSHI-mcUSD",
-  CRVMCUSD = "CRV-mcUSD",
-  AAVEMCUSD = "AAVE-mcUSD",
-  FTMMCUSD = "FTM-mcUSD",
-  AVAXMCUSD = "AVAX-mcUSD",
-  WMATICMCUSD = "WMATIC-mcUSD",
-  BNBMCUSD = "BNB-mcUSD",
-  SOLCELO = "SOL-CELO",
+  // CELOUSD = "CELO-mcUSD",
+  // CELOEUR = "CELO-mcEUR",
+  // CELOUBE = "UBE-CELO",
+  // CELORCELO = "rCELO-CELO",
+  // WBTCMCUSD = "WBTC-mcUSD",
+  // WETHMCUSD = "WETH-mcUSD",
+  // SUSHIMCUSD = "SUSHI-mcUSD",
+  // CRVMCUSD = "CRV-mcUSD",
+  // AAVEMCUSD = "AAVE-mcUSD",
+  // FTMMCUSD = "FTM-mcUSD",
+  // AVAXMCUSD = "AVAX-mcUSD",
+  // WMATICMCUSD = "WMATIC-mcUSD",
+  // BNBMCUSD = "BNB-mcUSD",
+  // SOLCELO = "SOL-CELO",
   UBE = "UBE",
 
   // Poof controlled
-  POOFUBE = "POOF-UBE",
-  PCELOPOOF = "pCELO-POOF",
-  pUSDUSD = "pUSD-cUSD",
-  pEUREUR = "pEUR-cEUR",
-  pCELOCELO = "pCELO-CELO",
+  // POOFUBE = "POOF-UBE",
+  // PCELOPOOF = "pCELO-POOF",
+  // pUSDUSD = "pUSD-cUSD",
+  // pEUREUR = "pEUR-cEUR",
+  // pCELOCELO = "pCELO-CELO",
 }
 
 enum Token {
