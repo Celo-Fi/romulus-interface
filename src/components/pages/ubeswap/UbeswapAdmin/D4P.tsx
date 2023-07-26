@@ -1,4 +1,5 @@
-import { ethers } from "ethers";
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { BigNumber, ethers } from "ethers";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { Box, Button, Card, Flex, Heading, Link, Text } from "theme-ui";
@@ -12,6 +13,7 @@ import {
   ERC20__factory,
   FarmRegistry__factory,
   MoolaStakingRewards__factory,
+  Multicall__factory,
   MultiSig as MultisigContract,
 } from "../../../../generated";
 import { useAsyncState } from "../../../../hooks/useAsyncState";
@@ -156,7 +158,7 @@ export const D4P: React.FC<Props> = ({ manager }) => {
   const ubeswapMultisig = useMultisigContract(D4PMultisig.UBE);
   const poofMultisig = useMultisigContract(D4PMultisig.POOF);
   const provider = useProvider();
-  const [farms, setFarms] = React.useState<Farm[]>(extraFarms);
+  const farms = extraFarms;
   const multisigLookup: Record<string, MultisigContract> = React.useMemo(
     () => ({
       [D4PMultisig.UBE]: ubeswapMultisig,
@@ -223,6 +225,10 @@ export const D4P: React.FC<Props> = ({ manager }) => {
   );
   const lookupCall = React.useCallback(async () => {
     const lookup: FarmLookup = {};
+    const multicall = Multicall__factory.connect(
+      "0xa27A0C40A0a17485c11d1f342a95c946E9523551",
+      provider
+    );
     await Promise.all(
       farms.map(async (farm) => {
         const farmContract = MoolaStakingRewards__factory.connect(
@@ -237,26 +243,76 @@ export const D4P: React.FC<Props> = ({ manager }) => {
           stakingToken,
           owner,
           rewardsDistribution,
-          lastReward,
-        ] = await Promise.all([
-          farmContract.periodFinish(),
-          farmContract.rewardRate(),
-          rewardToken.balanceOf(farm.farmAddress),
-          farmContract.stakingToken(),
-          farmContract.owner(),
-          farmContract.rewardsDistribution(),
-          farmContract
-            .queryFilter(farmContract.filters.RewardAdded(null))
-            .then((events) => events.reverse()[0]?.args.reward),
-        ]);
+        ] = await multicall.callStatic
+          .aggregate([
+            {
+              target: farmContract.address,
+              callData:
+                farmContract.interface.encodeFunctionData("periodFinish"),
+            },
+            {
+              target: farmContract.address,
+              callData: farmContract.interface.encodeFunctionData("rewardRate"),
+            },
+            {
+              target: rewardToken.address,
+              callData: rewardToken.interface.encodeFunctionData("balanceOf", [
+                farm.farmAddress,
+              ]),
+            },
+            {
+              target: farmContract.address,
+              callData:
+                farmContract.interface.encodeFunctionData("stakingToken"),
+            },
+            {
+              target: farmContract.address,
+              callData: farmContract.interface.encodeFunctionData("owner"),
+            },
+            {
+              target: farmContract.address,
+              callData: farmContract.interface.encodeFunctionData(
+                "rewardsDistribution"
+              ),
+            },
+          ])
+          .then(({ returnData }) => [
+            farmContract.interface.decodeFunctionResult(
+              "periodFinish",
+              returnData[0]!
+            ),
+            farmContract.interface.decodeFunctionResult(
+              "rewardRate",
+              returnData[1]!
+            ),
+            rewardToken.interface.decodeFunctionResult(
+              "balanceOf",
+              returnData[2]!
+            ),
+            farmContract.interface.decodeFunctionResult(
+              "stakingToken",
+              returnData[3]!
+            )[0] as unknown as string,
+            farmContract.interface.decodeFunctionResult(
+              "owner",
+              returnData[4]!
+            )[0] as unknown as string,
+            farmContract.interface.decodeFunctionResult(
+              "rewardsDistribution",
+              returnData[5]!
+            )[0] as unknown as string,
+          ]);
         lookup[farm.farmAddress] = {
           periodEnd: Number(periodEnd),
-          rewardRate: Number(fromWei(rewardRate.toString())) * SECONDS_PER_WEEK,
-          rewardBalance: Number(fromWei(balance.toString())),
-          stakingToken,
-          owner,
-          rewardsDistribution,
-          lastReward: lastReward?.toString() || "0",
+          rewardRate:
+            Number(fromWei(rewardRate!.toString())) * SECONDS_PER_WEEK,
+          rewardBalance: Number(fromWei(balance!.toString())),
+          stakingToken: stakingToken as unknown as string,
+          owner: owner as unknown as string,
+          rewardsDistribution: rewardsDistribution as unknown as string,
+          lastReward: BigNumber.from(rewardRate!.toString())
+            .mul(SECONDS_PER_WEEK)
+            .toString(),
         };
       })
     );
